@@ -27,6 +27,7 @@ public class ClassroomController {
 
     @PostMapping
     public ResponseEntity<Classrooms> createClassroom(@RequestBody CreateClassroomDTO classroomDTO) {
+        //Long coordinatorId = userService.getAuthenticatedUserId();
         Long coordinatorId = 1L;
 
         Classrooms classroom = classroomService.saveClassroom(classroomDTO, coordinatorId);
