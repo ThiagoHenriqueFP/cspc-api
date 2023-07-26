@@ -1,10 +1,10 @@
-package uol.compass.cspcapi.application.api.user.dto;
+package uol.compass.cspcapi.application.api.student.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
-public class CreateUserDTO {
+public class UpdateStudentDTO {
     @NotBlank(message = "first name must not be empty")
     @Min(value = 3, message = "first name must be greater than 3 letters")
     private String firstName;
@@ -15,15 +15,10 @@ public class CreateUserDTO {
     @Email(message = "this field must be an email pattern")
     private String email;
 
-    @NotBlank(message = "password name must not be empty")
-    @Min(value = 8, message = "password length must be greater 8 letters")
-    private String password;
-
-    public CreateUserDTO(String firstName, String lastName, String email, String password) {
+    public UpdateStudentDTO(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.password = password;
     }
 
     public String getFirstName() {
@@ -36,9 +31,5 @@ public class CreateUserDTO {
 
     public String getEmail() {
         return email;
-    }
-
-    public String getPassword() {
-        return password;
     }
 }
