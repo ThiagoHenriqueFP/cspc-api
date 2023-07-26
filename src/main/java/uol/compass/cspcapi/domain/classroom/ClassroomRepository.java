@@ -7,9 +7,5 @@ import java.util.Optional;
 
 public interface ClassroomRepository extends JpaRepository<Classrooms, Long> {
 
-    Optional<Classrooms> findById(Long id);
-    List<Classrooms> findAll();
-
-    void deleteById(Long id);
 
 }

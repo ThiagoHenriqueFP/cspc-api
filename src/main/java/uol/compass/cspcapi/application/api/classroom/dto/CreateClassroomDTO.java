@@ -10,7 +10,7 @@ import java.util.List;
 public class CreateClassroomDTO {
 
     private String title;
-    private Coordinator coordinator;
+    private Long coordinator;
 
     private List<Student> students;
 
@@ -22,7 +22,7 @@ public class CreateClassroomDTO {
         return title;
     }
 
-    public Coordinator getCoordinator() {
+    public Long getCoordinator() {
         return coordinator;
     }
 

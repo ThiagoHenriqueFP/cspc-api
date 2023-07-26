@@ -28,8 +28,8 @@ public class ClassroomController {
     @PostMapping
     public ResponseEntity<Classrooms> createClassroom(@RequestBody CreateClassroomDTO classroomDTO) {
         //Long coordinatorId = userService.getAuthenticatedUserId();
-        Long coordinatorId = 1L; // Ou outro valor fixo para o ID do coordenador
-
+        Long coordinatorId = classroomDTO.getCoordinator();
+        //todo veri already exists
         ResponseEntity<Classrooms> responseEntity = classroomService.saveClassroom(classroomDTO, coordinatorId);
         return responseEntity;
     }
