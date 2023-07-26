@@ -12,9 +12,4 @@ public interface ClassroomRepository extends JpaRepository<Classrooms, Long> {
 
     void deleteById(Long id);
 
-    List<Classrooms> findAllBySomeAttribute(String attribute);
-
-    void deleteAll();
-
-
 }
