@@ -3,6 +3,7 @@ package uol.compass.cspcapi.domain.Squad;
 import jakarta.persistence.*;
 import uol.compass.cspcapi.domain.student.Student;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,14 +15,16 @@ public class Squad {
     private String name;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "student_id", referencedColumnName = "id")
     private List<Student> students;
 
     public Squad() {
+        this.students = new ArrayList<>();
     }
 
-    public Squad(String name, List<Student> students) {
+    public Squad(String name) {
         this.name = name;
-        this.students = students;
+        this.students = new ArrayList<>();
     }
 
     public Long getId() {
