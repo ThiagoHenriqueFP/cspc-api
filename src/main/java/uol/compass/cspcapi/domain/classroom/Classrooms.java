@@ -6,6 +6,7 @@ import uol.compass.cspcapi.domain.coordinator.Coordinator;
 import uol.compass.cspcapi.domain.scrumMaster.ScrumMaster;
 import uol.compass.cspcapi.domain.student.Student;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,6 +35,9 @@ public class Classrooms {
     public Classrooms(String title, Coordinator coordinator) {
         this.title = title;
         this.coordinator = coordinator;
+        this.students = new ArrayList<>();
+        this.scrumMasters = new ArrayList<>();
+        this.squads = new ArrayList<>();
     }
 
     public Long getId() {
