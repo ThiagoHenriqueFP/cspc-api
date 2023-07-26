@@ -2,6 +2,7 @@ package uol.compass.cspcapi.domain.classroom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.classroom.dto.CreateClassroomDTO;
@@ -9,6 +10,7 @@ import uol.compass.cspcapi.domain.coordinator.Coordinator;
 import uol.compass.cspcapi.domain.coordinator.CoordinatorService;
 import uol.compass.cspcapi.domain.student.Student;
 import uol.compass.cspcapi.domain.student.StudentRepository;
+import uol.compass.cspcapi.domain.student.StudentService;
 
 
 import java.util.List;
@@ -16,38 +18,39 @@ import java.util.List;
 @Service
 public class ClassroomService {
 
+    //repositories
     private ClassroomRepository classroomRepository;
-    private StudentRepository studentRepository;
+
+
+    //services
     private CoordinatorService coordinatorService;
+    private StudentService studentService;
 
     @Autowired
-    public ClassroomService(ClassroomRepository classroomRepository, StudentRepository studentRepository, CoordinatorService coordinatorService) {
+    public ClassroomService(ClassroomRepository classroomRepository, CoordinatorService coordinatorService, StudentService studentService) {
         this.classroomRepository = classroomRepository;
-        this.studentRepository = studentRepository;
         this.coordinatorService = coordinatorService;
+        this.studentService = studentService;
     }
 
-    public Classrooms saveClassroom(CreateClassroomDTO classroomDTO, Long coordinatorId) {
+    public ResponseEntity<Classrooms> saveClassroom(CreateClassroomDTO classroomDTO, Long coordinatorId) {
         Coordinator coordinator = coordinatorService.getCoordinatorById(coordinatorId);
 
-        Classrooms classrooms = new Classrooms(
+        Classrooms classroom = new Classrooms(
                 classroomDTO.getTitle(),
                 coordinator
         );
 
-        return classroomRepository.save(classrooms);
+        Classrooms savedClassroom = classroomRepository.save(classroom);
+        return ResponseEntity.ok(savedClassroom);
     }
-
 
     public Classrooms addStudentsToClassroom(Long classroomId, List<Long> studentIds) {
         Classrooms classroom = classroomRepository.findById(classroomId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "classroom not found"));
 
         for (Long studentId : studentIds) {
-            // Acessando o repositório do Student para obter cada estudante pelo ID
-            Student student = studentRepository.findById(studentId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "student not found"));
-
+            Student student = studentService.getStudentFindById(studentId);
             classroom.getStudents().add(student);
         }
 
@@ -55,18 +58,18 @@ public class ClassroomService {
     }
 
 
-    public List<Classrooms> listClassroom(){
-
-        return classroomRepository.findAll();
+    public ResponseEntity<List<Classrooms>> listClassroom() {
+        List<Classrooms> classrooms = classroomRepository.findAll();
+        return ResponseEntity.ok(classrooms);
     }
 
-    public Classrooms deleteClassromm(Classrooms classrooms){
-
-        if (!classroomRepository.existsById(classrooms.getId())) {
+    public ResponseEntity<Long> deleteClassroom(long classroomId) {
+        if (!classroomRepository.existsById(classroomId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "classroom not found");
         }
 
-        return classroomRepository.deleteById(classrooms);
+        classroomRepository.deleteById(classroomId);
+        return ResponseEntity.ok(classroomId);
     }
 
 }

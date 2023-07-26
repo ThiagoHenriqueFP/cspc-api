@@ -28,27 +28,27 @@ public class ClassroomController {
     @PostMapping
     public ResponseEntity<Classrooms> createClassroom(@RequestBody CreateClassroomDTO classroomDTO) {
         //Long coordinatorId = userService.getAuthenticatedUserId();
-        Long coordinatorId = 1L;
+        Long coordinatorId = 1L; // Ou outro valor fixo para o ID do coordenador
 
-        Classrooms classroom = classroomService.saveClassroom(classroomDTO, coordinatorId);
-
-        return ResponseEntity.ok(classroom);
+        ResponseEntity<Classrooms> responseEntity = classroomService.saveClassroom(classroomDTO, coordinatorId);
+        return responseEntity;
     }
 
     @PostMapping("/{classroomId}/add-students")
     public ResponseEntity<Classrooms> addStudentsToClassroom(@PathVariable Long classroomId, @RequestBody List<Long> studentIds) {
-        Classrooms classroom = classroomService.addStudentsToClassroom(classroomId, studentIds);
-        return ResponseEntity.ok(classroom);
+        Classrooms updatedClassroom = classroomService.addStudentsToClassroom(classroomId, studentIds);
+        return ResponseEntity.ok(updatedClassroom);
     }
 
     @GetMapping
-    public List<Classrooms> list(){
+    public ResponseEntity<List<Classrooms>> list() {
         return classroomService.listClassroom();
     }
 
-    @DeleteMapping
-    public Classrooms delete(@PathVariable Classrooms classrooms){
-        return classroomService.deleteClassromm(classrooms);
+    @DeleteMapping("/{classroomId}")
+    public ResponseEntity<Void> delete(@PathVariable Long classroomId) {
+        classroomService.deleteClassroom(classroomId);
+        return ResponseEntity.noContent().build();
     }
 
 }
