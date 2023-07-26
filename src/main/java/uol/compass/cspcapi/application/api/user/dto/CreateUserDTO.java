@@ -15,10 +15,15 @@ public class CreateUserDTO {
     @Email(message = "this field must be an email pattern")
     private String email;
 
-    public CreateUserDTO(String firstName, String lastName, String email) {
+    @NotBlank(message = "password name must not be empty")
+    @Min(value = 8, message = "password length must be greater 8 letters")
+    private String password;
+
+    public CreateUserDTO(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.password = password;
     }
 
     public String getFirstName() {
@@ -31,5 +36,9 @@ public class CreateUserDTO {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }
