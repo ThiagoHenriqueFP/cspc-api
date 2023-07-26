@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 public class StudentService {
     private StudentRepository studentRepository;
 
+    public StudentService() {
+    }
+
     public Student save(Student student) {
         return studentRepository.save(student);
     }
