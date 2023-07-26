@@ -14,6 +14,7 @@ import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncrypt
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 @Service
 public class StudentService {

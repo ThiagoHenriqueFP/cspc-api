@@ -3,9 +3,11 @@ package uol.compass.cspcapi.domain.classroom;
 import jakarta.persistence.*;
 import uol.compass.cspcapi.domain.Squad.Squad;
 import uol.compass.cspcapi.domain.coordinator.Coordinator;
+import uol.compass.cspcapi.domain.instructor.Instructor;
 import uol.compass.cspcapi.domain.scrumMaster.ScrumMaster;
 import uol.compass.cspcapi.domain.student.Student;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,21 +21,34 @@ public class Classrooms {
     @OneToOne
     private Coordinator coordinator;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "instructor_id", referencedColumnName = "id")
+    public List<Instructor> instructor;
+
     @OneToMany(fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
+    @JoinColumn(name = "student_id", referencedColumnName = "id")
     private List<Student> students;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "scrum_master_id", referencedColumnName = "id")
     private List<ScrumMaster> scrumMasters;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "squad_id", referencedColumnName = "id")
     private List<Squad> squads;
 
     public Classrooms() {
+        this.students = new ArrayList<>();
+        this.squads = new ArrayList<>();
+        this.scrumMasters = new ArrayList<>();
     }
 
     public Classrooms(String title, Coordinator coordinator) {
         this.title = title;
         this.coordinator = coordinator;
+        this.students = new ArrayList<>();
+        this.squads = new ArrayList<>();
+        this.scrumMasters = new ArrayList<>();
     }
 
     public Long getId() {
