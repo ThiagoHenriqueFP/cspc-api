@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import uol.compass.cspcapi.application.api.classroom.dto.CreateClassroomDTO;
 import uol.compass.cspcapi.domain.classroom.ClassroomService;
 import uol.compass.cspcapi.domain.classroom.Classrooms;
+import uol.compass.cspcapi.domain.user.UserService;
 
 import java.util.List;
 
@@ -16,26 +17,27 @@ public class ClassroomController {
 
     private ClassroomService classroomService;
 
+    private UserService userService;
+
     @Autowired
-    public ClassroomController(ClassroomService classroomService) {
+    public ClassroomController(ClassroomService classroomService, UserService userService) {
         this.classroomService = classroomService;
+        this.userService = userService;
     }
 
     @PostMapping
-    public Classrooms save(@RequestBody CreateClassroomDTO classBody){
-        return classroomService.saveClassroom(classBody);
-    }
+    public ResponseEntity<Classrooms> createClassroom(@RequestBody CreateClassroomDTO classroomDTO) {
+        Long coordinatorId = 1L;
 
-    @PostMapping("/{classroomId}/add-student/{studentId}")
-    public ResponseEntity<Classrooms> addStudentToClassroom(@PathVariable Long classroomId, @PathVariable Long studentId){
-        Classrooms updateClassroom = classroomService.addStudentToClass(classroomId, studentId);
-        return ResponseEntity.ok(updateClassroom);
+        Classrooms classroom = classroomService.saveClassroom(classroomDTO, coordinatorId);
+
+        return ResponseEntity.ok(classroom);
     }
 
     @PostMapping("/{classroomId}/add-students")
-    public ResponseEntity<Classrooms> addManyStudentsToClassroom(@PathVariable Long classroomId, @RequestBody List<Long> studentIds) {
-        Classrooms updatedClassroom = classroomService.addManyStudentsToClassroom(classroomId, studentIds);
-        return ResponseEntity.ok(updatedClassroom);
+    public ResponseEntity<Classrooms> addStudentsToClassroom(@PathVariable Long classroomId, @RequestBody List<Long> studentIds) {
+        Classrooms classroom = classroomService.addStudentsToClassroom(classroomId, studentIds);
+        return ResponseEntity.ok(classroom);
     }
 
     @GetMapping
