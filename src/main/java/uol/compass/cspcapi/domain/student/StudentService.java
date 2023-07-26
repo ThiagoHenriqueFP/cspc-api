@@ -13,7 +13,7 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
-    public Student findById(Long studentId) {
+    public Student getStudentFindById(Long studentId) {
         return studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId));
     }
