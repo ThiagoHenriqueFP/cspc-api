@@ -6,15 +6,7 @@ import org.springframework.stereotype.Service;
 public class StudentService {
     private StudentRepository studentRepository;
 
-    public StudentService() {
-    }
-
     public Student save(Student student) {
         return studentRepository.save(student);
-    }
-
-    public Student getStudentFindById(Long studentId) {
-        return studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId));
     }
 }
