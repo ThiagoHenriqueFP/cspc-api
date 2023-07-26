@@ -9,7 +9,7 @@ public class Student {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private User user;
 
 //    @OneToMany(mappedBy = "users")
