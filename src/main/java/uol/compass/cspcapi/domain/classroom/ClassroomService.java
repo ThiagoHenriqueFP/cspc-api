@@ -6,9 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.classroom.dto.CreateClassroomDTO;
+import uol.compass.cspcapi.domain.Squad.Squad;
 import uol.compass.cspcapi.domain.coordinator.Coordinator;
 import uol.compass.cspcapi.domain.coordinator.CoordinatorService;
 import uol.compass.cspcapi.domain.scrumMaster.ScrumMaster;
+import uol.compass.cspcapi.domain.scrumMaster.ScrumMasterRepository;
 import uol.compass.cspcapi.domain.scrumMaster.ScrumMasterService;
 import uol.compass.cspcapi.domain.student.Student;
 import uol.compass.cspcapi.domain.student.StudentRepository;
@@ -22,6 +24,7 @@ public class ClassroomService {
 
     //repositories
     private ClassroomRepository classroomRepository;
+    private ScrumMasterRepository scrumMasterRepository;
 
 
     //services
@@ -29,11 +32,12 @@ public class ClassroomService {
     private StudentService studentService;
     private ScrumMasterService scrumMasterService;
 
-    @Autowired
-    public ClassroomService(ClassroomRepository classroomRepository, CoordinatorService coordinatorService, StudentService studentService) {
+    public ClassroomService(ClassroomRepository classroomRepository, ScrumMasterRepository scrumMasterRepository, CoordinatorService coordinatorService, StudentService studentService, ScrumMasterService scrumMasterService) {
         this.classroomRepository = classroomRepository;
+        this.scrumMasterRepository = scrumMasterRepository;
         this.coordinatorService = coordinatorService;
         this.studentService = studentService;
+        this.scrumMasterService = scrumMasterService;
     }
 
     public ResponseEntity<Classrooms> saveClassroom(CreateClassroomDTO classroomDTO, Long coordinatorId) {
@@ -64,14 +68,23 @@ public class ClassroomService {
         Classrooms classroom = classroomRepository.findById(classroomId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom not found"));
 
+        //alterar repository para service
         for (Long scrumMasterId : scrumMasterIds) {
-            ScrumMaster scrumMaster = scrumMasterService.getById(scrumMasterId);
+            ScrumMaster scrumMaster = scrumMasterRepository.getById(scrumMasterId);
             classroom.getScrumMasters().add(scrumMaster);
         }
 
         return classroomRepository.save(classroom);
     }
 
+    public Classrooms getById(Long id){
+        return classroomRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "user not found"
+                )
+        );
+    }
 
     public ResponseEntity<List<Classrooms>> listClassroom() {
         List<Classrooms> classrooms = classroomRepository.findAll();
@@ -87,4 +100,16 @@ public class ClassroomService {
         return ResponseEntity.ok(classroomId);
     }
 
+
+    public Classrooms addSquadToClassroom(Long classroomId, String squadName) {
+        Classrooms classroom = classroomRepository.findById(classroomId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom not found"));
+
+        Squad newSquad = new Squad(squadName);
+        //jogar squad dentro de class
+        classroom.getSquads().add(newSquad);
+        return classroomRepository.save(classroom);
+    }
 }
+
+

@@ -59,4 +59,11 @@ public class ClassroomController {
         return ResponseEntity.noContent().build();
     }
 
+
+    @PostMapping("/{classroomId}/addSquad")
+    public ResponseEntity<Classrooms> addSquadToClassroom(@PathVariable Long classroomId, @RequestParam String squadName) {
+        Classrooms classroom = classroomService.addSquadToClassroom(classroomId, squadName);
+        return ResponseEntity.ok(classroom);
+    }
+
 }
