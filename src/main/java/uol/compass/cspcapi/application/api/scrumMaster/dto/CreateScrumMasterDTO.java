@@ -22,19 +22,6 @@ public class CreateScrumMasterDTO {
     @Min(value = 8, message = "password length must be greater 8 letters")
     private String password;
 
-//    request para salvar qualquer tipo de usuário
-//    (como coincidentemetne as relações de usuário não tem atributos
-//    extras, pode ser utilizado desta forma para salavar instrutor,
-//    coordenador e scrum master também)
-//
-//    {
-//        "firstName": "Mak",
-//        "lastName": "Jesus",
-//        "email": "mak.jesus@mail.com"
-//    }
-
-    // --
-
     public CreateScrumMasterDTO(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;

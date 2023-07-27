@@ -3,6 +3,7 @@ package uol.compass.cspcapi.domain.classroom;
 import jakarta.persistence.*;
 import uol.compass.cspcapi.domain.Squad.Squad;
 import uol.compass.cspcapi.domain.coordinator.Coordinator;
+import uol.compass.cspcapi.domain.instructor.Instructor;
 import uol.compass.cspcapi.domain.scrumMaster.ScrumMaster;
 import uol.compass.cspcapi.domain.student.Student;
 
@@ -23,6 +24,10 @@ public class Classrooms {
     @OneToMany(fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
     @JoinColumn(name = "student_id", referencedColumnName = "id")
     private List<Student> students;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "instructor_id", referencedColumnName = "id")
+    private List<Instructor> instructors;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "scrum_master_id", referencedColumnName = "id")
@@ -73,6 +78,14 @@ public class Classrooms {
 
     public void setStudents(List<Student> students) {
         this.students = students;
+    }
+
+    public List<Instructor> getInstructors() {
+        return instructors;
+    }
+
+    public void setInstructors(List<Instructor> instructors) {
+        this.instructors = instructors;
     }
 
     public List<ScrumMaster> getScrumMasters() {
