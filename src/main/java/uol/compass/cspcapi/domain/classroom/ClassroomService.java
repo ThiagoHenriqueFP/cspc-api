@@ -24,7 +24,6 @@ public class ClassroomService {
 
     //repositories
     private ClassroomRepository classroomRepository;
-    private ScrumMasterRepository scrumMasterRepository;
 
 
     //services
@@ -32,9 +31,9 @@ public class ClassroomService {
     private StudentService studentService;
     private ScrumMasterService scrumMasterService;
 
-    public ClassroomService(ClassroomRepository classroomRepository, ScrumMasterRepository scrumMasterRepository, CoordinatorService coordinatorService, StudentService studentService, ScrumMasterService scrumMasterService) {
+    @Autowired
+    public ClassroomService(ClassroomRepository classroomRepository, CoordinatorService coordinatorService, StudentService studentService, ScrumMasterService scrumMasterService) {
         this.classroomRepository = classroomRepository;
-        this.scrumMasterRepository = scrumMasterRepository;
         this.coordinatorService = coordinatorService;
         this.studentService = studentService;
         this.scrumMasterService = scrumMasterService;
@@ -70,7 +69,7 @@ public class ClassroomService {
 
         //alterar repository para service
         for (Long scrumMasterId : scrumMasterIds) {
-            ScrumMaster scrumMaster = scrumMasterRepository.getById(scrumMasterId);
+            ScrumMaster scrumMaster = scrumMasterService.getById(scrumMasterId);
             classroom.getScrumMasters().add(scrumMaster);
         }
 

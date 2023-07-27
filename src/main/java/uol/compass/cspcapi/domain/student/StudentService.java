@@ -58,8 +58,6 @@ public class StudentService {
         );
 
         return studentRepository.save(newStudent);
-
-
     }
 
     public Student getById(Long id){
