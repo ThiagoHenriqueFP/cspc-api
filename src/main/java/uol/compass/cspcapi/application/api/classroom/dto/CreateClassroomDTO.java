@@ -12,11 +12,6 @@ public class CreateClassroomDTO {
     private String title;
     private Long coordinator;
 
-    private List<Student> students;
-
-    private List<ScrumMaster> scrumMasters;
-
-    private List<Squad> squads;
 
     public String getTitle() {
         return title;
@@ -26,15 +21,4 @@ public class CreateClassroomDTO {
         return coordinator;
     }
 
-    public List<Student> getStudents() {
-        return students;
-    }
-
-    public List<ScrumMaster> getScrumMasters() {
-        return scrumMasters;
-    }
-
-    public List<Squad> getSquads() {
-        return squads;
-    }
 }
