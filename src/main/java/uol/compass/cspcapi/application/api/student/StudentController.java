@@ -13,7 +13,7 @@ import uol.compass.cspcapi.domain.student.StudentService;
 import java.util.List;
 
 @RestController
-@RequestMapping("students")
+@RequestMapping("/students")
 public class StudentController {
     private StudentService studentService;
 

@@ -34,7 +34,7 @@ public class ClassroomService {
     }
 
     public ResponseEntity<Classrooms> saveClassroom(CreateClassroomDTO classroomDTO, Long coordinatorId) {
-        Coordinator coordinator = coordinatorService.getCoordinatorById(coordinatorId);
+        Coordinator coordinator = coordinatorService.getById(coordinatorId);
 
         Classrooms classroom = new Classrooms(
                 classroomDTO.getTitle(),
