@@ -8,6 +8,8 @@ import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.classroom.dto.CreateClassroomDTO;
 import uol.compass.cspcapi.domain.coordinator.Coordinator;
 import uol.compass.cspcapi.domain.coordinator.CoordinatorService;
+import uol.compass.cspcapi.domain.scrumMaster.ScrumMaster;
+import uol.compass.cspcapi.domain.scrumMaster.ScrumMasterService;
 import uol.compass.cspcapi.domain.student.Student;
 import uol.compass.cspcapi.domain.student.StudentRepository;
 import uol.compass.cspcapi.domain.student.StudentService;
@@ -25,6 +27,7 @@ public class ClassroomService {
     //services
     private CoordinatorService coordinatorService;
     private StudentService studentService;
+    private ScrumMasterService scrumMasterService;
 
     @Autowired
     public ClassroomService(ClassroomRepository classroomRepository, CoordinatorService coordinatorService, StudentService studentService) {
@@ -52,6 +55,18 @@ public class ClassroomService {
         for (Long studentId : studentIds) {
             Student student = studentService.getById(studentId);
             classroom.getStudents().add(student);
+        }
+
+        return classroomRepository.save(classroom);
+    }
+
+    public Classrooms addScrumMastersToClassroom(Long classroomId, List<Long> scrumMasterIds) {
+        Classrooms classroom = classroomRepository.findById(classroomId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom not found"));
+
+        for (Long scrumMasterId : scrumMasterIds) {
+            ScrumMaster scrumMaster = scrumMasterService.getById(scrumMasterId);
+            classroom.getScrumMasters().add(scrumMaster);
         }
 
         return classroomRepository.save(classroom);
