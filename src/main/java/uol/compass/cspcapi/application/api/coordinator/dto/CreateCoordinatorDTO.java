@@ -1,12 +1,10 @@
-package uol.compass.cspcapi.application.api.student.dto;
-
-// user -> student
+package uol.compass.cspcapi.application.api.coordinator.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
-public class CreateStudentDTO {
+public class CreateCoordinatorDTO {
     // User
     @NotBlank(message = "first name must not be empty")
     @Min(value = 3, message = "first name must be greater than 3 letters")
@@ -22,20 +20,7 @@ public class CreateStudentDTO {
     @Min(value = 8, message = "password length must be greater than 8 letters")
     private String password;
 
-//    request para salvar qualquer tipo de usuário
-//    (como coincidentemetne as relações de usuário não tem atributos
-//    extras, pode ser utilizado desta forma para salavar instrutor,
-//    coordenador e scrum master também)
-//
-//    {
-//        "firstName": "Mak",
-//        "lastName": "Jesus",
-//        "email": "mak.jesus@mail.com"
-//    }
-
-    // --
-
-    public CreateStudentDTO(String firstName, String lastName, String email, String password) {
+    public CreateCoordinatorDTO(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
