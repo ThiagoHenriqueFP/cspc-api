@@ -23,7 +23,7 @@ public class CoordinatorController {
     }
 
     @PostMapping
-    public ResponseEntity<Coordinator> createCoordinator(@RequestBody CreateCoordinatorDTO coordinator) {
+    public ResponseEntity<ResponseCoordinatorDTO> createCoordinator(@RequestBody CreateCoordinatorDTO coordinator) {
         return new ResponseEntity<>(
                 coordinatorService.save(coordinator),
                 HttpStatus.CREATED
