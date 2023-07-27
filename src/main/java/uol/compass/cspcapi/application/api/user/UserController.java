@@ -10,7 +10,7 @@ import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
 
 @RestController
-@RequestMapping("/users/")
+@RequestMapping("/users")
 public class UserController {
     private UserService userService;
 

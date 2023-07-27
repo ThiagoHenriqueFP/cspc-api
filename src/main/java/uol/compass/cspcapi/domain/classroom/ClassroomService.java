@@ -50,7 +50,7 @@ public class ClassroomService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "classroom not found"));
 
         for (Long studentId : studentIds) {
-            Student student = studentService.getStudentFindById(studentId);
+            Student student = studentService.getById(studentId);
             classroom.getStudents().add(student);
         }
 
