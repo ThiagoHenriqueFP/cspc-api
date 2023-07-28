@@ -31,15 +31,15 @@ public class SquadController {
         );
     }
 
-    @PostMapping("/{id}/addStudent")
-    public ResponseEntity<Squad> addStudentToSquad(@PathVariable Long squadId, @RequestBody Long studentId) {
-        Squad squad = squadService.addStudentToSquad(squadId, studentId);
+    @PatchMapping("/{id}/addStudents")
+    public ResponseEntity<Squad> addStudentsToSquad(@PathVariable Long id, @RequestBody UpdateSquadDTO studentsIds) {
+        Squad squad = squadService.addStudentsToSquad(id, studentsIds);
         return ResponseEntity.ok(squad);
     }
 
-    @DeleteMapping("/{squadId}/removeStudent/{studentId}")
-    public ResponseEntity<Squad> removeStudentFromSquad(@PathVariable Long id, @RequestBody Long studentId) {
-        Squad squad = squadService.removeStudentFromSquad(id, studentId);
+    @PatchMapping("/{id}/removeStudents")
+    public ResponseEntity<Squad> removeStudentsFromSquad(@PathVariable Long id, @RequestBody UpdateSquadDTO studentsIds) {
+        Squad squad = squadService.removeStudentsFromSquad(id, studentsIds);
         return ResponseEntity.ok(squad);
     }
 

@@ -1,5 +1,6 @@
 package uol.compass.cspcapi.domain.Squad;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -47,22 +48,37 @@ public class SquadService {
         );
     }
 
-
-    public Squad addStudentToSquad(Long squadId, Long studentId) {
+    @Transactional
+    public Squad addStudentsToSquad(Long squadId, UpdateSquadDTO squadDTO) {
         Squad squad = squadRepository.findById(squadId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Squad not found"));
 
-        Student student = studentService.getById(studentId);
+        List<Student> students = squad.getStudents();
+        List<Student> newStudents = studentService.getAllStudentsById(squadDTO.getStudentsIds());
+        students.addAll(newStudents);
 
-        squad.getStudents().add(student);
+        studentService.attributeStudentsToSquad(squad, students);
+        squad.setStudents(students);
+
+        //squad.getStudents().add(student);
+
         return squadRepository.save(squad);
     }
 
-    public Squad removeStudentFromSquad(Long squadId, Long studentId) {
+    public Squad removeStudentsFromSquad(Long squadId, UpdateSquadDTO squadDTO) {
         Squad squad = squadRepository.findById(squadId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Squad not found"));
 
-        squad.getStudents().removeIf(student -> student.getId().equals(studentId));
+        List<Student> students = squad.getStudents();
+
+        students.removeIf(
+                student -> squadDTO.getStudentsIds().contains(student.getId())
+        );
+
+        List<Student> toDeleteStudents = studentService.getAllStudentsById(squadDTO.getStudentsIds());
+        studentService.attributeStudentsToSquad(null, toDeleteStudents);
+
+        squad.setStudents(students);
 
         return squadRepository.save(squad);
     }
