@@ -1,6 +1,7 @@
 package uol.compass.cspcapi.domain.Squad;
 
 import jakarta.persistence.*;
+import uol.compass.cspcapi.domain.classroom.Classrooms;
 import uol.compass.cspcapi.domain.student.Student;
 
 import java.util.ArrayList;
@@ -14,9 +15,12 @@ public class Squad {
 
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "student_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "squad", fetch = FetchType.LAZY)
     private List<Student> students;
+
+    @ManyToOne
+    @JoinColumn(name = "classroom_id", referencedColumnName = "id")
+    private Classrooms classroom;
 
     public Squad() {
         this.students = new ArrayList<>();

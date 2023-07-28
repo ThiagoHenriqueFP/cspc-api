@@ -4,7 +4,7 @@ import uol.compass.cspcapi.domain.student.Student;
 
 import java.util.List;
 
-public class RespondeSquadDTO {
+public class ResponseSquadDTO {
 
     private Long id;
 
@@ -12,10 +12,15 @@ public class RespondeSquadDTO {
 
     private List<Student> students;
 
-    public RespondeSquadDTO() {
+    public ResponseSquadDTO() {
     }
 
-    public RespondeSquadDTO(Long id, String name, List<Student> students) {
+    public ResponseSquadDTO(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public ResponseSquadDTO(Long id, String name, List<Student> students) {
         this.id = id;
         this.name = name;
         this.students = students;

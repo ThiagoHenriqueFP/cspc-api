@@ -2,18 +2,16 @@ package uol.compass.cspcapi.domain.Squad;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import uol.compass.cspcapi.application.api.classroom.dto.ResponseClassroomDTO;
-import uol.compass.cspcapi.application.api.classroom.dto.UpdateClassroomDTO;
-import uol.compass.cspcapi.application.api.squad.dto.RespondeSquadDTO;
+import uol.compass.cspcapi.application.api.squad.dto.CreateSquadDTO;
+import uol.compass.cspcapi.application.api.squad.dto.ResponseSquadDTO;
 import uol.compass.cspcapi.application.api.squad.dto.UpdateSquadDTO;
-import uol.compass.cspcapi.domain.classroom.Classrooms;
 import uol.compass.cspcapi.domain.student.Student;
 import uol.compass.cspcapi.domain.student.StudentService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SquadService {
@@ -27,6 +25,28 @@ public class SquadService {
         this.squadRepository = squadRepository;
         this.studentService = studentService;
     }
+
+    public ResponseSquadDTO save(CreateSquadDTO squad) {
+        Optional<Squad> alreadyExists = squadRepository.findByName(squad.getName());
+
+        if(alreadyExists.isPresent()){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Squad already exists"
+            );
+        }
+
+        Squad newSquad = new Squad(
+                squad.getName()
+        );
+
+        Squad squadDb = squadRepository.save(newSquad);
+        return new ResponseSquadDTO(
+                squadDb.getId(),
+                squadDb.getName()
+        );
+    }
+
 
     public Squad addStudentToSquad(Long squadId, Long studentId) {
         Squad squad = squadRepository.findById(squadId)
@@ -73,11 +93,12 @@ public class SquadService {
         return squadRepository.findAll();
     }
 
-    public RespondeSquadDTO updateSquad(Long id, UpdateSquadDTO squadDTO) {
+    public ResponseSquadDTO updateSquad(Long id, UpdateSquadDTO squadDTO) {
         Squad squad = squadRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Squad not found"));
 
-        squad.setName(squad.getName());
+        //squad.setName(squad.getName());
+        squad.setName(squadDTO.getName());
 
         Squad updatedSquad = squadRepository.save(squad);
 
@@ -85,8 +106,8 @@ public class SquadService {
     }
 
     //Possivel jogar o metodo em package UTILS
-    private RespondeSquadDTO mapToResponseDTO(Squad squad) {
-        RespondeSquadDTO responseDTO = new RespondeSquadDTO();
+    private ResponseSquadDTO mapToResponseDTO(Squad squad) {
+        ResponseSquadDTO responseDTO = new ResponseSquadDTO();
         responseDTO.setId(squad.getId());
         responseDTO.setName(squad.getName());
 

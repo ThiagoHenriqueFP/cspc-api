@@ -4,9 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uol.compass.cspcapi.application.api.classroom.dto.ResponseClassroomDTO;
-import uol.compass.cspcapi.application.api.classroom.dto.UpdateClassroomDTO;
-import uol.compass.cspcapi.application.api.squad.dto.RespondeSquadDTO;
+import uol.compass.cspcapi.application.api.squad.dto.CreateSquadDTO;
+import uol.compass.cspcapi.application.api.squad.dto.ResponseSquadDTO;
 import uol.compass.cspcapi.application.api.squad.dto.UpdateSquadDTO;
 import uol.compass.cspcapi.domain.Squad.Squad;
 import uol.compass.cspcapi.domain.Squad.SquadService;
@@ -14,7 +13,7 @@ import uol.compass.cspcapi.domain.Squad.SquadService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/squad")
+@RequestMapping("/squads")
 public class SquadController {
 
     private SquadService squadService;
@@ -22,6 +21,14 @@ public class SquadController {
     @Autowired
     public SquadController(SquadService squadService) {
         this.squadService = squadService;
+    }
+
+    @PostMapping
+    public ResponseEntity<ResponseSquadDTO> createSquad(@RequestBody CreateSquadDTO squad) {
+        return new ResponseEntity<>(
+                squadService.save(squad),
+                HttpStatus.CREATED
+        );
     }
 
     @PostMapping("/{id}/addStudent")
@@ -37,8 +44,8 @@ public class SquadController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Squad> getSquadById(@PathVariable Long squadId) {
-        Squad squad = squadService.getById(squadId);
+    public ResponseEntity<Squad> getSquadById(@PathVariable Long id) {
+        Squad squad = squadService.getById(id);
         return ResponseEntity.ok(squad);
     }
 
@@ -51,15 +58,15 @@ public class SquadController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> removeSquadById(@PathVariable Long squadId) {
+    public ResponseEntity<Boolean> removeSquadById(@PathVariable Long id) {
         return new ResponseEntity<>(
-                squadService.delete(squadId),
+                squadService.delete(id),
                 HttpStatus.OK
         );
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RespondeSquadDTO> updateSquad(@PathVariable Long id, @RequestBody UpdateSquadDTO squadDTO)
+    public ResponseEntity<ResponseSquadDTO> updateSquad(@PathVariable Long id, @RequestBody UpdateSquadDTO squadDTO)
     {
         return new ResponseEntity<>(
                 squadService.updateSquad(id, squadDTO),

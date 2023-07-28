@@ -21,8 +21,7 @@ public class Classrooms {
     @OneToOne
     private Coordinator coordinator;
 
-    @OneToMany(fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
-    @JoinColumn(name = "student_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)
     private List<Student> students;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -33,8 +32,7 @@ public class Classrooms {
     @JoinColumn(name = "scrum_master_id", referencedColumnName = "id")
     private List<ScrumMaster> scrumMasters;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "squad_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)
     private List<Squad> squads;
 
     public Classrooms() {

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import uol.compass.cspcapi.application.api.coordinator.dto.ResponseCoordinatorDTO;
 import uol.compass.cspcapi.application.api.student.dto.CreateStudentDTO;
 import uol.compass.cspcapi.application.api.student.dto.ResponseStudentDTO;
 import uol.compass.cspcapi.application.api.student.dto.UpdateStudentDTO;
@@ -34,7 +35,7 @@ public class StudentService {
 
 
     @Transactional
-    public Student save(CreateStudentDTO student) {
+    public ResponseStudentDTO save(CreateStudentDTO student) {
         Optional<User> alreadyExists = userService.findByEmail(student.getEmail());
 
         if(alreadyExists.isPresent()){
@@ -56,8 +57,14 @@ public class StudentService {
         Student newStudent = new Student(
                 savedUSer
         );
+        Student studentDb = studentRepository.save(newStudent);
 
-        return studentRepository.save(newStudent);
+        return new ResponseStudentDTO(
+                studentDb.getUser().getId(),
+                studentDb.getUser().getFirstName(),
+                studentDb.getUser().getLastName(),
+                studentDb.getUser().getEmail()
+        );
     }
 
     public Student getById(Long id){

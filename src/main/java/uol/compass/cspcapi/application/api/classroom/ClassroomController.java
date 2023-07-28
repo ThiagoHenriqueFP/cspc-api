@@ -13,7 +13,7 @@ import uol.compass.cspcapi.domain.classroom.Classrooms;
 import java.util.List;
 
 @RestController
-@RequestMapping("/classroom")
+@RequestMapping("/classrooms")
 public class ClassroomController {
 
 
@@ -26,10 +26,12 @@ public class ClassroomController {
 
     //Create Classroom
     @PostMapping
-    public ResponseEntity<Classrooms> createClassroom(@RequestBody CreateClassroomDTO classroomDTO) {
-        Long coordinatorId = classroomDTO.getCoordinator();
-        ResponseEntity<Classrooms> responseEntity = classroomService.saveClassroom(classroomDTO, coordinatorId);
-        return responseEntity;
+    public ResponseEntity<ResponseClassroomDTO> createClassroom(@RequestBody CreateClassroomDTO classroomDTO) {
+        Long coordinatorId = classroomDTO.getCoordinatorId();
+        return new ResponseEntity<>(
+                classroomService.saveClassroom(classroomDTO, coordinatorId),
+                HttpStatus.CREATED
+        );
     }
 
 
@@ -69,6 +71,14 @@ public class ClassroomController {
     public ResponseEntity<Classrooms> removeInstructorFromClassroom(@PathVariable Long classroomId, @RequestBody Long instructorId) {
         Classrooms classroom = classroomService.removeInstructorFromClassroom(classroomId, instructorId);
         return ResponseEntity.ok(classroom);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Classrooms> getClassroomById(@PathVariable Long id) {
+        return new ResponseEntity<>(
+                classroomService.getById(id),
+                HttpStatus.OK
+        );
     }
 
     @GetMapping

@@ -20,6 +20,7 @@ import uol.compass.cspcapi.domain.student.StudentService;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClassroomService {
@@ -44,7 +45,16 @@ public class ClassroomService {
     }
 
     //Criando uma nova classroom
-    public ResponseEntity<Classrooms> saveClassroom(CreateClassroomDTO classroomDTO, Long coordinatorId) {
+    public ResponseClassroomDTO saveClassroom(CreateClassroomDTO classroomDTO, Long coordinatorId) {
+        Optional<Classrooms> alreadyExists = classroomRepository.findByTitle(classroomDTO.getTitle());
+
+        if(alreadyExists.isPresent()){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Title already exists"
+            );
+        }
+
         Coordinator coordinator = coordinatorService.getById(coordinatorId);
 
         Classrooms classroom = new Classrooms(
@@ -53,7 +63,11 @@ public class ClassroomService {
         );
 
         Classrooms savedClassroom = classroomRepository.save(classroom);
-        return ResponseEntity.ok(savedClassroom);
+        return new ResponseClassroomDTO(
+                savedClassroom.getId(),
+                savedClassroom.getTitle(),
+                savedClassroom.getCoordinator().getId()
+        );
     }
 
     //Jogando users dentro da minha classroom
@@ -125,7 +139,9 @@ public class ClassroomService {
         Classrooms classrooms = classroomRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom not found"));
 
-        classrooms.setTitle(classrooms.getTitle());
+        //classrooms.setTitle(classrooms.getTitle());
+        classrooms.setTitle(classroomDTO.getTitle());
+        classrooms.setCoordinator(coordinatorService.getById(classroomDTO.getCoordinatorId()));
 
         Classrooms updatedClassroom = classroomRepository.save(classrooms);
 
@@ -146,7 +162,7 @@ public class ClassroomService {
         return classroomRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "user not found"
+                        "Classroom not found"
                 )
         );
     }

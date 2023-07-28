@@ -1,6 +1,8 @@
 package uol.compass.cspcapi.domain.student;
 
 import jakarta.persistence.*;
+import uol.compass.cspcapi.domain.Squad.Squad;
+import uol.compass.cspcapi.domain.classroom.Classrooms;
 import uol.compass.cspcapi.domain.user.User;
 
 @Entity
@@ -11,6 +13,14 @@ public class Student {
 
     @OneToOne(cascade = CascadeType.ALL)
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "squad_id", referencedColumnName = "id")
+    private Squad squad;
+
+    @ManyToOne
+    @JoinColumn(name = "classroom_id", referencedColumnName = "id")
+    private Classrooms classroom;
 
 //    @OneToMany(mappedBy = "users")
 //    private List<grade> grade;
