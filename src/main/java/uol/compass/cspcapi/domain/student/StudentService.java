@@ -5,15 +5,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import uol.compass.cspcapi.application.api.grade.dto.UpdateGradeDTO;
 import uol.compass.cspcapi.application.api.student.dto.CreateStudentDTO;
 import uol.compass.cspcapi.application.api.student.dto.ResponseStudentDTO;
 import uol.compass.cspcapi.application.api.student.dto.UpdateStudentDTO;
 import uol.compass.cspcapi.domain.Squad.Squad;
 import uol.compass.cspcapi.domain.classroom.Classroom;
+import uol.compass.cspcapi.domain.grade.Grade;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
 import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncrypt;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -145,4 +148,33 @@ public class StudentService {
     }
 
 
+    @Transactional
+    public Student updateGradesFromStudent(Long id, UpdateStudentDTO studentDTO) {
+        Student student = studentRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "student not found"
+                )
+        );
+
+        Grade studentGrades;
+        if (student.getGrades() == null) {
+            studentGrades = new Grade(0.00, 0.00, 0.00, 0.00, 0.00, 0.00);
+        } else {
+            studentGrades = student.getGrades();
+        }
+        UpdateGradeDTO newGrades = studentDTO.getGrades();
+
+        studentGrades.setCommunication(newGrades.getCommunication());
+        studentGrades.setCollaboration(newGrades.getCollaboration());
+        studentGrades.setAutonomy(newGrades.getAutonomy());
+        studentGrades.setQuiz(newGrades.getQuiz());
+        studentGrades.setIndividualChallenge(newGrades.getIndividualChallenge());
+        studentGrades.setSquadChallenge(newGrades.getSquadChallenge());
+        studentGrades.setFinalGrade(newGrades.getFinalGrade());
+
+        student.setGrades(studentGrades);
+
+        return studentRepository.save(student);
+    }
 }

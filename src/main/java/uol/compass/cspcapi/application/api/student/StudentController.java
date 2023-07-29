@@ -67,7 +67,9 @@ public class StudentController {
         );
     }
 
-
-
+    @PatchMapping("/{studentId}/update-grades")
+    public ResponseEntity<Student> updateGradesFromStudent(@PathVariable Long studentId, @RequestBody UpdateStudentDTO studentDTO) {
+        return new ResponseEntity<>(studentService.updateGradesFromStudent(studentId, studentDTO), HttpStatus.OK);
+    }
 
 }
