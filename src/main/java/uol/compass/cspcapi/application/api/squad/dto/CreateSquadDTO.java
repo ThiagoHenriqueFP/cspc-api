@@ -2,10 +2,6 @@ package uol.compass.cspcapi.application.api.squad.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import uol.compass.cspcapi.domain.student.Student;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CreateSquadDTO {
     @NotBlank(message = "first name must not be empty")
@@ -13,6 +9,13 @@ public class CreateSquadDTO {
     private String name;
 
     private Long idClassroom;
+
+    public CreateSquadDTO() {
+    }
+
+    public CreateSquadDTO(String name) {
+        this.name = name;
+    }
 
     public CreateSquadDTO(String name, Long idClassroom) {
         this.name = name;

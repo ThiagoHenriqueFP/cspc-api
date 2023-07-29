@@ -9,6 +9,7 @@ import uol.compass.cspcapi.application.api.student.dto.CreateStudentDTO;
 import uol.compass.cspcapi.application.api.student.dto.ResponseStudentDTO;
 import uol.compass.cspcapi.application.api.student.dto.UpdateStudentDTO;
 import uol.compass.cspcapi.domain.Squad.Squad;
+import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
 import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncrypt;
@@ -131,7 +132,17 @@ public class StudentService {
         return studentRepository.saveAll(students);
     }
 
+    @Transactional
+    public List<Student> attributeStudentsToClassroom(Classroom classroom, List<Student> students) {
+        for (Student student: students) {
+            student.setClassroom(classroom);
+        }
+        return studentRepository.saveAll(students);
+    }
+
     public List<Student> getAllStudentsBySquadId(Long squadId) {
         return studentRepository.findAllBySquadId(squadId);
     }
+
+
 }

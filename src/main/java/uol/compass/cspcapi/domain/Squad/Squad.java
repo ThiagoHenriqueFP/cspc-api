@@ -1,7 +1,8 @@
 package uol.compass.cspcapi.domain.Squad;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import uol.compass.cspcapi.domain.classroom.Classrooms;
+import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.student.Student;
 
 import java.util.ArrayList;
@@ -18,12 +19,12 @@ public class Squad {
     @OneToMany(mappedBy = "squad", fetch = FetchType.LAZY)
     private List<Student> students;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "classroom_id", referencedColumnName = "id")
-    private Classrooms classroom;
+    private Classroom classroom;
 
     public Squad() {
-        this.students = new ArrayList<>();
     }
 
     public Squad(String name) {
@@ -58,5 +59,13 @@ public class Squad {
 
     public void setStudents(List<Student> students) {
         this.students = students;
+    }
+
+    public Classroom getClassroom() {
+        return classroom;
+    }
+
+    public void setClassroom(Classroom classroom) {
+        this.classroom = classroom;
     }
 }
