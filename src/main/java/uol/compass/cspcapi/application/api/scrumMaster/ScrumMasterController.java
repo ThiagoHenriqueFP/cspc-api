@@ -13,7 +13,7 @@ import uol.compass.cspcapi.domain.scrumMaster.ScrumMasterService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/scrumMaster")
+@RequestMapping("/scrummasters")
 public class ScrumMasterController {
 
     private ScrumMasterService scrumMasterService;

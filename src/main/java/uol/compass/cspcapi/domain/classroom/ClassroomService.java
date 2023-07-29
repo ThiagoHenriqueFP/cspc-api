@@ -1,5 +1,6 @@
 package uol.compass.cspcapi.domain.classroom;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import uol.compass.cspcapi.application.api.classroom.dto.CreateClassroomDTO;
 import uol.compass.cspcapi.application.api.classroom.dto.ResponseClassroomDTO;
 import uol.compass.cspcapi.application.api.classroom.dto.UpdateClassroomDTO;
 import uol.compass.cspcapi.domain.Squad.Squad;
+import uol.compass.cspcapi.domain.Squad.SquadService;
 import uol.compass.cspcapi.domain.coordinator.Coordinator;
 import uol.compass.cspcapi.domain.coordinator.CoordinatorService;
 import uol.compass.cspcapi.domain.instructor.Instructor;
@@ -34,19 +36,21 @@ public class ClassroomService {
     private StudentService studentService;
     private ScrumMasterService scrumMasterService;
     private InstructorService instructorService;
+    private SquadService squadService;
 
     @Autowired
-    public ClassroomService(ClassroomRepository classroomRepository, CoordinatorService coordinatorService, StudentService studentService, ScrumMasterService scrumMasterService, InstructorService instructorService) {
+    public ClassroomService(ClassroomRepository classroomRepository, CoordinatorService coordinatorService, StudentService studentService, ScrumMasterService scrumMasterService, InstructorService instructorService, SquadService squadService) {
         this.classroomRepository = classroomRepository;
         this.coordinatorService = coordinatorService;
         this.studentService = studentService;
         this.scrumMasterService = scrumMasterService;
         this.instructorService = instructorService;
+        this.squadService = squadService;
     }
 
     //Criando uma nova classroom
     public ResponseClassroomDTO saveClassroom(CreateClassroomDTO classroomDTO, Long coordinatorId) {
-        Optional<Classrooms> alreadyExists = classroomRepository.findByTitle(classroomDTO.getTitle());
+        Optional<Classroom> alreadyExists = classroomRepository.findByTitle(classroomDTO.getTitle());
 
         if(alreadyExists.isPresent()){
             throw new ResponseStatusException(
@@ -57,12 +61,12 @@ public class ClassroomService {
 
         Coordinator coordinator = coordinatorService.getById(coordinatorId);
 
-        Classrooms classroom = new Classrooms(
+        Classroom classroom = new Classroom(
                 classroomDTO.getTitle(),
                 coordinator
         );
 
-        Classrooms savedClassroom = classroomRepository.save(classroom);
+        Classroom savedClassroom = classroomRepository.save(classroom);
         return new ResponseClassroomDTO(
                 savedClassroom.getId(),
                 savedClassroom.getTitle(),
@@ -71,85 +75,157 @@ public class ClassroomService {
     }
 
     //Jogando users dentro da minha classroom
-    public Classrooms addStudentsToClassroom(Long classroomId, List<Long> studentIds) {
-        Classrooms classroom = classroomRepository.findById(classroomId)
+    @Transactional
+    public Classroom addStudentsToClassroom(Long classroomId, UpdateClassroomDTO classroomDTO) {
+        Classroom classroom = classroomRepository.findById(classroomId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "classroom not found"));
 
-        for (Long studentId : studentIds) {
-            Student student = studentService.getById(studentId);
-            classroom.getStudents().add(student);
-        }
+        List<Student> students = classroom.getStudents();
+        List<Student> newStudents = studentService.getAllStudentsById(classroomDTO.getGeneralUsersIds());
+        students.addAll(newStudents);
+
+        studentService.attributeStudentsToClassroom(classroom, students);
+        classroom.setStudents(students);
+//        for (Long studentId : students.getStudentsIds()) {
+//            Student student = studentService.getById(studentId);
+//            classroom.getStudents().add(student);
+//        }
 
         return classroomRepository.save(classroom);
     }
 
-    public Classrooms addScrumMastersToClassroom(Long classroomId, List<Long> scrumMasterIds) {
-        Classrooms classroom = classroomRepository.findById(classroomId)
+    public Classroom addScrumMastersToClassroom(Long classroomId, UpdateClassroomDTO classroomDTO) {
+        Classroom classroom = classroomRepository.findById(classroomId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom not found"));
 
-        for (Long scrumMasterId : scrumMasterIds) {
-            ScrumMaster scrumMaster = scrumMasterService.getById(scrumMasterId);
-            classroom.getScrumMasters().add(scrumMaster);
-        }
+        List<ScrumMaster> scrumMasters = classroom.getScrumMasters();
+        List<ScrumMaster> newScrumMasters = scrumMasterService.getAllScrumMastersById(classroomDTO.getGeneralUsersIds());
+        scrumMasters.addAll(newScrumMasters);
+
+        scrumMasterService.attributeScrumMastersToClassroom(classroom, scrumMasters);
+        classroom.setScrumMasters(scrumMasters);
 
         return classroomRepository.save(classroom);
     }
 
-    public Classrooms addInstructorToClassroom(Long classroomId, List<Long> instructorIds) {
-        Classrooms classroom = classroomRepository.findById(classroomId)
+    public Classroom addInstructorsToClassroom(Long classroomId, UpdateClassroomDTO classroomDTO) {
+        Classroom classroom = classroomRepository.findById(classroomId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom not found"));
 
-        for (Long instructorId : instructorIds) {
-            Instructor instructor = instructorService.getById(instructorId);
-            classroom.getInstructors().add(instructor);
-        }
+        List<Instructor> instructors = classroom.getInstructors();
+        List<Instructor> newInstructors = instructorService.getAllInstructorsById(classroomDTO.getGeneralUsersIds());
+        instructors.addAll(newInstructors);
+
+        instructorService.attributeInstructorsToClassroom(classroom, instructors);
+        classroom.setInstructors(instructors);
+
+        return classroomRepository.save(classroom);
+    }
+
+    public Classroom addSquadsToClassroom(Long classroomId, UpdateClassroomDTO classroomDTO) {
+        Classroom classroom = classroomRepository.findById(classroomId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom not found"));
+
+        List<Squad> squads = classroom.getSquads();
+        List<Squad> newSquads = squadService.getAllSquadsById(classroomDTO.getGeneralUsersIds());
+        squads.addAll(newSquads);
+
+        squadService.attributeSquadsToClassroom(classroom, squads);
+        classroom.setSquads(squads);
 
         return classroomRepository.save(classroom);
     }
 
 
-    public Classrooms removeStudentFromClassroom(Long classroomId, Long studentId) {
-        Classrooms classroom = classroomRepository.findById(classroomId)
+    public Classroom removeStudentsFromClassroom(Long classroomId, UpdateClassroomDTO classroomDTO) {
+        Classroom classroom = classroomRepository.findById(classroomId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom not found"));
 
-        classroom.getStudents().removeIf(student -> student.getId().equals(studentId));
+        //classroom.getStudents().removeIf(student -> student.getId().equals(studentId));
+
+        List<Student> students = classroom.getStudents();
+
+        students.removeIf(
+                student -> classroomDTO.getGeneralUsersIds().contains(student.getId())
+        );
+
+        List<Student> toRemoveStudents = studentService.getAllStudentsById(classroomDTO.getGeneralUsersIds());
+        studentService.attributeStudentsToClassroom(null, toRemoveStudents);
+
+        classroom.setStudents(students);
 
         return classroomRepository.save(classroom);
     }
 
-    public Classrooms removeScrumMasterFromClassroom(Long classroomId, Long scrumMasterId) {
-        Classrooms classroom = classroomRepository.findById(classroomId)
+    public Classroom removeScrumMastersFromClassroom(Long classroomId, UpdateClassroomDTO classroomDTO) {
+        Classroom classroom = classroomRepository.findById(classroomId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom not found"));
 
-        classroom.getScrumMasters().removeIf(scrumMaster -> scrumMaster.getId().equals(scrumMasterId));
+        List<ScrumMaster> scrumMasters = classroom.getScrumMasters();
+
+        scrumMasters.removeIf(
+                scrumMaster -> classroomDTO.getGeneralUsersIds().contains(scrumMaster.getId())
+        );
+
+        List<ScrumMaster> toRemoveScrumMasters = scrumMasterService.getAllScrumMastersById(classroomDTO.getGeneralUsersIds());
+        scrumMasterService.attributeScrumMastersToClassroom(null, toRemoveScrumMasters);
+
+        classroom.setScrumMasters(scrumMasters);
 
         return classroomRepository.save(classroom);
     }
 
-    public Classrooms removeInstructorFromClassroom(Long classroomId, Long instructorId) {
-        Classrooms classroom = classroomRepository.findById(classroomId)
+    public Classroom removeInstructorsFromClassroom(Long classroomId, UpdateClassroomDTO classroomDTO) {
+        Classroom classroom = classroomRepository.findById(classroomId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom not found"));
 
-        classroom.getInstructors().removeIf(instructor -> instructor.getId().equals(instructorId));
+        List<Instructor> instructors = classroom.getInstructors();
+
+        instructors.removeIf(
+                instructor -> classroomDTO.getGeneralUsersIds().contains(instructor.getId())
+        );
+
+        List<Instructor> toRemoveInstructors = instructorService.getAllInstructorsById(classroomDTO.getGeneralUsersIds());
+        instructorService.attributeInstructorsToClassroom(null, toRemoveInstructors);
+
+        classroom.setInstructors(instructors);
+
+        return classroomRepository.save(classroom);
+    }
+
+    public Classroom removeSquadsFromClassroom(Long classroomId, UpdateClassroomDTO classroomDTO) {
+        Classroom classroom = classroomRepository.findById(classroomId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom not found"));
+
+        List<Squad> squads = classroom.getSquads();
+
+        squads.removeIf(
+                squad -> classroomDTO.getGeneralUsersIds().contains(squad.getId())
+        );
+
+        List<Squad> toRemoveSquads = squadService.getAllSquadsById(classroomDTO.getGeneralUsersIds());
+        squadService.attributeSquadsToClassroom(null, toRemoveSquads);
+
+        classroom.setSquads(squads);
 
         return classroomRepository.save(classroom);
     }
 
     public ResponseClassroomDTO updateClassroom(Long id, UpdateClassroomDTO classroomDTO) {
-        Classrooms classrooms = classroomRepository.findById(id)
+        Classroom classrooms = classroomRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom not found"));
 
         //classrooms.setTitle(classrooms.getTitle());
         classrooms.setTitle(classroomDTO.getTitle());
         classrooms.setCoordinator(coordinatorService.getById(classroomDTO.getCoordinatorId()));
 
-        Classrooms updatedClassroom = classroomRepository.save(classrooms);
+        Classroom updatedClassroom = classroomRepository.save(classrooms);
 
         return mapToResponseDTO(updatedClassroom);
     }
 
     //Possivel jogar o metodo em package UTILS
-    private ResponseClassroomDTO mapToResponseDTO(Classrooms classroom) {
+    private ResponseClassroomDTO mapToResponseDTO(Classroom classroom) {
         ResponseClassroomDTO responseDTO = new ResponseClassroomDTO();
         responseDTO.setId(classroom.getId());
         responseDTO.setTitle(classroom.getTitle());
@@ -158,7 +234,7 @@ public class ClassroomService {
         return responseDTO;
     }
 
-    public Classrooms getById(Long id){
+    public Classroom getById(Long id){
         return classroomRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
@@ -167,8 +243,8 @@ public class ClassroomService {
         );
     }
 
-    public ResponseEntity<List<Classrooms>> listClassroom() {
-        List<Classrooms> classrooms = classroomRepository.findAll();
+    public ResponseEntity<List<Classroom>> listClassroom() {
+        List<Classroom> classrooms = classroomRepository.findAll();
         return ResponseEntity.ok(classrooms);
     }
 
@@ -179,17 +255,6 @@ public class ClassroomService {
 
         classroomRepository.deleteById(classroomId);
         return ResponseEntity.ok(classroomId);
-    }
-
-
-    public Classrooms addSquadToClassroom(Long classroomId, CreateClassroomDTO classroomDTO) {
-        Classrooms classroom = classroomRepository.findById(classroomId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom not found"));
-
-        Squad newSquad = new Squad(classroomDTO.getTitle());
-        classroom.getSquads().add(newSquad);
-
-        return classroomRepository.save(classroom);
     }
 }
 

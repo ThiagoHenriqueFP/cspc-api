@@ -9,7 +9,9 @@ import uol.compass.cspcapi.application.api.coordinator.dto.ResponseCoordinatorDT
 import uol.compass.cspcapi.application.api.instructor.dto.CreateInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.ResponseInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.UpdateInstructorDTO;
+import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.coordinator.Coordinator;
+import uol.compass.cspcapi.domain.scrumMaster.ScrumMaster;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
 import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncrypt;
@@ -111,5 +113,17 @@ public class InstructorService {
 
         instructorRepository.delete(instructor);
         return true;
+    }
+
+    public List<Instructor> getAllInstructorsById(List<Long> instructorsIds) {
+        return instructorRepository.findAllByIdIn(instructorsIds);
+    }
+
+    @Transactional
+    public List<Instructor> attributeInstructorsToClassroom(Classroom classroom, List<Instructor> instructors) {
+        for (Instructor instructor : instructors) {
+            instructor.setClassroom(classroom);
+        }
+        return instructorRepository.saveAll(instructors);
     }
 }

@@ -2,6 +2,11 @@ package uol.compass.cspcapi.application.api.classroom.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import uol.compass.cspcapi.domain.Squad.Squad;
+import uol.compass.cspcapi.domain.instructor.Instructor;
+import uol.compass.cspcapi.domain.scrumMaster.ScrumMaster;
+
+import java.util.List;
 
 public class UpdateClassroomDTO {
     @NotBlank(message = "Title must not be empty")
@@ -10,9 +15,15 @@ public class UpdateClassroomDTO {
 
     private Long coordinatorId;
 
+    private List<Long> generalUsersIds;
+
     public UpdateClassroomDTO(String title, Long coordinatorId) {
         this.title = title;
         this.coordinatorId = coordinatorId;
+    }
+
+    public UpdateClassroomDTO(List<Long> generalUsersIds) {
+        this.generalUsersIds = generalUsersIds;
     }
 
     public String getTitle() {
@@ -29,5 +40,9 @@ public class UpdateClassroomDTO {
 
     public void setCoordinatorId(Long coordinatorId) {
         this.coordinatorId = coordinatorId;
+    }
+
+    public List<Long> getGeneralUsersIds() {
+        return generalUsersIds;
     }
 }

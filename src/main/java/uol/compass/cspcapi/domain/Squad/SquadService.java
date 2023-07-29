@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.squad.dto.CreateSquadDTO;
 import uol.compass.cspcapi.application.api.squad.dto.ResponseSquadDTO;
 import uol.compass.cspcapi.application.api.squad.dto.UpdateSquadDTO;
+import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.student.Student;
 import uol.compass.cspcapi.domain.student.StudentService;
 
@@ -75,8 +76,8 @@ public class SquadService {
                 student -> squadDTO.getStudentsIds().contains(student.getId())
         );
 
-        List<Student> toDeleteStudents = studentService.getAllStudentsById(squadDTO.getStudentsIds());
-        studentService.attributeStudentsToSquad(null, toDeleteStudents);
+        List<Student> toRemoveStudents = studentService.getAllStudentsById(squadDTO.getStudentsIds());
+        studentService.attributeStudentsToSquad(null, toRemoveStudents);
 
         squad.setStudents(students);
 
@@ -130,4 +131,14 @@ public class SquadService {
         return responseDTO;
     }
 
+    public List<Squad> getAllSquadsById(List<Long> squadsIds) {
+        return squadRepository.findAllByIdIn(squadsIds);
+    }
+
+    public List<Squad> attributeSquadsToClassroom(Classroom classroom, List<Squad> squads) {
+        for (Squad squad : squads) {
+            squad.setClassroom(classroom);
+        }
+        return squadRepository.saveAll(squads);
+    }
 }

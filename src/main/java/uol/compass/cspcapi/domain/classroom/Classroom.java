@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "classrooms")
-public class Classrooms {
+public class Classroom {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -24,26 +24,28 @@ public class Classrooms {
     @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)
     private List<Student> students;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "instructor_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)
     private List<Instructor> instructors;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "scrum_master_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)
     private List<ScrumMaster> scrumMasters;
 
     @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)
     private List<Squad> squads;
 
-    public Classrooms() {
-        this.students = new ArrayList<>();
-        this.scrumMasters = new ArrayList<>();
-        this.squads = new ArrayList<>();
-    }
-
-    public Classrooms(String title, Coordinator coordinator) {
+    public Classroom(String title, Coordinator coordinator) {
         this.title = title;
         this.coordinator = coordinator;
+    }
+
+    public Classroom() {
+    }
+
+    public Classroom(List<Student> students, List<Instructor> instructors, List<ScrumMaster> scrumMasters, List<Squad> squads) {
+        this.students = students;
+        this.instructors = instructors;
+        this.scrumMasters = scrumMasters;
+        this.squads = squads;
     }
 
     public Long getId() {

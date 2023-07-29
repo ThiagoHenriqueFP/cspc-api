@@ -3,7 +3,7 @@ package uol.compass.cspcapi.domain.student;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import uol.compass.cspcapi.domain.Squad.Squad;
-import uol.compass.cspcapi.domain.classroom.Classrooms;
+import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.user.User;
 
 @Entity
@@ -23,7 +23,7 @@ public class Student {
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "classroom_id", referencedColumnName = "id")
-    private Classrooms classroom;
+    private Classroom classroom;
 
 //    @OneToMany(mappedBy = "users")
 //    private List<grade> grade;
@@ -59,11 +59,11 @@ public class Student {
         this.squad = squad;
     }
 
-    public Classrooms getClassroom() {
+    public Classroom getClassroom() {
         return classroom;
     }
 
-    public void setClassroom(Classrooms classroom) {
+    public void setClassroom(Classroom classroom) {
         this.classroom = classroom;
     }
 

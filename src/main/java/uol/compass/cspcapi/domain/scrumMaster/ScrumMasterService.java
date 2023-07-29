@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.scrumMaster.dto.CreateScrumMasterDTO;
 import uol.compass.cspcapi.application.api.scrumMaster.dto.ResponseScrumMasterDTO;
 import uol.compass.cspcapi.application.api.scrumMaster.dto.UpdateScrumMasterDTO;
+import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
 import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncrypt;
@@ -111,4 +112,18 @@ public class ScrumMasterService {
         scrumMasterRepository.delete(scrumMaster);
         return true;
     }
+
+    public List<ScrumMaster> getAllScrumMastersById(List<Long> scrumMastersIds) {
+        return scrumMasterRepository.findAllByIdIn(scrumMastersIds);
+    }
+
+    @Transactional
+    public List<ScrumMaster> attributeScrumMastersToClassroom(Classroom classroom, List<ScrumMaster> scrumMasters) {
+        for (ScrumMaster scrumMaster : scrumMasters) {
+            scrumMaster.setClassroom(classroom);
+        }
+        return scrumMasterRepository.saveAll(scrumMasters);
+    }
+
+
 }
