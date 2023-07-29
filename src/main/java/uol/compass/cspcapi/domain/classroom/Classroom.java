@@ -3,6 +3,7 @@ package uol.compass.cspcapi.domain.classroom;
 import jakarta.persistence.*;
 import uol.compass.cspcapi.domain.Squad.Squad;
 import uol.compass.cspcapi.domain.coordinator.Coordinator;
+import uol.compass.cspcapi.domain.instructor.Instructor;
 import uol.compass.cspcapi.domain.scrumMaster.ScrumMaster;
 import uol.compass.cspcapi.domain.student.Student;
 
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "classrooms")
-public class Classrooms {
+public class Classroom {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -20,27 +21,31 @@ public class Classrooms {
     @OneToOne
     private Coordinator coordinator;
 
-    @OneToMany(fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
-    @JoinColumn(name = "student_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)
     private List<Student> students;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "scrum_master_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)
+    private List<Instructor> instructors;
+
+    @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)
     private List<ScrumMaster> scrumMasters;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "squad_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)
     private List<Squad> squads;
 
-    public Classrooms() {
-        this.students = new ArrayList<>();
-        this.scrumMasters = new ArrayList<>();
-        this.squads = new ArrayList<>();
-    }
-
-    public Classrooms(String title, Coordinator coordinator) {
+    public Classroom(String title, Coordinator coordinator) {
         this.title = title;
         this.coordinator = coordinator;
+    }
+
+    public Classroom() {
+    }
+
+    public Classroom(List<Student> students, List<Instructor> instructors, List<ScrumMaster> scrumMasters, List<Squad> squads) {
+        this.students = students;
+        this.instructors = instructors;
+        this.scrumMasters = scrumMasters;
+        this.squads = squads;
     }
 
     public Long getId() {
@@ -73,6 +78,14 @@ public class Classrooms {
 
     public void setStudents(List<Student> students) {
         this.students = students;
+    }
+
+    public List<Instructor> getInstructors() {
+        return instructors;
+    }
+
+    public void setInstructors(List<Instructor> instructors) {
+        this.instructors = instructors;
     }
 
     public List<ScrumMaster> getScrumMasters() {

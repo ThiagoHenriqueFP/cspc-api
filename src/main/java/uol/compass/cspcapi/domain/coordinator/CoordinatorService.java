@@ -29,7 +29,7 @@ public class CoordinatorService {
     }
 
     @Transactional
-    public Coordinator save(CreateCoordinatorDTO coordinator) {
+    public ResponseCoordinatorDTO save(CreateCoordinatorDTO coordinator) {
         Optional<User> alreadyExists = userService.findByEmail(coordinator.getEmail());
 
         if(alreadyExists.isPresent()){
@@ -51,10 +51,13 @@ public class CoordinatorService {
                 savedUser
         );
 
-        Coordinator coordinatorWtPassword = coordinatorRepository.save(newCoordinator);
-        coordinatorWtPassword.getUser().setPassword("");
-
-        return coordinatorWtPassword;
+        Coordinator coordinatorDb = coordinatorRepository.save(newCoordinator);
+        return new ResponseCoordinatorDTO(
+                coordinatorDb.getUser().getId(),
+                coordinatorDb.getUser().getFirstName(),
+                coordinatorDb.getUser().getLastName(),
+                coordinatorDb.getUser().getEmail()
+        );
     }
 
     public Coordinator getById(Long id) {
@@ -70,6 +73,7 @@ public class CoordinatorService {
         return coordinatorRepository.findAll();
     }
 
+    @Transactional
     public ResponseCoordinatorDTO update(Long id, UpdateCoordinatorDTO coordinatorDTO) {
         Coordinator coordinator = coordinatorRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(
@@ -94,6 +98,7 @@ public class CoordinatorService {
         );
     }
 
+    @Transactional
     public boolean deleteById(Long id) {
         Coordinator coordinator = coordinatorRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(

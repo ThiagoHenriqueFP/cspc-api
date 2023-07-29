@@ -23,7 +23,7 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<Student> save(
+    public ResponseEntity<ResponseStudentDTO> save(
             @RequestBody CreateStudentDTO student
     ){
         return new ResponseEntity<>(

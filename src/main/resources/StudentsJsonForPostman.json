@@ -1,0 +1,152 @@
+[
+  {
+    "firstName": "Pedro",
+    "lastName": "Goes",
+    "email": "pedro.goes.pb@compasso.com.br",
+    "password": "pedro.goes.pb"
+  },
+  {
+    "firstName": "Ezequias",
+    "lastName": "Oliveira",
+    "email": "ezequias.oliveira.pb@compasso.com.br",
+    "password": "ezequias.oliveira.pb"
+  },
+  {
+    "firstName": "Danielle",
+    "lastName": "Kuhn",
+    "email": "danielle.kuhn.pb@compasso.com.br",
+    "password": "danielle.kuhn.pb"
+  },
+  {
+    "firstName": "João",
+    "lastName": "Martins",
+    "email": "joao.martins.pb@compasso.com.br",
+    "password": "joao.martins.pb"
+  },
+  {
+    "firstName": "Gabriel",
+    "lastName": "Lopes",
+    "email": "gabriel.lopes.pb@compasso.com.br",
+    "password": "gabriel.lopes.pb"
+  },
+  {
+    "firstName": "Carolina",
+    "lastName": "Koike",
+    "email": "carolina.koike.pb@compasso.com.br",
+    "password": "carolina.koike.pb"
+  },
+  {
+    "firstName": "Marina",
+    "lastName": "Flores",
+    "email": "marina.flores.pb@compasso.com.br",
+    "password": "marina.flores.pb"
+  },
+  {
+    "firstName": "Gilson",
+    "lastName": "Medeiros",
+    "email": "gilson.medeiros.pb@compasso.com.br",
+    "password": "gilson.medeiros.pb"
+  },
+  {
+    "firstName": "Ualaci",
+    "lastName": "Júnior",
+    "email": "ualaci.junior.pb@compasso.com.br",
+    "password": "ualaci.junior.pb"
+  },
+  {
+    "firstName": "Victor",
+    "lastName": "Dias",
+    "email": "victor.dias.pb@compasso.com.br",
+    "password": "victor.dias.pb"
+  },
+  {
+    "firstName": "Alex",
+    "lastName": "Júnior",
+    "email": "alex.junior.pb@compasso.com.br",
+    "password": "alex.junior.pb"
+  },
+  {
+    "firstName": "Monique",
+    "lastName": "Silva",
+    "email": "monique.silva.pb@compasso.com.br",
+    "password": "monique.silva.pb"
+  },
+  {
+    "firstName": "Ítalo",
+    "lastName": "Costa",
+    "email": "italo.costa.pb@compasso.com.br",
+    "password": "italo.costa.pb"
+  },
+  {
+    "firstName": "David",
+    "lastName": "Godoy",
+    "email": "david.godoy.pb@compasso.com.br",
+    "password": "david.godoy.pb"
+  },
+  {
+    "firstName": "Fernando",
+    "lastName": "Silva",
+    "email": "fernando.silva.pb@compasso.com.br",
+    "password": "fernando.silva.pb"
+  },
+  {
+    "firstName": "Edilson",
+    "lastName": "Filho",
+    "email": "edilson.filho.pb@compasso.com.br",
+    "password": "edilson.filho.pb"
+  },
+  {
+    "firstName": "Débora",
+    "lastName": "Apolinário",
+    "email": "debora.apolinario.pb@compasso.com.br",
+    "password": "debora.apolinario.pb"
+  },
+  {
+    "firstName": "Pedro",
+    "lastName": "Solozabal",
+    "email": "pedro.solozabal.pb@compasso.com.br",
+    "password": "pedro.solozabal.pb"
+  },
+  {
+    "firstName": "Letícia",
+    "lastName": "Lucena",
+    "email": "leticia.lucena.pb@compasso.com.br",
+    "password": "leticia.lucena.pb"
+  },
+  {
+    "firstName": "Taís",
+    "lastName": "Haefliger",
+    "email": "tais.haefliger.pb@compasso.com.br",
+    "password": "tais.haefliger.pb"
+  },
+  {
+    "firstName": "Thiago",
+    "lastName": "Pereira",
+    "email": "thiago.pereira.pb@compasso.com.br",
+    "password": "thiago.pereira.pb"
+  },
+  {
+    "firstName": "Israel",
+    "lastName": "Veríssimo",
+    "email": "israel.verissimo.pb@compasso.com.br",
+    "password": "israel.verissimo.pb"
+  },
+  {
+    "firstName": "Mak",
+    "lastName": "Jesus",
+    "email": "mak.jesus.pb@compasso.com.br",
+    "password": "mak.jesus.pb"
+  },
+  {
+    "firstName": "Gabriel",
+    "lastName": "Rocha",
+    "email": "gabriel.rocha.pb@compasso.com.br",
+    "password": "gabriel.rocha.pb.pb"
+  },
+  {
+    "firstName": "Thiago",
+    "lastName": "Rossato",
+    "email": "thiago.rossato.pb@compasso.com.br",
+    "password": "thiago.rossato.pb"
+  }
+]
