@@ -1,37 +1,27 @@
-package uol.compass.cspcapi.domain.Squad;
+package uol.compass.cspcapi.application.api.squad.dto;
 
-import jakarta.persistence.*;
-import uol.compass.cspcapi.domain.classroom.Classrooms;
 import uol.compass.cspcapi.domain.student.Student;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "squads")
-public class Squad {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ResponseSquadDTO {
+
     private Long id;
 
     private String name;
 
-    @OneToMany(mappedBy = "squad", fetch = FetchType.LAZY)
     private List<Student> students;
 
-    @ManyToOne
-    @JoinColumn(name = "classroom_id", referencedColumnName = "id")
-    private Classrooms classroom;
-
-    public Squad() {
-        this.students = new ArrayList<>();
+    public ResponseSquadDTO() {
     }
 
-    public Squad(String name) {
+    public ResponseSquadDTO(Long id, String name) {
+        this.id = id;
         this.name = name;
-//        this.students = new ArrayList<>();
     }
 
-    public Squad(String name, List<Student> students) {
+    public ResponseSquadDTO(Long id, String name, List<Student> students) {
+        this.id = id;
         this.name = name;
         this.students = students;
     }

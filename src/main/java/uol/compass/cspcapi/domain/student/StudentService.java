@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.student.dto.CreateStudentDTO;
 import uol.compass.cspcapi.application.api.student.dto.ResponseStudentDTO;
 import uol.compass.cspcapi.application.api.student.dto.UpdateStudentDTO;
+import uol.compass.cspcapi.domain.Squad.Squad;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
 import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncrypt;
@@ -34,7 +35,7 @@ public class StudentService {
 
 
     @Transactional
-    public Student save(CreateStudentDTO student) {
+    public ResponseStudentDTO save(CreateStudentDTO student) {
         Optional<User> alreadyExists = userService.findByEmail(student.getEmail());
 
         if(alreadyExists.isPresent()){
@@ -56,10 +57,14 @@ public class StudentService {
         Student newStudent = new Student(
                 savedUSer
         );
+        Student studentDb = studentRepository.save(newStudent);
 
-        return studentRepository.save(newStudent);
-
-
+        return new ResponseStudentDTO(
+                studentDb.getUser().getId(),
+                studentDb.getUser().getFirstName(),
+                studentDb.getUser().getLastName(),
+                studentDb.getUser().getEmail()
+        );
     }
 
     public Student getById(Long id){
@@ -112,5 +117,21 @@ public class StudentService {
         studentRepository.delete(student);
 
         return true;
+    }
+
+    public List<Student> getAllStudentsById(List<Long> studentsIds) {
+        return studentRepository.findAllByIdIn(studentsIds);
+    }
+
+    @Transactional
+    public List<Student> attributeStudentsToSquad(Squad squad, List<Student> students) {
+        for (Student student : students) {
+            student.setSquad(squad);
+        }
+        return studentRepository.saveAll(students);
+    }
+
+    public List<Student> getAllStudentsBySquadId(Long squadId) {
+        return studentRepository.findAllBySquadId(squadId);
     }
 }

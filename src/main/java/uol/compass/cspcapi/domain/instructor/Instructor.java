@@ -1,6 +1,7 @@
 package uol.compass.cspcapi.domain.instructor;
 
 import jakarta.persistence.*;
+import uol.compass.cspcapi.domain.classroom.Classrooms;
 import uol.compass.cspcapi.domain.user.User;
 
 @Entity
@@ -9,8 +10,9 @@ public class Instructor {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private User user;
+
 
     public Instructor() {
     }
