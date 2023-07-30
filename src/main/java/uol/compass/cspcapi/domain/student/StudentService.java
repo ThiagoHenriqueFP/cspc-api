@@ -10,6 +10,7 @@ import uol.compass.cspcapi.application.api.student.dto.ResponseStudentDTO;
 import uol.compass.cspcapi.application.api.student.dto.UpdateStudentDTO;
 import uol.compass.cspcapi.domain.Squad.Squad;
 import uol.compass.cspcapi.domain.classroom.Classroom;
+import uol.compass.cspcapi.domain.role.RoleService;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
 import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncoder;
@@ -27,11 +28,14 @@ public class StudentService {
 
     private final PasswordEncoder passwordEncrypt;
 
+    private final RoleService roleService;
+
     @Autowired
-    public StudentService(StudentRepository studentRepository, UserService userService, PasswordEncoder passwordEncrypt) {
+    public StudentService(StudentRepository studentRepository, UserService userService, PasswordEncoder passwordEncrypt, RoleService roleService) {
         this.studentRepository = studentRepository;
         this.userService = userService;
         this.passwordEncrypt = passwordEncrypt;
+        this.roleService = roleService;
     }
 
 
@@ -50,8 +54,10 @@ public class StudentService {
                 student.getFirstName(),
                 student.getLastName(),
                 student.getEmail(),
-                passwordEncrypt.encoder().encode(student.getPassword())
+                student.getPassword()
         );
+
+        newUser.getRoles().add(roleService.findRoleByName("ROLE_STUDENT"));
 
         User savedUSer = userService.saveUser(newUser);
 

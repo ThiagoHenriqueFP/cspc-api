@@ -9,6 +9,7 @@ import uol.compass.cspcapi.application.api.instructor.dto.CreateInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.ResponseInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.UpdateInstructorDTO;
 import uol.compass.cspcapi.domain.classroom.Classroom;
+import uol.compass.cspcapi.domain.role.RoleService;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
 import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncoder;
@@ -22,11 +23,14 @@ public class InstructorService {
     private final UserService userService;
     private final PasswordEncoder passwordEncrypt;
 
+    private final RoleService roleService;
+
     @Autowired
-    public InstructorService(InstructorRepository instructorRepository, UserService userService, PasswordEncoder passwordEncrypt) {
+    public InstructorService(InstructorRepository instructorRepository, UserService userService, PasswordEncoder passwordEncrypt, RoleService roleService) {
         this.instructorRepository = instructorRepository;
         this.userService = userService;
         this.passwordEncrypt = passwordEncrypt;
+        this.roleService = roleService;
     }
 
     @Transactional
@@ -47,6 +51,8 @@ public class InstructorService {
                 passwordEncrypt.encoder().encode(instructor.getPassword())
         );
         User savedUser = userService.saveUser(newUser);
+
+        savedUser.getRoles().add(roleService.findRoleByName("ROLE_INSTRUCTOR"));
 
         Instructor newInstructor = new Instructor(
                 savedUser

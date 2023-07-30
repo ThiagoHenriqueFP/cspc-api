@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.coordinator.dto.CreateCoordinatorDTO;
 import uol.compass.cspcapi.application.api.coordinator.dto.ResponseCoordinatorDTO;
 import uol.compass.cspcapi.application.api.coordinator.dto.UpdateCoordinatorDTO;
+import uol.compass.cspcapi.domain.role.RoleService;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
 import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncoder;
@@ -21,11 +22,14 @@ public class CoordinatorService {
     private final UserService userService;
     private final PasswordEncoder passwordEncrypt;
 
+    private final RoleService roleService;
+
     @Autowired
-    public CoordinatorService(CoordinatorRepository coordinatorRepository, UserService userService, PasswordEncoder passwordEncrypt) {
+    public CoordinatorService(CoordinatorRepository coordinatorRepository, UserService userService, PasswordEncoder passwordEncrypt, RoleService roleService) {
         this.coordinatorRepository = coordinatorRepository;
         this.userService = userService;
         this.passwordEncrypt = passwordEncrypt;
+        this.roleService = roleService;
     }
 
     @Transactional
@@ -46,6 +50,8 @@ public class CoordinatorService {
                 passwordEncrypt.encoder().encode(coordinator.getPassword())
         );
         User savedUser = userService.saveUser(newUser);
+
+        savedUser.getRoles().add(roleService.findRoleByName("ROLE_INSTRUCTOR"));
 
         Coordinator newCoordinator = new Coordinator(
                 savedUser

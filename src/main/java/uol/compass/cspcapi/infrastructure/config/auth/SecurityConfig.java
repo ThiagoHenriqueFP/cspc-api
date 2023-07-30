@@ -56,9 +56,9 @@ public class SecurityConfig {
         http.authorizeHttpRequests(req ->
                 req
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
-                        .requestMatchers("/coordinator/**").hasAnyRole("ADMIN", "COORDINATOR")
-                        .requestMatchers("/scrum_master").hasAnyRole("ADMIN", "SCRUM_MASTER")
-                        .requestMatchers("/instructor").hasAnyRole("ADMIN", "COORDINATOR", "SCRUM_MASTER", "INSTRUCTOR")
+                        .requestMatchers("/coordinators/**").hasAnyRole("ADMIN", "COORDINATOR")
+                        .requestMatchers("/scrum_masters/**").hasAnyRole("ADMIN", "SCRUM_MASTER")
+                        .requestMatchers("/instructors/**").hasAnyRole("ADMIN", "COORDINATOR", "SCRUM_MASTER", "INSTRUCTOR")
                         .anyRequest().authenticated()
         );
 

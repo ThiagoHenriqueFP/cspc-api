@@ -9,6 +9,7 @@ import uol.compass.cspcapi.application.api.scrumMaster.dto.CreateScrumMasterDTO;
 import uol.compass.cspcapi.application.api.scrumMaster.dto.ResponseScrumMasterDTO;
 import uol.compass.cspcapi.application.api.scrumMaster.dto.UpdateScrumMasterDTO;
 import uol.compass.cspcapi.domain.classroom.Classroom;
+import uol.compass.cspcapi.domain.role.RoleService;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
 import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncoder;
@@ -26,12 +27,14 @@ public class ScrumMasterService {
     private final UserService userService;
 
     private final PasswordEncoder passwordEncrypt;
+    private final RoleService roleService;
 
     @Autowired
-    public ScrumMasterService(ScrumMasterRepository scrumMasterRepository, UserService userService, PasswordEncoder passwordEncrypt) {
+    public ScrumMasterService(ScrumMasterRepository scrumMasterRepository, UserService userService, PasswordEncoder passwordEncrypt, RoleService roleService) {
         this.scrumMasterRepository = scrumMasterRepository;
         this.userService = userService;
         this.passwordEncrypt = passwordEncrypt;
+        this.roleService = roleService;
     }
 
     @Transactional
@@ -53,6 +56,8 @@ public class ScrumMasterService {
         );
 
         User savedUSer = userService.saveUser(newUser);
+
+        savedUSer.getRoles().add(roleService.findRoleByName("ROLE_SCRUM_MASTER"));
 
         ScrumMaster newScrumMaster = new ScrumMaster(
                 savedUSer
