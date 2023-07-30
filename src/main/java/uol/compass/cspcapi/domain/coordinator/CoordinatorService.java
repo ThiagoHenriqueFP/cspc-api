@@ -8,11 +8,12 @@ import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.coordinator.dto.CreateCoordinatorDTO;
 import uol.compass.cspcapi.application.api.coordinator.dto.ResponseCoordinatorDTO;
 import uol.compass.cspcapi.application.api.coordinator.dto.UpdateCoordinatorDTO;
+import uol.compass.cspcapi.domain.role.RoleService;
 import uol.compass.cspcapi.application.api.user.dto.CreateUserDTO;
 import uol.compass.cspcapi.application.api.user.dto.ResponseUserDTO;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
-import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncrypt;
+import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +23,16 @@ import java.util.Optional;
 public class CoordinatorService {
     private CoordinatorRepository coordinatorRepository;
     private final UserService userService;
-    private final PasswordEncrypt passwordEncrypt;
+    private final PasswordEncoder passwordEncrypt;
+
+    private final RoleService roleService;
 
     @Autowired
-    public CoordinatorService(CoordinatorRepository coordinatorRepository, UserService userService, PasswordEncrypt passwordEncrypt) {
+    public CoordinatorService(CoordinatorRepository coordinatorRepository, UserService userService, PasswordEncoder passwordEncrypt, RoleService roleService) {
         this.coordinatorRepository = coordinatorRepository;
         this.userService = userService;
         this.passwordEncrypt = passwordEncrypt;
+        this.roleService = roleService;
     }
 
     @Transactional
@@ -48,6 +52,8 @@ public class CoordinatorService {
                 coordinator.getUser().getEmail(),
                 passwordEncrypt.encoder().encode(coordinator.getUser().getPassword())
         );
+      
+        user.getRoles().add(roleService.findRoleByName("ROLE_COORDINATOR"));
 
         Coordinator newCoordinator = new Coordinator(user);
         Coordinator coordinatorDb = coordinatorRepository.save(newCoordinator);

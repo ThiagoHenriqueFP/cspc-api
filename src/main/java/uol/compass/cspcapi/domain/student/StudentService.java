@@ -13,10 +13,11 @@ import uol.compass.cspcapi.application.api.user.dto.CreateUserDTO;
 import uol.compass.cspcapi.application.api.user.dto.ResponseUserDTO;
 import uol.compass.cspcapi.domain.Squad.Squad;
 import uol.compass.cspcapi.domain.classroom.Classroom;
+import uol.compass.cspcapi.domain.role.RoleService;
 import uol.compass.cspcapi.domain.grade.Grade;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
-import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncrypt;
+import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +31,16 @@ public class StudentService {
     // Essa abordagem serve para manter as classes protegidas
     private final UserService userService;
 
-    private final PasswordEncrypt passwordEncrypt;
+    private final PasswordEncoder passwordEncrypt;
+
+    private final RoleService roleService;
 
     @Autowired
-    public StudentService(StudentRepository studentRepository, UserService userService, PasswordEncrypt passwordEncrypt) {
+    public StudentService(StudentRepository studentRepository, UserService userService, PasswordEncoder passwordEncrypt, RoleService roleService) {
         this.studentRepository = studentRepository;
         this.userService = userService;
         this.passwordEncrypt = passwordEncrypt;
+        this.roleService = roleService;
     }
 
 
@@ -57,7 +61,8 @@ public class StudentService {
                 student.getUser().getEmail(),
                 passwordEncrypt.encoder().encode(student.getUser().getPassword())
         );
-
+      
+        user.getRoles().add(roleService.findRoleByName("ROLE_STUDENT"));
         Student newStudent = new Student(user);
         Student studentDb = studentRepository.save(newStudent);
 

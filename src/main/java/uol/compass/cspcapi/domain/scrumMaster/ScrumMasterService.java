@@ -11,9 +11,10 @@ import uol.compass.cspcapi.application.api.scrumMaster.dto.UpdateScrumMasterDTO;
 import uol.compass.cspcapi.application.api.user.dto.CreateUserDTO;
 import uol.compass.cspcapi.application.api.user.dto.ResponseUserDTO;
 import uol.compass.cspcapi.domain.classroom.Classroom;
+import uol.compass.cspcapi.domain.role.RoleService;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
-import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncrypt;
+import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +28,16 @@ public class ScrumMasterService {
     // Aqui eu não posso acessar diretamente o user repository
     // Essa abordagem serve para manter as classes protegidas
     private final UserService userService;
+    private final PasswordEncoder passwordEncrypt;
+    private final RoleService roleService;
     private final PasswordEncrypt passwordEncrypt;
 
     @Autowired
-    public ScrumMasterService(ScrumMasterRepository scrumMasterRepository, UserService userService, PasswordEncrypt passwordEncrypt) {
+    public ScrumMasterService(ScrumMasterRepository scrumMasterRepository, UserService userService, PasswordEncoder passwordEncrypt, RoleService roleService) {
         this.scrumMasterRepository = scrumMasterRepository;
         this.userService = userService;
         this.passwordEncrypt = passwordEncrypt;
+        this.roleService = roleService;
     }
 
     @Transactional
@@ -54,11 +58,11 @@ public class ScrumMasterService {
                 passwordEncrypt.encoder().encode(scrumMaster.getUser().getPassword())
         );
 
+        user.getRoles().add(roleService.findRoleByName("ROLE_SCRUM_MASTER"));
         ScrumMaster newScrumMaster = new ScrumMaster(user);
         ScrumMaster scrumMasterDb = scrumMasterRepository.save(newScrumMaster);
-
+        
         return mapToResponseScrumMaster(scrumMasterDb);
-
     }
 
     public ResponseScrumMasterDTO getById(Long id){

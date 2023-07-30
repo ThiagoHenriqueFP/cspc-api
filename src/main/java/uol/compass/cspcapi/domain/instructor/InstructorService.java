@@ -12,9 +12,10 @@ import uol.compass.cspcapi.application.api.student.dto.ResponseStudentDTO;
 import uol.compass.cspcapi.application.api.user.dto.CreateUserDTO;
 import uol.compass.cspcapi.application.api.user.dto.ResponseUserDTO;
 import uol.compass.cspcapi.domain.classroom.Classroom;
+import uol.compass.cspcapi.domain.role.RoleService;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
-import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncrypt;
+import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +25,16 @@ import java.util.Optional;
 public class InstructorService {
     private InstructorRepository instructorRepository;
     private final UserService userService;
-    private final PasswordEncrypt passwordEncrypt;
+    private final PasswordEncoder passwordEncrypt;
+
+    private final RoleService roleService;
 
     @Autowired
-    public InstructorService(InstructorRepository instructorRepository, UserService userService, PasswordEncrypt passwordEncrypt) {
+    public InstructorService(InstructorRepository instructorRepository, UserService userService, PasswordEncoder passwordEncrypt, RoleService roleService) {
         this.instructorRepository = instructorRepository;
         this.userService = userService;
         this.passwordEncrypt = passwordEncrypt;
+        this.roleService = roleService;
     }
 
     @Transactional
@@ -50,6 +54,8 @@ public class InstructorService {
                 instructor.getUser().getEmail(),
                 passwordEncrypt.encoder().encode(instructor.getUser().getPassword())
         );
+          
+        user.getRoles().add(roleService.findRoleByName("ROLE_INSTRUCTOR"));
 
         Instructor newInstructor = new Instructor(user);
         Instructor instructorDb = instructorRepository.save(newInstructor);
