@@ -47,7 +47,8 @@ public class ScrumMasterServiceTest {
     public void clean() {
     	for (int i = 0; i < idList.size(); i++) {
     		if (!idList.isEmpty()) {
-    			scrumMasterRepository.deleteById(idList.get(i));
+    			scrumMasterService.delete(idList.get(i));
+    			userRepository.deleteById(idList.get(i));
     		}
     	}
     }
