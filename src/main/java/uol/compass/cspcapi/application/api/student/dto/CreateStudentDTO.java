@@ -19,7 +19,7 @@ public class CreateStudentDTO {
     private String email;
 
     @NotBlank(message = "password name must not be empty")
-    @Min(value = 8, message = "password length must be greater than 8 letters")
+    @Min(value = 8, message = "password length must be greater 8 letters")
     private String password;
 
 //    request para salvar qualquer tipo de usuário

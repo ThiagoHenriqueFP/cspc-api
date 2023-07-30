@@ -1,8 +1,6 @@
 package uol.compass.cspcapi.domain.instructor;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.user.User;
 
 @Entity
@@ -11,13 +9,8 @@ public class Instructor {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     private User user;
-
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "classroom_id", referencedColumnName = "id")
-    private Classroom classroom;
 
     public Instructor() {
     }
@@ -40,13 +33,5 @@ public class Instructor {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public Classroom getClassroom() {
-        return classroom;
-    }
-
-    public void setClassroom(Classroom classroom) {
-        this.classroom = classroom;
     }
 }

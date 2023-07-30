@@ -21,12 +21,6 @@ public class UserService {
     }
 
     public User saveUser (CreateUserDTO userDTO){
-        if(findByEmail(userDTO.getEmail()).isPresent()){
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "user already exists");
-        }
-
         User user = new User(
                 userDTO.getFirstName(),
                 userDTO.getLastName(),
@@ -34,23 +28,24 @@ public class UserService {
                 passwordEncoder.encode(userDTO.getPassword())
         );
 
-        return userRepository.save(user);
-    }
+        Optional<User> userAlreadyExists = userRepository.findByEmail(userDTO.getEmail());
 
-    public User saveUser(User user) {
-        if(findByEmail(user.getEmail()).isPresent()){
+        if(userAlreadyExists.isEmpty()){
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "user already exists"
             );
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         return userRepository.save(user);
     }
 
-    public Optional<User> findByEmail(String email){
-        return userRepository.findByEmail(email);
+    public User saveUser(User user) {
+        return userRepository.save(new User(
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                passwordEncoder.encode(user.getPassword())
+        ));
     }
 }
