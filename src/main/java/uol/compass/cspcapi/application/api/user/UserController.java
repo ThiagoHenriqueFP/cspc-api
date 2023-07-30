@@ -1,5 +1,6 @@
 package uol.compass.cspcapi.application.api.user;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,7 +13,7 @@ import uol.compass.cspcapi.domain.user.UserService;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
@@ -20,7 +21,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User save(@RequestBody CreateUserDTO userBody){
+    public User save(@Valid @RequestBody CreateUserDTO userBody){
         return userService.saveUser(userBody);
     }
 }
