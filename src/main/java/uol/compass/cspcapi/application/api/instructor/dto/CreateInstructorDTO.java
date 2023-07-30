@@ -3,43 +3,21 @@ package uol.compass.cspcapi.application.api.instructor.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import uol.compass.cspcapi.domain.user.User;
 
 public class CreateInstructorDTO {
     // User
-    @NotBlank(message = "first name must not be empty")
-    @Min(value = 3, message = "first name must be greater than 3 letters")
-    private String firstName;
-    @NotBlank(message = "last name must not be empty")
-    @Min(value = 3, message = "last name must be greater than 3 letters")
-    private String lastName;
-    @NotBlank(message = "email name must not be empty")
-    @Email(message = "this field must be an email pattern")
-    private String email;
+    @NotBlank(message = "user must not be empty")
+    private User user;
 
-    @NotBlank(message = "password name must not be empty")
-    @Min(value = 8, message = "password length must be greater than 8 letters")
-    private String password;
-
-    public CreateInstructorDTO(String firstName, String lastName, String email, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
+    public CreateInstructorDTO() {
     }
 
-    public String getFirstName() {
-        return firstName;
+    public CreateInstructorDTO(User user) {
+        this.user = user;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
+    public User getUser() {
+        return user;
     }
 }

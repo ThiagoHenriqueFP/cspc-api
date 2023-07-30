@@ -31,49 +31,43 @@ public class SquadController {
         );
     }
 
-    @PatchMapping("/{id}/addStudents")
-    public ResponseEntity<Squad> addStudentsToSquad(@PathVariable Long id, @RequestBody UpdateSquadDTO studentsIds) {
-        Squad squad = squadService.addStudentsToSquad(id, studentsIds);
-        return ResponseEntity.ok(squad);
-    }
-
-    @PatchMapping("/{id}/removeStudents")
-    public ResponseEntity<Squad> removeStudentsFromSquad(@PathVariable Long id, @RequestBody UpdateSquadDTO studentsIds) {
-        Squad squad = squadService.removeStudentsFromSquad(id, studentsIds);
-        return ResponseEntity.ok(squad);
-    }
-
     @GetMapping("/{id}")
-    public ResponseEntity<Squad> getSquadById(@PathVariable Long id) {
-        Squad squad = squadService.getById(id);
-        return ResponseEntity.ok(squad);
+    public ResponseEntity<ResponseSquadDTO> getSquadById(@PathVariable Long id) {
+        return new ResponseEntity<>(
+                squadService.getById(id),
+                HttpStatus.OK
+        );
     }
 
     @GetMapping
-    public ResponseEntity<List<Squad>> getAllSquads(){
-        return new ResponseEntity<>(
-                squadService.getAll(),
-                HttpStatus.OK
-        );
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> removeSquadById(@PathVariable Long id) {
-        return new ResponseEntity<>(
-                squadService.delete(id),
-                HttpStatus.OK
-        );
+    public ResponseEntity<List<ResponseSquadDTO>> getAllSquads(){
+        return new ResponseEntity<>(squadService.getAll(), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseSquadDTO> updateSquad(@PathVariable Long id, @RequestBody UpdateSquadDTO squadDTO)
-    {
+    public ResponseEntity<ResponseSquadDTO> updateSquad(@PathVariable Long id, @RequestBody UpdateSquadDTO squadDTO) {
+        return new ResponseEntity<>(squadService.updateSquad(id, squadDTO), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSquadById(@PathVariable Long id) {
+        squadService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping("/{id}/add-students")
+    public ResponseEntity<ResponseSquadDTO> addStudentsToSquad(@PathVariable Long id, @RequestBody UpdateSquadDTO studentsIds) {
         return new ResponseEntity<>(
-                squadService.updateSquad(id, squadDTO),
+                squadService.addStudentsToSquad(id, studentsIds),
                 HttpStatus.OK
         );
     }
 
-
-
+    @PatchMapping("/{id}/remove-students")
+    public ResponseEntity<ResponseSquadDTO> removeStudentsFromSquad(@PathVariable Long id, @RequestBody UpdateSquadDTO studentsIds) {
+        return new ResponseEntity<>(
+                squadService.removeStudentsFromSquad(id, studentsIds),
+                HttpStatus.OK
+        );
+    }
 }

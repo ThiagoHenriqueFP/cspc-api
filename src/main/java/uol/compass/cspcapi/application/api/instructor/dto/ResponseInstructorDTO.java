@@ -1,31 +1,33 @@
 package uol.compass.cspcapi.application.api.instructor.dto;
 
+import uol.compass.cspcapi.application.api.user.dto.ResponseUserDTO;
+import uol.compass.cspcapi.domain.classroom.Classroom;
+
 public class ResponseInstructorDTO {
     private Long id;
-    private String userFirstName;
-    private String userLastName;
-    private String userEmail;
+    private ResponseUserDTO user;
+    private Long classroomId;
 
-    public ResponseInstructorDTO(Long id, String userFirstName, String userLastName, String userEmail) {
+    public ResponseInstructorDTO(Long id, ResponseUserDTO user) {
         this.id = id;
-        this.userFirstName = userFirstName;
-        this.userLastName = userLastName;
-        this.userEmail = userEmail;
+        this.user = user;
+    }
+
+    public ResponseInstructorDTO(Long id, ResponseUserDTO user, Long classroomId) {
+        this.id = id;
+        this.user = user;
+        this.classroomId = classroomId;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getUserFirstName() {
-        return userFirstName;
+    public ResponseUserDTO getUser() {
+        return user;
     }
 
-    public String getUserLastName() {
-        return userLastName;
-    }
-
-    public String getUserEmail() {
-        return userEmail;
+    public Long getClassroomId() {
+        return classroomId;
     }
 }
