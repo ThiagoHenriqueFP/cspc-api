@@ -9,10 +9,13 @@ import uol.compass.cspcapi.application.api.coordinator.dto.CreateCoordinatorDTO;
 import uol.compass.cspcapi.application.api.coordinator.dto.ResponseCoordinatorDTO;
 import uol.compass.cspcapi.application.api.coordinator.dto.UpdateCoordinatorDTO;
 import uol.compass.cspcapi.domain.role.RoleService;
+import uol.compass.cspcapi.application.api.user.dto.CreateUserDTO;
+import uol.compass.cspcapi.application.api.user.dto.ResponseUserDTO;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
 import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +37,7 @@ public class CoordinatorService {
 
     @Transactional
     public ResponseCoordinatorDTO save(CreateCoordinatorDTO coordinator) {
-        Optional<User> alreadyExists = userService.findByEmail(coordinator.getEmail());
+        Optional<User> alreadyExists = userService.findByEmail(coordinator.getUser().getEmail());
 
         if(alreadyExists.isPresent()){
             throw new ResponseStatusException(
@@ -43,30 +46,31 @@ public class CoordinatorService {
             );
         }
 
-        User newUser = new User(
-                coordinator.getFirstName(),
-                coordinator.getLastName(),
-                coordinator.getEmail(),
-                passwordEncrypt.encoder().encode(coordinator.getPassword())
+        User user = new User(
+                coordinator.getUser().getFirstName(),
+                coordinator.getUser().getLastName(),
+                coordinator.getUser().getEmail(),
+                passwordEncrypt.encoder().encode(coordinator.getUser().getPassword())
         );
-        User savedUser = userService.saveUser(newUser);
+      
+        user.getRoles().add(roleService.findRoleByName("ROLE_COORDINATOR"));
 
-        savedUser.getRoles().add(roleService.findRoleByName("ROLE_INSTRUCTOR"));
-
-        Coordinator newCoordinator = new Coordinator(
-                savedUser
-        );
-
+        Coordinator newCoordinator = new Coordinator(user);
         Coordinator coordinatorDb = coordinatorRepository.save(newCoordinator);
-        return new ResponseCoordinatorDTO(
-                coordinatorDb.getUser().getId(),
-                coordinatorDb.getUser().getFirstName(),
-                coordinatorDb.getUser().getLastName(),
-                coordinatorDb.getUser().getEmail()
-        );
+
+        return mapToResponseCoordinator(coordinatorDb);
     }
 
-    public Coordinator getById(Long id) {
+    public ResponseCoordinatorDTO getById(Long id) {
+        return mapToResponseCoordinator(coordinatorRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "user not found"
+                )
+        ));
+    }
+
+    public Coordinator getByIdOriginal(Long id) {
         return coordinatorRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
@@ -75,8 +79,14 @@ public class CoordinatorService {
         );
     }
 
-    public List<Coordinator> getAll() {
-        return coordinatorRepository.findAll();
+    public List<ResponseCoordinatorDTO> getAll() {
+        List<Coordinator> coordinators = coordinatorRepository.findAll();
+        List<ResponseCoordinatorDTO> coordinatorsNoPassword = new ArrayList<>();
+
+        for (Coordinator coordinator : coordinators) {
+            coordinatorsNoPassword.add(mapToResponseCoordinator(coordinator));
+        }
+        return coordinatorsNoPassword;
     }
 
     @Transactional
@@ -89,23 +99,20 @@ public class CoordinatorService {
         );
 
         User user = coordinator.getUser();
-        user.setFirstName(coordinatorDTO.getFirstName());
-        user.setLastName(coordinatorDTO.getLastName());
-        user.setEmail(coordinatorDTO.getEmail());
+
+        user.setFirstName(coordinatorDTO.getUser().getFirstName());
+        user.setLastName(coordinatorDTO.getUser().getLastName());
+        user.setEmail(coordinatorDTO.getUser().getEmail());
 
         coordinator.setUser(user);
 
-        coordinatorRepository.save(coordinator);
-        return new ResponseCoordinatorDTO(
-                coordinator.getId(),
-                coordinator.getUser().getFirstName(),
-                coordinator.getUser().getLastName(),
-                coordinator.getUser().getEmail()
-        );
+        Coordinator updatedCoordinator = coordinatorRepository.save(coordinator);
+
+        return mapToResponseCoordinator(updatedCoordinator);
     }
 
     @Transactional
-    public boolean deleteById(Long id) {
+    public void deleteById(Long id) {
         Coordinator coordinator = coordinatorRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
@@ -114,6 +121,12 @@ public class CoordinatorService {
         );
 
         coordinatorRepository.delete(coordinator);
-        return true;
+    }
+
+    private ResponseCoordinatorDTO mapToResponseCoordinator(Coordinator coordinatorDb) {
+        return new ResponseCoordinatorDTO(
+                coordinatorDb.getId(),
+                userService.mapToResponseUser(coordinatorDb.getUser())
+        );
     }
 }

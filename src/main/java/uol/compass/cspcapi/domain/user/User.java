@@ -16,8 +16,6 @@ public class User {
 
     private String lastName;
 
-    private String password;
-
     @Column(unique = true)
     private String email;
 
@@ -27,6 +25,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private List<Role> roles = new ArrayList<>();
+    private String password;
 
     public User() {
     }

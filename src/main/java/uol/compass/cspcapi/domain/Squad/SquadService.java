@@ -12,6 +12,7 @@ import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.student.Student;
 import uol.compass.cspcapi.domain.student.StudentService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +29,7 @@ public class SquadService {
         this.studentService = studentService;
     }
 
+    @Transactional
     public ResponseSquadDTO save(CreateSquadDTO squad) {
         Optional<Squad> alreadyExists = squadRepository.findByName(squad.getName());
 
@@ -38,19 +40,60 @@ public class SquadService {
             );
         }
 
-        Squad newSquad = new Squad(
-                squad.getName()
-        );
-
+        Squad newSquad = new Squad(squad.getName());
         Squad squadDb = squadRepository.save(newSquad);
-        return new ResponseSquadDTO(
-                squadDb.getId(),
-                squadDb.getName()
-        );
+
+        return mapToResponseSquad(squadDb);
+    }
+
+
+    public ResponseSquadDTO getById(Long id){
+        return mapToResponseSquad(squadRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "squad not found"
+                )
+        ));
+    }
+
+    public List<ResponseSquadDTO> getAll(){
+        List<Squad> squads = squadRepository.findAll();
+        return mapToResponseSquads(squads);
     }
 
     @Transactional
-    public Squad addStudentsToSquad(Long squadId, UpdateSquadDTO squadDTO) {
+    public ResponseSquadDTO updateSquad(Long id, UpdateSquadDTO squadDTO) {
+        Squad squad = squadRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Squad not found"));
+
+        squad.setName(squadDTO.getName());
+
+        Squad updatedSquad = squadRepository.save(squad);
+
+        return mapToResponseSquad(updatedSquad);
+    }
+
+    @Transactional
+    public void delete(Long id){
+        Squad squad = squadRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Squad not found"
+                )
+        );
+
+        List<Student> toRemoveStudents = squad.getStudents();
+        studentService.attributeStudentsToSquad(null, toRemoveStudents);
+
+        toRemoveStudents.removeIf(student -> true);
+        squad.setStudents(toRemoveStudents);
+
+        squadRepository.save(squad);
+        squadRepository.delete(squad);
+    }
+
+    @Transactional
+    public ResponseSquadDTO addStudentsToSquad(Long squadId, UpdateSquadDTO squadDTO) {
         Squad squad = squadRepository.findById(squadId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Squad not found"));
 
@@ -60,13 +103,13 @@ public class SquadService {
 
         studentService.attributeStudentsToSquad(squad, students);
         squad.setStudents(students);
+        Squad updatedSquad = squadRepository.save(squad);
 
-        //squad.getStudents().add(student);
-
-        return squadRepository.save(squad);
+        return mapToResponseSquad(updatedSquad);
     }
 
-    public Squad removeStudentsFromSquad(Long squadId, UpdateSquadDTO squadDTO) {
+    @Transactional
+    public ResponseSquadDTO removeStudentsFromSquad(Long squadId, UpdateSquadDTO squadDTO) {
         Squad squad = squadRepository.findById(squadId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Squad not found"));
 
@@ -80,65 +123,40 @@ public class SquadService {
         studentService.attributeStudentsToSquad(null, toRemoveStudents);
 
         squad.setStudents(students);
-
-        return squadRepository.save(squad);
-    }
-
-    public Squad getById(Long id){
-        return squadRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "user not found"
-                )
-        );
-    }
-
-    public boolean delete(Long id){
-        Squad squad = squadRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Squad not found"
-                )
-        );
-
-        squadRepository.delete(squad);
-
-        return true;
-    }
-
-    public List<Squad> getAll(){
-        return squadRepository.findAll();
-    }
-
-    public ResponseSquadDTO updateSquad(Long id, UpdateSquadDTO squadDTO) {
-        Squad squad = squadRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Squad not found"));
-
-        //squad.setName(squad.getName());
-        squad.setName(squadDTO.getName());
-
         Squad updatedSquad = squadRepository.save(squad);
 
-        return mapToResponseDTO(updatedSquad);
-    }
-
-    //Possivel jogar o metodo em package UTILS
-    private ResponseSquadDTO mapToResponseDTO(Squad squad) {
-        ResponseSquadDTO responseDTO = new ResponseSquadDTO();
-        responseDTO.setId(squad.getId());
-        responseDTO.setName(squad.getName());
-
-        return responseDTO;
+        return mapToResponseSquad(updatedSquad);
     }
 
     public List<Squad> getAllSquadsById(List<Long> squadsIds) {
         return squadRepository.findAllByIdIn(squadsIds);
     }
 
+    @Transactional
     public List<Squad> attributeSquadsToClassroom(Classroom classroom, List<Squad> squads) {
         for (Squad squad : squads) {
             squad.setClassroom(classroom);
         }
         return squadRepository.saveAll(squads);
+    }
+
+    public ResponseSquadDTO mapToResponseSquad(Squad squad) {
+        if (squad.getStudents() == null) {
+            squad.setStudents(new ArrayList<>());
+        }
+        return new ResponseSquadDTO(
+                squad.getId(),
+                squad.getName(),
+                studentService.mapToResponseStudents(squad.getStudents())
+        );
+    }
+
+    public List<ResponseSquadDTO> mapToResponseSquads(List<Squad> squads) {
+        List<ResponseSquadDTO> squadsNoPassword = new ArrayList<>();
+
+        for (Squad squad : squads) {
+            squadsNoPassword.add(mapToResponseSquad(squad));
+        }
+        return squadsNoPassword;
     }
 }

@@ -8,12 +8,15 @@ import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.scrumMaster.dto.CreateScrumMasterDTO;
 import uol.compass.cspcapi.application.api.scrumMaster.dto.ResponseScrumMasterDTO;
 import uol.compass.cspcapi.application.api.scrumMaster.dto.UpdateScrumMasterDTO;
+import uol.compass.cspcapi.application.api.user.dto.CreateUserDTO;
+import uol.compass.cspcapi.application.api.user.dto.ResponseUserDTO;
 import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.role.RoleService;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
 import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,9 +28,9 @@ public class ScrumMasterService {
     // Aqui eu não posso acessar diretamente o user repository
     // Essa abordagem serve para manter as classes protegidas
     private final UserService userService;
-
     private final PasswordEncoder passwordEncrypt;
     private final RoleService roleService;
+    private final PasswordEncrypt passwordEncrypt;
 
     @Autowired
     public ScrumMasterService(ScrumMasterRepository scrumMasterRepository, UserService userService, PasswordEncoder passwordEncrypt, RoleService roleService) {
@@ -38,46 +41,48 @@ public class ScrumMasterService {
     }
 
     @Transactional
-    public ScrumMaster save(CreateScrumMasterDTO scrumMaster) {
-        Optional<User> alreadyExists = userService.findByEmail(scrumMaster.getEmail());
+    public ResponseScrumMasterDTO save(CreateScrumMasterDTO scrumMaster) {
+        Optional<User> alreadyExists = userService.findByEmail(scrumMaster.getUser().getEmail());
 
         if(alreadyExists.isPresent()){
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "scrumMaster already exists"
+                    "user already exists"
             );
         }
 
-        User newUser = new User(
-                scrumMaster.getFirstName(),
-                scrumMaster.getLastName(),
-                scrumMaster.getEmail(),
-                passwordEncrypt.encoder().encode(scrumMaster.getPassword())
+        User user = new User(
+                scrumMaster.getUser().getFirstName(),
+                scrumMaster.getUser().getLastName(),
+                scrumMaster.getUser().getEmail(),
+                passwordEncrypt.encoder().encode(scrumMaster.getUser().getPassword())
         );
 
-        User savedUSer = userService.saveUser(newUser);
-
-        savedUSer.getRoles().add(roleService.findRoleByName("ROLE_SCRUM_MASTER"));
-
-        ScrumMaster newScrumMaster = new ScrumMaster(
-                savedUSer
-        );
-
-        return scrumMasterRepository.save(newScrumMaster);
-
+        user.getRoles().add(roleService.findRoleByName("ROLE_SCRUM_MASTER"));
+        ScrumMaster newScrumMaster = new ScrumMaster(user);
+        ScrumMaster scrumMasterDb = scrumMasterRepository.save(newScrumMaster);
+        
+        return mapToResponseScrumMaster(scrumMasterDb);
     }
 
-    public ScrumMaster getById(Long id){
-        return scrumMasterRepository.findById(id).orElseThrow(
+    public ResponseScrumMasterDTO getById(Long id){
+        return mapToResponseScrumMaster(scrumMasterRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "user not found"
                 )
-        );
+        ));
     }
 
-    public List<ScrumMaster> getAll(){
-        return scrumMasterRepository.findAll();
+    public List<ResponseScrumMasterDTO> getAll(){
+        List<ScrumMaster> scrumMasters = scrumMasterRepository.findAll();
+//        List<ResponseScrumMasterDTO> scrumMastersNoPassword = new ArrayList<>();
+//
+//        for (ScrumMaster scrumMaster : scrumMasters) {
+//            scrumMastersNoPassword.add(mapToResponseScrumMaster(scrumMaster));
+//        }
+//        return scrumMastersNoPassword;
+        return mapToResponseScrumMasters(scrumMasters);
     }
 
     public ResponseScrumMasterDTO update(Long id, UpdateScrumMasterDTO scrumMasterDTO) {
@@ -90,32 +95,27 @@ public class ScrumMasterService {
 
         User user = scrumMaster.getUser();
 
-        user.setFirstName(scrumMasterDTO.getFirstName());
-        user.setLastName(scrumMasterDTO.getLastName());
-        user.setEmail(scrumMasterDTO.getEmail());
+        user.setFirstName(scrumMasterDTO.getUser().getFirstName());
+        user.setLastName(scrumMasterDTO.getUser().getLastName());
+        user.setEmail(scrumMasterDTO.getUser().getEmail());
 
         scrumMaster.setUser(user);
 
-        scrumMasterRepository.save(scrumMaster);
+        ScrumMaster updatedScrumMasters = scrumMasterRepository.save(scrumMaster);
 
-        return new ResponseScrumMasterDTO (
-                scrumMaster.getId(),
-                scrumMaster.getUser().getFirstName(),
-                scrumMaster.getUser().getLastName(),
-                scrumMaster.getUser().getEmail()
-        );
+        return mapToResponseScrumMaster(updatedScrumMasters);
     }
 
-    public boolean delete(Long id){
+    @Transactional
+    public void delete(Long id){
         ScrumMaster scrumMaster = scrumMasterRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "user not found"
+                        "scrum master not found"
                 )
         );
 
         scrumMasterRepository.delete(scrumMaster);
-        return true;
     }
 
     public List<ScrumMaster> getAllScrumMastersById(List<Long> scrumMastersIds) {
@@ -123,12 +123,44 @@ public class ScrumMasterService {
     }
 
     @Transactional
-    public List<ScrumMaster> attributeScrumMastersToClassroom(Classroom classroom, List<ScrumMaster> scrumMasters) {
+    public List<ResponseScrumMasterDTO> attributeScrumMastersToClassroom(Classroom classroom, List<ScrumMaster> scrumMasters) {
         for (ScrumMaster scrumMaster : scrumMasters) {
             scrumMaster.setClassroom(classroom);
         }
-        return scrumMasterRepository.saveAll(scrumMasters);
+        List<ScrumMaster> updatedScrumMasters = scrumMasterRepository.saveAll(scrumMasters);
+//        List<ResponseScrumMasterDTO> scrumMastersNoPassword = new ArrayList<>();
+//
+//        for (ScrumMaster scrumMaster : scrumMasters) {
+//            scrumMastersNoPassword.add(mapToResponseScrumMaster(scrumMaster));
+//        }
+//
+//        return scrumMastersNoPassword;
+        return mapToResponseScrumMasters(updatedScrumMasters);
     }
 
+    public ResponseScrumMasterDTO mapToResponseScrumMaster(ScrumMaster scrumMaster) {
+        Long classroomId;
 
+        if (scrumMaster.getClassroom() == null) {
+            classroomId = null;
+        } else {
+            classroomId = scrumMaster.getClassroom().getId();
+        }
+
+        return new ResponseScrumMasterDTO(
+                scrumMaster.getId(),
+                userService.mapToResponseUser(scrumMaster.getUser()),
+                classroomId
+        );
+    }
+
+    public List<ResponseScrumMasterDTO> mapToResponseScrumMasters(List<ScrumMaster> scrumMasters) {
+        List<ResponseScrumMasterDTO> scrumMastersNoPassword = new ArrayList<>();
+
+        for (ScrumMaster scrumMaster : scrumMasters) {
+            scrumMastersNoPassword.add(mapToResponseScrumMaster(scrumMaster));
+        }
+
+        return scrumMastersNoPassword;
+    }
 }

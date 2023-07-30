@@ -24,7 +24,7 @@ public class ScrumMasterController {
     }
 
     @PostMapping
-    public ResponseEntity<ScrumMaster> save( @RequestBody CreateScrumMasterDTO scrumMaster)
+    public ResponseEntity<ResponseScrumMasterDTO> save( @RequestBody CreateScrumMasterDTO scrumMaster)
     {
         return new ResponseEntity<>(
                 scrumMasterService.save(scrumMaster),
@@ -33,7 +33,7 @@ public class ScrumMasterController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ScrumMaster> getById(@PathVariable Long id){
+    public ResponseEntity<ResponseScrumMasterDTO> getById(@PathVariable Long id){
         return new ResponseEntity<>(
                 scrumMasterService.getById(id),
                 HttpStatus.OK
@@ -41,7 +41,7 @@ public class ScrumMasterController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ScrumMaster>> getAllScrumMaster(){
+    public ResponseEntity<List<ResponseScrumMasterDTO>> getAllScrumMaster(){
         return new ResponseEntity<>(
                 scrumMasterService.getAll(),
                 HttpStatus.OK
@@ -58,11 +58,9 @@ public class ScrumMasterController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> delete(@PathVariable Long id){
-        return new ResponseEntity<>(
-                scrumMasterService.delete(id),
-                HttpStatus.OK
-        );
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        scrumMasterService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
