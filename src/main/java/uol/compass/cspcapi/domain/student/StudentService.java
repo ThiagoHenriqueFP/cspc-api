@@ -12,7 +12,7 @@ import uol.compass.cspcapi.domain.Squad.Squad;
 import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
-import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncrypt;
+import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,10 +25,10 @@ public class StudentService {
     // Essa abordagem serve para manter as classes protegidas
     private final UserService userService;
 
-    private final PasswordEncrypt passwordEncrypt;
+    private final PasswordEncoder passwordEncrypt;
 
     @Autowired
-    public StudentService(StudentRepository studentRepository, UserService userService, PasswordEncrypt passwordEncrypt) {
+    public StudentService(StudentRepository studentRepository, UserService userService, PasswordEncoder passwordEncrypt) {
         this.studentRepository = studentRepository;
         this.userService = userService;
         this.passwordEncrypt = passwordEncrypt;

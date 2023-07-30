@@ -5,16 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import uol.compass.cspcapi.application.api.coordinator.dto.ResponseCoordinatorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.CreateInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.ResponseInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.UpdateInstructorDTO;
 import uol.compass.cspcapi.domain.classroom.Classroom;
-import uol.compass.cspcapi.domain.coordinator.Coordinator;
-import uol.compass.cspcapi.domain.scrumMaster.ScrumMaster;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
-import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncrypt;
+import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,10 +20,10 @@ import java.util.Optional;
 public class InstructorService {
     private InstructorRepository instructorRepository;
     private final UserService userService;
-    private final PasswordEncrypt passwordEncrypt;
+    private final PasswordEncoder passwordEncrypt;
 
     @Autowired
-    public InstructorService(InstructorRepository instructorRepository, UserService userService, PasswordEncrypt passwordEncrypt) {
+    public InstructorService(InstructorRepository instructorRepository, UserService userService, PasswordEncoder passwordEncrypt) {
         this.instructorRepository = instructorRepository;
         this.userService = userService;
         this.passwordEncrypt = passwordEncrypt;

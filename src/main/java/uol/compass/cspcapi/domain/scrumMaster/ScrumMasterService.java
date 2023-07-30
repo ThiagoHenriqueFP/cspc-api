@@ -11,7 +11,7 @@ import uol.compass.cspcapi.application.api.scrumMaster.dto.UpdateScrumMasterDTO;
 import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
-import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncrypt;
+import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,10 +25,10 @@ public class ScrumMasterService {
     // Essa abordagem serve para manter as classes protegidas
     private final UserService userService;
 
-    private final PasswordEncrypt passwordEncrypt;
+    private final PasswordEncoder passwordEncrypt;
 
     @Autowired
-    public ScrumMasterService(ScrumMasterRepository scrumMasterRepository, UserService userService, PasswordEncrypt passwordEncrypt) {
+    public ScrumMasterService(ScrumMasterRepository scrumMasterRepository, UserService userService, PasswordEncoder passwordEncrypt) {
         this.scrumMasterRepository = scrumMasterRepository;
         this.userService = userService;
         this.passwordEncrypt = passwordEncrypt;

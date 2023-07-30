@@ -10,7 +10,7 @@ import uol.compass.cspcapi.application.api.coordinator.dto.ResponseCoordinatorDT
 import uol.compass.cspcapi.application.api.coordinator.dto.UpdateCoordinatorDTO;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
-import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncrypt;
+import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,10 +19,10 @@ import java.util.Optional;
 public class CoordinatorService {
     private CoordinatorRepository coordinatorRepository;
     private final UserService userService;
-    private final PasswordEncrypt passwordEncrypt;
+    private final PasswordEncoder passwordEncrypt;
 
     @Autowired
-    public CoordinatorService(CoordinatorRepository coordinatorRepository, UserService userService, PasswordEncrypt passwordEncrypt) {
+    public CoordinatorService(CoordinatorRepository coordinatorRepository, UserService userService, PasswordEncoder passwordEncrypt) {
         this.coordinatorRepository = coordinatorRepository;
         this.userService = userService;
         this.passwordEncrypt = passwordEncrypt;
