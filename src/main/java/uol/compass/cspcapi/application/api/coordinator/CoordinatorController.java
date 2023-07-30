@@ -31,7 +31,7 @@ public class CoordinatorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Coordinator> getCoordinatorById(@PathVariable Long id) {
+    public ResponseEntity<ResponseCoordinatorDTO> getCoordinatorById(@PathVariable Long id) {
         return new ResponseEntity<>(
                 coordinatorService.getById(id),
                 HttpStatus.OK
@@ -39,7 +39,7 @@ public class CoordinatorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Coordinator>> getAllCoordinators() {
+    public ResponseEntity<List<ResponseCoordinatorDTO>> getAllCoordinators() {
         return new ResponseEntity<>(
                 coordinatorService.getAll(),
                 HttpStatus.OK
@@ -58,10 +58,8 @@ public class CoordinatorController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteCoordinatorById(@PathVariable Long id) {
-        return new ResponseEntity<>(
-                coordinatorService.deleteById(id),
-                HttpStatus.OK
-        );
+    public ResponseEntity<Void> deleteCoordinatorById(@PathVariable Long id) {
+        coordinatorService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

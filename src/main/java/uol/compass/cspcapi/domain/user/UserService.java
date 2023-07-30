@@ -1,11 +1,13 @@
 package uol.compass.cspcapi.domain.user;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.user.dto.CreateUserDTO;
+import uol.compass.cspcapi.application.api.user.dto.ResponseUserDTO;
 
 import java.util.Optional;
 
@@ -20,7 +22,8 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User saveUser (CreateUserDTO userDTO){
+    @Transactional
+    public ResponseUserDTO saveUser (CreateUserDTO userDTO){
         if(findByEmail(userDTO.getEmail()).isPresent()){
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -33,27 +36,21 @@ public class UserService {
                 userDTO.getEmail(),
                 passwordEncoder.encode(userDTO.getPassword())
         );
+        User savedUser = userRepository.save(user);
 
-        return userRepository.save(user);
-    }
-
-    public User saveUser(User user) {
-        if(findByEmail(user.getEmail()).isPresent()){
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "user already exists"
-            );
-        }
-
-        return userRepository.save(new User(
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                passwordEncoder.encode(user.getPassword())
-        ));
+        return mapToResponseUser(savedUser);
     }
 
     public Optional<User> findByEmail(String email){
         return userRepository.findByEmail(email);
+    }
+
+    public ResponseUserDTO mapToResponseUser(User user) {
+        return new ResponseUserDTO(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail()
+        );
     }
 }

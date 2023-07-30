@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import uol.compass.cspcapi.application.api.instructor.dto.CreateInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.ResponseInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.UpdateInstructorDTO;
-import uol.compass.cspcapi.domain.instructor.Instructor;
 import uol.compass.cspcapi.domain.instructor.InstructorService;
 
 import java.util.List;
@@ -31,7 +30,7 @@ public class InstructorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Instructor> getInstructorById(@PathVariable Long id) {
+    public ResponseEntity<ResponseInstructorDTO> getInstructorById(@PathVariable Long id) {
         return new ResponseEntity<>(
                 instructorService.getById(id),
                 HttpStatus.OK
@@ -39,7 +38,7 @@ public class InstructorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Instructor>> getAllInstructors() {
+    public ResponseEntity<List<ResponseInstructorDTO>> getAllInstructors() {
         return new ResponseEntity<>(
                 instructorService.getAll(),
                 HttpStatus.OK
@@ -58,10 +57,8 @@ public class InstructorController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteInstructorById(@PathVariable Long id) {
-        return new ResponseEntity<>(
-                instructorService.deleteById(id),
-                HttpStatus.OK
-        );
+    public ResponseEntity<Void> deleteInstructorById(@PathVariable Long id) {
+        instructorService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
