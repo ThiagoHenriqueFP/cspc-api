@@ -50,7 +50,7 @@ public class SquadController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeSquadById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSquadById(@PathVariable Long id) {
         squadService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

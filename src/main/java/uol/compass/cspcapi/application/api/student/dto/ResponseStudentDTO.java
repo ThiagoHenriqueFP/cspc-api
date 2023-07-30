@@ -9,8 +9,8 @@ public class ResponseStudentDTO {
     private Long id;
     private ResponseUserDTO user;
     private Grade grades;
-    private Squad squad;
-    private Classroom classroom;
+    private Long squadId;
+    private Long classroomId;
 
     public ResponseStudentDTO(Long id, ResponseUserDTO user, Grade grades) {
         this.id = id;
@@ -18,12 +18,12 @@ public class ResponseStudentDTO {
         this.grades = grades;
     }
 
-    public ResponseStudentDTO(Long id, ResponseUserDTO user, Grade grades, Squad squad, Classroom classroom) {
+    public ResponseStudentDTO(Long id, ResponseUserDTO user, Grade grades, Long squadId, Long classroomId) {
         this.id = id;
         this.user = user;
         this.grades = grades;
-        this.squad = squad;
-        this.classroom = classroom;
+        this.squadId = squadId;
+        this.classroomId = classroomId;
     }
 
     public Long getId() {
@@ -38,11 +38,11 @@ public class ResponseStudentDTO {
         return grades;
     }
 
-    public Squad getSquad() {
-        return squad;
+    public Long getSquadId() {
+        return squadId;
     }
 
-    public Classroom getClassroom() {
-        return classroom;
+    public Long getClassroomId() {
+        return classroomId;
     }
 }

@@ -58,12 +58,7 @@ public class SquadService {
 
     public List<ResponseSquadDTO> getAll(){
         List<Squad> squads = squadRepository.findAll();
-        List<ResponseSquadDTO> squadsNoPassword = new ArrayList<>();
-
-        for (Squad squad : squads) {
-            squadsNoPassword.add(mapToResponseSquad(squad));
-        }
-        return squadsNoPassword;
+        return mapToResponseSquads(squads);
     }
 
     @Transactional
@@ -92,8 +87,8 @@ public class SquadService {
 
         toRemoveStudents.removeIf(student -> true);
         squad.setStudents(toRemoveStudents);
-        squadRepository.save(squad);
 
+        squadRepository.save(squad);
         squadRepository.delete(squad);
     }
 
@@ -108,9 +103,9 @@ public class SquadService {
 
         studentService.attributeStudentsToSquad(squad, students);
         squad.setStudents(students);
-        Squad updatedSquads = squadRepository.save(squad);
+        Squad updatedSquad = squadRepository.save(squad);
 
-        return mapToResponseSquad(updatedSquads);
+        return mapToResponseSquad(updatedSquad);
     }
 
     @Transactional
@@ -146,10 +141,22 @@ public class SquadService {
     }
 
     public ResponseSquadDTO mapToResponseSquad(Squad squad) {
+        if (squad.getStudents() == null) {
+            squad.setStudents(new ArrayList<>());
+        }
         return new ResponseSquadDTO(
                 squad.getId(),
                 squad.getName(),
                 studentService.mapToResponseStudents(squad.getStudents())
         );
+    }
+
+    public List<ResponseSquadDTO> mapToResponseSquads(List<Squad> squads) {
+        List<ResponseSquadDTO> squadsNoPassword = new ArrayList<>();
+
+        for (Squad squad : squads) {
+            squadsNoPassword.add(mapToResponseSquad(squad));
+        }
+        return squadsNoPassword;
     }
 }

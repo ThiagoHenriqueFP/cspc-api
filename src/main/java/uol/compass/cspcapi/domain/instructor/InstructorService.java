@@ -61,19 +61,14 @@ public class InstructorService {
         return mapToResponseInstructor(instructorRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "user not found"
+                        "instructor not found"
                 )
         ));
     }
 
     public List<ResponseInstructorDTO> getAll() {
         List<Instructor> instructors = instructorRepository.findAll();
-        List<ResponseInstructorDTO> instructorsNoPassword = new ArrayList<>();
-
-        for (Instructor instructor : instructors) {
-            instructorsNoPassword.add(mapToResponseInstructor(instructor));
-        }
-        return instructorsNoPassword;
+        return mapToResponseInstructors(instructors);
     }
 
     @Transactional
@@ -93,22 +88,21 @@ public class InstructorService {
 
         instructor.setUser(user);
 
-        Instructor updatedInstructors = instructorRepository.save(instructor);
+        Instructor updatedInstructor = instructorRepository.save(instructor);
 
-        return mapToResponseInstructor(updatedInstructors);
+        return mapToResponseInstructor(updatedInstructor);
     }
 
     @Transactional
-    public boolean deleteById(Long id) {
+    public void deleteById(Long id) {
         Instructor instructor = instructorRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "user not found"
+                        "instructor not found"
                 )
         );
 
         instructorRepository.delete(instructor);
-        return true;
     }
 
     public List<Instructor> getAllInstructorsById(List<Long> instructorsIds) {
@@ -121,18 +115,31 @@ public class InstructorService {
             instructor.setClassroom(classroom);
         }
         List<Instructor> updatedInstructors = instructorRepository.saveAll(instructors);
-        List<ResponseInstructorDTO> instructorsNoPassword = new ArrayList<>();
-
-        for (Instructor instructor : updatedInstructors) {
-            instructorsNoPassword.add(mapToResponseInstructor(instructor));
-        }
-        return instructorsNoPassword;
+        return mapToResponseInstructors(updatedInstructors);
     }
 
     public ResponseInstructorDTO mapToResponseInstructor(Instructor instructor) {
+        Long classroomId;
+
+        if (instructor.getClassroom() == null) {
+            classroomId = null;
+        } else {
+            classroomId = instructor.getClassroom().getId();
+        }
+
         return new ResponseInstructorDTO(
                 instructor.getId(),
-                userService.mapToResponseUser(instructor.getUser())//, instructor.getClassroom()
+                userService.mapToResponseUser(instructor.getUser()),
+                classroomId
         );
+    }
+
+    public List<ResponseInstructorDTO> mapToResponseInstructors(List<Instructor> instructors) {
+        List<ResponseInstructorDTO> instructorsNoPassword = new ArrayList<>();
+
+        for (Instructor instructor : instructors) {
+            instructorsNoPassword.add(mapToResponseInstructor(instructor));
+        }
+        return instructorsNoPassword;
     }
 }

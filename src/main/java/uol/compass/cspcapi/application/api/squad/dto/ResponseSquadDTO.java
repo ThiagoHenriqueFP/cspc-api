@@ -1,7 +1,6 @@
 package uol.compass.cspcapi.application.api.squad.dto;
 
 import uol.compass.cspcapi.application.api.student.dto.ResponseStudentDTO;
-import uol.compass.cspcapi.domain.student.Student;
 
 import java.util.List;
 

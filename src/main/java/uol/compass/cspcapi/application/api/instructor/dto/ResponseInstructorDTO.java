@@ -6,15 +6,17 @@ import uol.compass.cspcapi.domain.classroom.Classroom;
 public class ResponseInstructorDTO {
     private Long id;
     private ResponseUserDTO user;
-    private Classroom classroom;
+    private Long classroomId;
 
     public ResponseInstructorDTO(Long id, ResponseUserDTO user) {
         this.id = id;
         this.user = user;
     }
 
-    public ResponseInstructorDTO(Classroom classroom) {
-        this.classroom = classroom;
+    public ResponseInstructorDTO(Long id, ResponseUserDTO user, Long classroomId) {
+        this.id = id;
+        this.user = user;
+        this.classroomId = classroomId;
     }
 
     public Long getId() {
@@ -25,7 +27,7 @@ public class ResponseInstructorDTO {
         return user;
     }
 
-    public Classroom getClassroom() {
-        return classroom;
+    public Long getClassroomId() {
+        return classroomId;
     }
 }

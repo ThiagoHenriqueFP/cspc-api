@@ -6,16 +6,16 @@ import uol.compass.cspcapi.domain.classroom.Classroom;
 public class ResponseScrumMasterDTO {
     private Long id;
     private ResponseUserDTO user;
-    private Classroom classroom;
+    private Long classroomId;
 
-    public ResponseScrumMasterDTO(Long id, ResponseUserDTO user) {
+    public ResponseScrumMasterDTO() {}
+
+    public ResponseScrumMasterDTO(Long id, ResponseUserDTO user, Long classroomId) {
         this.id = id;
         this.user = user;
+        this.classroomId = classroomId;
     }
 
-    public ResponseScrumMasterDTO(Classroom classroom) {
-        this.classroom = classroom;
-    }
 
     public Long getId() {
         return id;
@@ -25,7 +25,7 @@ public class ResponseScrumMasterDTO {
         return user;
     }
 
-    public Classroom getClassroom() {
-        return classroom;
+    public Long getClassroomId() {
+        return classroomId;
     }
 }

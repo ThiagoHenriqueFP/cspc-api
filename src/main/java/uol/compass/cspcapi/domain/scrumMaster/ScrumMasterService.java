@@ -72,12 +72,13 @@ public class ScrumMasterService {
 
     public List<ResponseScrumMasterDTO> getAll(){
         List<ScrumMaster> scrumMasters = scrumMasterRepository.findAll();
-        List<ResponseScrumMasterDTO> scrumMastersNoPassword = new ArrayList<>();
-
-        for (ScrumMaster scrumMaster : scrumMasters) {
-            scrumMastersNoPassword.add(mapToResponseScrumMaster(scrumMaster));
-        }
-        return scrumMastersNoPassword;
+//        List<ResponseScrumMasterDTO> scrumMastersNoPassword = new ArrayList<>();
+//
+//        for (ScrumMaster scrumMaster : scrumMasters) {
+//            scrumMastersNoPassword.add(mapToResponseScrumMaster(scrumMaster));
+//        }
+//        return scrumMastersNoPassword;
+        return mapToResponseScrumMasters(scrumMasters);
     }
 
     public ResponseScrumMasterDTO update(Long id, UpdateScrumMasterDTO scrumMasterDTO) {
@@ -123,6 +124,33 @@ public class ScrumMasterService {
             scrumMaster.setClassroom(classroom);
         }
         List<ScrumMaster> updatedScrumMasters = scrumMasterRepository.saveAll(scrumMasters);
+//        List<ResponseScrumMasterDTO> scrumMastersNoPassword = new ArrayList<>();
+//
+//        for (ScrumMaster scrumMaster : scrumMasters) {
+//            scrumMastersNoPassword.add(mapToResponseScrumMaster(scrumMaster));
+//        }
+//
+//        return scrumMastersNoPassword;
+        return mapToResponseScrumMasters(updatedScrumMasters);
+    }
+
+    public ResponseScrumMasterDTO mapToResponseScrumMaster(ScrumMaster scrumMaster) {
+        Long classroomId;
+
+        if (scrumMaster.getClassroom() == null) {
+            classroomId = null;
+        } else {
+            classroomId = scrumMaster.getClassroom().getId();
+        }
+
+        return new ResponseScrumMasterDTO(
+                scrumMaster.getId(),
+                userService.mapToResponseUser(scrumMaster.getUser()),
+                classroomId
+        );
+    }
+
+    public List<ResponseScrumMasterDTO> mapToResponseScrumMasters(List<ScrumMaster> scrumMasters) {
         List<ResponseScrumMasterDTO> scrumMastersNoPassword = new ArrayList<>();
 
         for (ScrumMaster scrumMaster : scrumMasters) {
@@ -130,12 +158,5 @@ public class ScrumMasterService {
         }
 
         return scrumMastersNoPassword;
-    }
-
-    public ResponseScrumMasterDTO mapToResponseScrumMaster(ScrumMaster scrumMaster) {
-        return new ResponseScrumMasterDTO(
-                scrumMaster.getId(),
-                userService.mapToResponseUser(scrumMaster.getUser())
-        );
     }
 }

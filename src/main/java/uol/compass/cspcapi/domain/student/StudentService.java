@@ -181,10 +181,26 @@ public class StudentService {
     }
 
     public ResponseStudentDTO mapToResponseStudent(Student student) {
+        Long squadId;
+        Long classroomId;
+
+        if (student.getSquad() == null) {
+            squadId = null;
+        } else {
+            squadId = student.getSquad().getId();
+        }
+        if (student.getClassroom() == null) {
+            classroomId = null;
+        } else {
+            classroomId = student.getClassroom().getId();
+        }
+
         return new ResponseStudentDTO(
                 student.getId(),
                 userService.mapToResponseUser(student.getUser()),
-                student.getGrades()
+                student.getGrades(),
+                squadId,
+                classroomId
         );
     }
 
