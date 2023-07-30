@@ -1,0 +1,14 @@
+[
+  {
+    "firstName": "Victor",
+    "lastName": "Ferreira",
+    "email": "victor.ferreira@compasso.com.br",
+    "password": "victor.ferreira"
+  },
+  {
+    "firstName": "Gilberto",
+    "lastName": "Medeiros",
+    "email": "gilberto.medeiros@compasso.com.br",
+    "password": "gilberto.medeiros"
+  }
+]

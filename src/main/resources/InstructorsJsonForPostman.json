@@ -1,0 +1,38 @@
+[
+  {
+  "firstName": "Cristian",
+  "lastName": "Albrecht",
+  "email": "cristian.albrecht@compasso.com.br",
+  "password": "cristian.albrecht"
+  },
+  {
+    "firstName": "Diego",
+    "lastName": "Bonfim",
+    "email": "diego.bonfim@compasso.com.br",
+    "password": "diego.bonfim"
+  },
+  {
+    "firstName": "Giovanni",
+    "lastName": "Marchi",
+    "email": "giovanni.marchi@compasso.com.br",
+    "password": "giovanni.marchi"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Comarella",
+    "email": "jonathan.comarella@compasso.com.br",
+    "password": "jonathan.comarella"
+  },
+  {
+    "firstName": "Roger",
+    "lastName": "Barbosa",
+    "email": "roger.barbosa@compasso.com.br",
+    "password": "roger.barbosa"
+  },
+  {
+    "firstName": "Cláudio",
+    "lastName": "Júnior",
+    "email": "claudio.junior@compasso.com.br",
+    "password": "claudio.junior"
+  }
+]
