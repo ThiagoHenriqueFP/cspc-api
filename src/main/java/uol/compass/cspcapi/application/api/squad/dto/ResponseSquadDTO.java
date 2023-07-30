@@ -1,5 +1,6 @@
 package uol.compass.cspcapi.application.api.squad.dto;
 
+import uol.compass.cspcapi.application.api.student.dto.ResponseStudentDTO;
 import uol.compass.cspcapi.domain.student.Student;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public class ResponseSquadDTO {
 
     private String name;
 
-    private List<Student> students;
+    private List<ResponseStudentDTO> students;
 
     public ResponseSquadDTO() {
     }
@@ -20,7 +21,7 @@ public class ResponseSquadDTO {
         this.name = name;
     }
 
-    public ResponseSquadDTO(Long id, String name, List<Student> students) {
+    public ResponseSquadDTO(Long id, String name, List<ResponseStudentDTO> students) {
         this.id = id;
         this.name = name;
         this.students = students;
@@ -42,11 +43,11 @@ public class ResponseSquadDTO {
         this.name = name;
     }
 
-    public List<Student> getStudents() {
+    public List<ResponseStudentDTO> getStudents() {
         return students;
     }
 
-    public void setStudents(List<Student> students) {
+    public void setStudents(List<ResponseStudentDTO> students) {
         this.students = students;
     }
 }

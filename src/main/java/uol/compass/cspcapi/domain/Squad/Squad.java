@@ -31,8 +31,7 @@ public class Squad {
         this.name = name;
     }
 
-    public Squad(String name, List<Student> students) {
-        this.name = name;
+    public Squad(List<Student> students) {
         this.students = students;
     }
 

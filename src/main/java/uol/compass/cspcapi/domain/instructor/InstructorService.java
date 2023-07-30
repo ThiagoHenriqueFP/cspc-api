@@ -5,17 +5,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import uol.compass.cspcapi.application.api.coordinator.dto.ResponseCoordinatorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.CreateInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.ResponseInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.UpdateInstructorDTO;
+import uol.compass.cspcapi.application.api.student.dto.ResponseStudentDTO;
+import uol.compass.cspcapi.application.api.user.dto.CreateUserDTO;
+import uol.compass.cspcapi.application.api.user.dto.ResponseUserDTO;
 import uol.compass.cspcapi.domain.classroom.Classroom;
-import uol.compass.cspcapi.domain.coordinator.Coordinator;
-import uol.compass.cspcapi.domain.scrumMaster.ScrumMaster;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
 import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncrypt;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ public class InstructorService {
 
     @Transactional
     public ResponseInstructorDTO save(CreateInstructorDTO instructor) {
-        Optional<User> alreadyExists = userService.findByEmail(instructor.getEmail());
+        Optional<User> alreadyExists = userService.findByEmail(instructor.getUser().getEmail());
 
         if(alreadyExists.isPresent()){
             throw new ResponseStatusException(
@@ -43,38 +44,36 @@ public class InstructorService {
             );
         }
 
-        User newUser = new User(
-                instructor.getFirstName(),
-                instructor.getLastName(),
-                instructor.getEmail(),
-                passwordEncrypt.encoder().encode(instructor.getPassword())
-        );
-        User savedUser = userService.saveUser(newUser);
-
-        Instructor newInstructor = new Instructor(
-                savedUser
+        User user = new User(
+                instructor.getUser().getFirstName(),
+                instructor.getUser().getLastName(),
+                instructor.getUser().getEmail(),
+                passwordEncrypt.encoder().encode(instructor.getUser().getPassword())
         );
 
+        Instructor newInstructor = new Instructor(user);
         Instructor instructorDb = instructorRepository.save(newInstructor);
-        return new ResponseInstructorDTO(
-                instructorDb.getUser().getId(),
-                instructorDb.getUser().getFirstName(),
-                instructorDb.getUser().getLastName(),
-                instructorDb.getUser().getEmail()
-        );
+
+        return mapToResponseInstructor(instructorDb);
     }
 
-    public Instructor getById(Long id) {
-        return instructorRepository.findById(id).orElseThrow(
+    public ResponseInstructorDTO getById(Long id) {
+        return mapToResponseInstructor(instructorRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "user not found"
                 )
-        );
+        ));
     }
 
-    public List<Instructor> getAll() {
-        return instructorRepository.findAll();
+    public List<ResponseInstructorDTO> getAll() {
+        List<Instructor> instructors = instructorRepository.findAll();
+        List<ResponseInstructorDTO> instructorsNoPassword = new ArrayList<>();
+
+        for (Instructor instructor : instructors) {
+            instructorsNoPassword.add(mapToResponseInstructor(instructor));
+        }
+        return instructorsNoPassword;
     }
 
     @Transactional
@@ -87,19 +86,16 @@ public class InstructorService {
         );
 
         User user = instructor.getUser();
-        user.setFirstName(instructorDTO.getFirstName());
-        user.setLastName(instructorDTO.getLastName());
-        user.setEmail(instructorDTO.getEmail());
+
+        user.setFirstName(instructorDTO.getUser().getFirstName());
+        user.setLastName(instructorDTO.getUser().getLastName());
+        user.setEmail(instructorDTO.getUser().getEmail());
 
         instructor.setUser(user);
 
-        instructorRepository.save(instructor);
-        return new ResponseInstructorDTO(
-                instructor.getId(),
-                instructor.getUser().getFirstName(),
-                instructor.getUser().getLastName(),
-                instructor.getUser().getEmail()
-        );
+        Instructor updatedInstructors = instructorRepository.save(instructor);
+
+        return mapToResponseInstructor(updatedInstructors);
     }
 
     @Transactional
@@ -120,10 +116,23 @@ public class InstructorService {
     }
 
     @Transactional
-    public List<Instructor> attributeInstructorsToClassroom(Classroom classroom, List<Instructor> instructors) {
+    public List<ResponseInstructorDTO> attributeInstructorsToClassroom(Classroom classroom, List<Instructor> instructors) {
         for (Instructor instructor : instructors) {
             instructor.setClassroom(classroom);
         }
-        return instructorRepository.saveAll(instructors);
+        List<Instructor> updatedInstructors = instructorRepository.saveAll(instructors);
+        List<ResponseInstructorDTO> instructorsNoPassword = new ArrayList<>();
+
+        for (Instructor instructor : updatedInstructors) {
+            instructorsNoPassword.add(mapToResponseInstructor(instructor));
+        }
+        return instructorsNoPassword;
+    }
+
+    public ResponseInstructorDTO mapToResponseInstructor(Instructor instructor) {
+        return new ResponseInstructorDTO(
+                instructor.getId(),
+                userService.mapToResponseUser(instructor.getUser())//, instructor.getClassroom()
+        );
     }
 }

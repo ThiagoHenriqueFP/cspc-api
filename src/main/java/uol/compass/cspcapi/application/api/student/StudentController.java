@@ -33,7 +33,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getById(@PathVariable Long id){
+    public ResponseEntity<ResponseStudentDTO> getById(@PathVariable Long id){
         return new ResponseEntity<>(
                 studentService.getById(id),
                 HttpStatus.OK
@@ -41,7 +41,7 @@ public class StudentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Student>> getAllStudents(){
+    public ResponseEntity<List<ResponseStudentDTO>> getAllStudents(){
         return new ResponseEntity<>(
                 studentService.getAll(),
                 HttpStatus.OK
@@ -60,15 +60,13 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> delete(@PathVariable Long id){
-        return new ResponseEntity<>(
-                studentService.delete(id),
-                HttpStatus.OK
-        );
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        studentService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping("/{studentId}/update-grades")
-    public ResponseEntity<Student> updateGradesFromStudent(@PathVariable Long studentId, @RequestBody UpdateStudentDTO studentDTO) {
+    public ResponseEntity<ResponseStudentDTO> updateGradesFromStudent(@PathVariable Long studentId, @RequestBody UpdateStudentDTO studentDTO) {
         return new ResponseEntity<>(studentService.updateGradesFromStudent(studentId, studentDTO), HttpStatus.OK);
     }
 

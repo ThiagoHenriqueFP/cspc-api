@@ -1,31 +1,23 @@
 package uol.compass.cspcapi.application.api.coordinator.dto;
 
+import uol.compass.cspcapi.application.api.user.dto.ResponseUserDTO;
+import uol.compass.cspcapi.domain.Squad.Squad;
+import uol.compass.cspcapi.domain.classroom.Classroom;
+
 public class ResponseCoordinatorDTO {
     private Long id;
-    private String userFirstName;
-    private String userLastName;
-    private String userEmail;
+    private ResponseUserDTO user;
 
-    public ResponseCoordinatorDTO(Long id, String userFirstName, String userLastName, String userEmail) {
+    public ResponseCoordinatorDTO(Long id, ResponseUserDTO user) {
         this.id = id;
-        this.userFirstName = userFirstName;
-        this.userLastName = userLastName;
-        this.userEmail = userEmail;
+        this.user = user;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getUserFirstName() {
-        return userFirstName;
-    }
-
-    public String getUserLastName() {
-        return userLastName;
-    }
-
-    public String getUserEmail() {
-        return userEmail;
+    public ResponseUserDTO getUser() {
+        return user;
     }
 }

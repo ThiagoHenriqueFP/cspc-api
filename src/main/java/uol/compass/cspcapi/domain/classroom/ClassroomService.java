@@ -59,7 +59,7 @@ public class ClassroomService {
             );
         }
 
-        Coordinator coordinator = coordinatorService.getById(coordinatorId);
+        Coordinator coordinator = coordinatorService.getByIdOriginal(coordinatorId);
 
         Classroom classroom = new Classroom(
                 classroomDTO.getTitle(),
@@ -217,7 +217,7 @@ public class ClassroomService {
 
         //classrooms.setTitle(classrooms.getTitle());
         classrooms.setTitle(classroomDTO.getTitle());
-        classrooms.setCoordinator(coordinatorService.getById(classroomDTO.getCoordinatorId()));
+        classrooms.setCoordinator(coordinatorService.getByIdOriginal(classroomDTO.getCoordinatorId()));
 
         Classroom updatedClassroom = classroomRepository.save(classrooms);
 
