@@ -48,6 +48,10 @@ public class Classroom {
         this.squads = squads;
     }
 
+    public Classroom(String title) {
+        this.title = title;
+    }
+
     public Long getId() {
         return id;
     }
