@@ -1,6 +1,7 @@
 package uol.compass.cspcapi.domain.student;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import uol.compass.cspcapi.application.api.student.dto.ResponseStudentDTO;
 
 import java.util.List;
 

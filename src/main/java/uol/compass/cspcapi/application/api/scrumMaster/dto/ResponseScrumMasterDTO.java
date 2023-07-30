@@ -1,31 +1,31 @@
 package uol.compass.cspcapi.application.api.scrumMaster.dto;
 
+import uol.compass.cspcapi.application.api.user.dto.ResponseUserDTO;
+import uol.compass.cspcapi.domain.classroom.Classroom;
+
 public class ResponseScrumMasterDTO {
     private Long id;
-    private String userFirstName;
-    private String userLastName;
-    private String userEmail;
+    private ResponseUserDTO user;
+    private Long classroomId;
 
-    public ResponseScrumMasterDTO(Long id, String userFirstName, String userLastName, String userEmail) {
+    public ResponseScrumMasterDTO() {}
+
+    public ResponseScrumMasterDTO(Long id, ResponseUserDTO user, Long classroomId) {
         this.id = id;
-        this.userFirstName = userFirstName;
-        this.userLastName = userLastName;
-        this.userEmail = userEmail;
+        this.user = user;
+        this.classroomId = classroomId;
     }
+
 
     public Long getId() {
         return id;
     }
 
-    public String getUserFirstName() {
-        return userFirstName;
+    public ResponseUserDTO getUser() {
+        return user;
     }
 
-    public String getUserLastName() {
-        return userLastName;
-    }
-
-    public String getUserEmail() {
-        return userEmail;
+    public Long getClassroomId() {
+        return classroomId;
     }
 }

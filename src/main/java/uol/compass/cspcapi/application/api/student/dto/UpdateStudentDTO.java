@@ -1,35 +1,51 @@
 package uol.compass.cspcapi.application.api.student.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import uol.compass.cspcapi.application.api.grade.dto.UpdateGradeDTO;
+import uol.compass.cspcapi.application.api.user.dto.UpdateUserDTO;
+import uol.compass.cspcapi.domain.Squad.Squad;
+import uol.compass.cspcapi.domain.classroom.Classroom;
 
 public class UpdateStudentDTO {
-    @NotBlank(message = "first name must not be empty")
-    @Min(value = 3, message = "first name must be greater than 3 letters")
-    private String firstName;
-    @NotBlank(message = "last name must not be empty")
-    @Min(value = 3, message = "last name must be greater than 3 letters")
-    private String lastName;
-    @NotBlank(message = "email name must not be empty")
-    @Email(message = "this field must be an email pattern")
-    private String email;
+    private UpdateGradeDTO grades;
 
-    public UpdateStudentDTO(String firstName, String lastName, String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
+    @NotBlank(message = "user must not be empty")
+    private UpdateUserDTO user;
+
+    private Squad squad;
+    private Classroom classroom;
+
+    public UpdateStudentDTO() {}
+
+    public UpdateStudentDTO(UpdateGradeDTO grades) {
+        this.grades = grades;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public UpdateStudentDTO(UpdateUserDTO user) {
+        this.user = user;
     }
 
-    public String getLastName() {
-        return lastName;
+    public UpdateStudentDTO(Squad squad) {
+        this.squad = squad;
     }
 
-    public String getEmail() {
-        return email;
+    public UpdateStudentDTO(Classroom classroom) {
+        this.classroom = classroom;
+    }
+
+    public UpdateGradeDTO getGrades() {
+        return grades;
+    }
+
+    public UpdateUserDTO getUser() {
+        return user;
+    }
+
+    public Squad getSquad() {
+        return squad;
+    }
+
+    public Classroom getClassroom() {
+        return classroom;
     }
 }

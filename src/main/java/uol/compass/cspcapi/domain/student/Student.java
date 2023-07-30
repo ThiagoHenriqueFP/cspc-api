@@ -4,13 +4,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import uol.compass.cspcapi.domain.Squad.Squad;
 import uol.compass.cspcapi.domain.classroom.Classroom;
+import uol.compass.cspcapi.domain.grade.Grade;
 import uol.compass.cspcapi.domain.user.User;
+
+import java.util.List;
 
 @Entity
 @Table(name = "students")
 public class Student {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Grade grades;
 
     @OneToOne(cascade = CascadeType.ALL)
     private User user;
@@ -25,14 +31,15 @@ public class Student {
     @JoinColumn(name = "classroom_id", referencedColumnName = "id")
     private Classroom classroom;
 
-//    @OneToMany(mappedBy = "users")
-//    private List<grade> grade;
+    public Student() {
+    }
 
     public Student(User user) {
         this.user = user;
     }
 
-    public Student() {
+    public Student(Grade grades) {
+        this.grades = grades;
     }
 
     public Long getId() {
@@ -67,13 +74,11 @@ public class Student {
         this.classroom = classroom;
     }
 
-    @Override
-    public String toString() {
-        return "Student{" +
-                "id=" + id +
-                ", user=" + user +
-                ", squad=" + squad +
-                ", classroom=" + classroom +
-                '}';
+    public Grade getGrades() {
+        return grades;
+    }
+
+    public void setGrades(Grade grades) {
+        this.grades = grades;
     }
 }
