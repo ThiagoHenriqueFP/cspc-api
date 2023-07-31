@@ -13,11 +13,18 @@ public class CreateInstructorDTO {
     public CreateInstructorDTO() {
     }
 
+    public CreateInstructorDTO(long id, User user) {
+    }
+
     public CreateInstructorDTO(User user) {
         this.user = user;
     }
 
     public User getUser() {
         return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
