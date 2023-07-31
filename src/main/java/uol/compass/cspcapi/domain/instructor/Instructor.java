@@ -22,11 +22,11 @@ public class Instructor {
     public Instructor() {
     }
 
-    public Instructor(User user) {
-        this.user = user;
+    public Instructor(long id, User user) {
     }
 
-    public Instructor(long l, User user) {
+    public Instructor(User user) {
+        this.user = user;
     }
 
     public Long getId() {
