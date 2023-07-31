@@ -30,7 +30,6 @@ public class ScrumMasterService {
     private final UserService userService;
     private final PasswordEncoder passwordEncrypt;
     private final RoleService roleService;
-    private final PasswordEncrypt passwordEncrypt;
 
     @Autowired
     public ScrumMasterService(ScrumMasterRepository scrumMasterRepository, UserService userService, PasswordEncoder passwordEncrypt, RoleService roleService) {

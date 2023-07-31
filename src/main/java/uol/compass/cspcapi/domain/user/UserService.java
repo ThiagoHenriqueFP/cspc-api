@@ -40,6 +40,21 @@ public class UserService {
         return mapToResponseUser(savedUser);
     }
 
+    public User saveUser(User user){
+        if(findByEmail(user.getEmail()).isPresent()){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "user already exists");
+        }
+         return userRepository.save(new User(
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                passwordEncoder.encoder().encode(user.getPassword())
+        ));
+
+    }
+
     public Optional<User> findByEmail(String email){
         return userRepository.findByEmail(email);
     }
