@@ -179,7 +179,7 @@ public class ClassroomService {
         List<Instructor> newInstructors = instructorService.getAllInstructorsById(classroomDTO.getGeneralUsersIds());
         instructors.addAll(newInstructors);
 
-        //instructorService.attributeInstructorsToClassroom(classroom, instructors);
+        instructorService.attributeInstructorsToClassroom(classroom, instructors);
         classroom.setInstructors(instructors);
         Classroom updatedClassroom = classroomRepository.save(classroom);
 

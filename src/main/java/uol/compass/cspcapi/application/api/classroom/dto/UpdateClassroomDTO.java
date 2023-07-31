@@ -26,6 +26,9 @@ public class UpdateClassroomDTO {
         this.generalUsersIds = generalUsersIds;
     }
 
+    public UpdateClassroomDTO() {
+    }
+
     public String getTitle() {
         return title;
     }
