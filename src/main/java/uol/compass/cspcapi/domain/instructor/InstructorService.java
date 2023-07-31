@@ -8,9 +8,6 @@ import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.instructor.dto.CreateInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.ResponseInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.UpdateInstructorDTO;
-import uol.compass.cspcapi.application.api.student.dto.ResponseStudentDTO;
-import uol.compass.cspcapi.application.api.user.dto.CreateUserDTO;
-import uol.compass.cspcapi.application.api.user.dto.ResponseUserDTO;
 import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.role.RoleService;
 import uol.compass.cspcapi.domain.user.User;
@@ -54,7 +51,7 @@ public class InstructorService {
                 instructor.getUser().getEmail(),
                 passwordEncrypt.encoder().encode(instructor.getUser().getPassword())
         );
-          
+
         user.getRoles().add(roleService.findRoleByName("ROLE_INSTRUCTOR"));
 
         Instructor newInstructor = new Instructor(user);
@@ -112,8 +109,15 @@ public class InstructorService {
     }
 
     public List<Instructor> getAllInstructorsById(List<Long> instructorsIds) {
-        return instructorRepository.findAllByIdIn(instructorsIds);
+        List<Instructor> instructors = instructorRepository.findAllByIdIn(instructorsIds);
+
+        if (instructors.size() != instructorsIds.size()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "One or more instructors not found");
+        }
+
+        return instructors;
     }
+
 
     @Transactional
     public List<ResponseInstructorDTO> attributeInstructorsToClassroom(Classroom classroom, List<Instructor> instructors) {

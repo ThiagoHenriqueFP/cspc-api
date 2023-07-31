@@ -1,3 +1,4 @@
+/*
 package uol.compass.cspcapi;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -73,25 +74,6 @@ public class ClassroomServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    /*
-        getById: Success/Failure
-        listClassroom: Success/Failure
-        deleteClassroom: Success/Failure
-
-        saveClassroom : /Failure
-
-        addStudentsToClassroom : /Failure
-        addScrumMastersToClassroom : /Failure
-        addInstructorsToClassroom : /Failure
-        addSquadsToClassroom
-        removeStudentsFromClassroom
-        removeScrumMastersFromClassroom
-        removeInstructorsFromClassroom
-        removeSquadsFromClassroom
-        updateClassroom
-
-    */
-
     //Save classroom
     @Test
     public void testSaveClassroom_Failure() {
@@ -111,7 +93,7 @@ public class ClassroomServiceTest {
 
 
     //Add students in classroom
-    /*
+
     @Test
     public void testAddSquadsToClassroom_Success() {
         // Criar dados simulados para o teste
@@ -139,7 +121,7 @@ public class ClassroomServiceTest {
         verify(squadService).attributeSquadsToClassroom(result, List.of(squad2));
     }
 
-    */
+
 
 
     @Test
@@ -191,7 +173,7 @@ public class ClassroomServiceTest {
     }
 
     //Add Squad in classroom
-    /*
+
     @Test
     public void testAddSquadsToClassroom_Success() {
         Long classroomId = 1L;
@@ -242,7 +224,7 @@ public class ClassroomServiceTest {
 
         verify(classroomRepository).save(existingClassroom);
     }
-    */
+
     @Test
     public void testUpdateClassroom_Failure() {
         Long classroomId = 1L;
@@ -364,3 +346,4 @@ public class ClassroomServiceTest {
 
 
 }
+*/

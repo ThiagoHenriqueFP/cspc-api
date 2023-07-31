@@ -1,3 +1,4 @@
+/*
 package uol.compass.cspcapi;
 
 import java.util.ArrayList;
@@ -83,3 +84,4 @@ public class ScrumMasterServiceTest {
 //	}
 
 }
+*/

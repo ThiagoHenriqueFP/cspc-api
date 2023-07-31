@@ -83,6 +83,28 @@ public class SquadService {
         );
 
         List<Student> toRemoveStudents = squad.getStudents();
+        if (toRemoveStudents != null) {
+            studentService.attributeStudentsToSquad(null, toRemoveStudents);
+
+            toRemoveStudents.removeIf(student -> true);
+            squad.setStudents(toRemoveStudents);
+        }
+
+        squadRepository.save(squad);
+        squadRepository.delete(squad);
+    }
+
+
+    /*
+    public void delete(Long id){
+        Squad squad = squadRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Squad not found"
+                )
+        );
+
+        List<Student> toRemoveStudents = squad.getStudents();
         studentService.attributeStudentsToSquad(null, toRemoveStudents);
 
         toRemoveStudents.removeIf(student -> true);
@@ -91,6 +113,7 @@ public class SquadService {
         squadRepository.save(squad);
         squadRepository.delete(squad);
     }
+    */
 
     @Transactional
     public ResponseSquadDTO addStudentsToSquad(Long squadId, UpdateSquadDTO squadDTO) {
