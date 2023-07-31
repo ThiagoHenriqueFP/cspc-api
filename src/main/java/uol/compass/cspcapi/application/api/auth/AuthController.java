@@ -58,7 +58,7 @@ public class AuthController {
     public ResponseEntity<?> saveAdminUser(@Valid @RequestBody CreateUserDTO createUserDTO){
         User user = new User(
                 createUserDTO.getFirstName(),
-                createUserDTO.getFirstName(),
+                createUserDTO.getLastName(),
                 createUserDTO.getEmail(),
                 createUserDTO.getPassword()
         );
