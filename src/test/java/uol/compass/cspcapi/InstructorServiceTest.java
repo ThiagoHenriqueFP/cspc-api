@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,8 +34,6 @@ public class InstructorServiceTest {
     @Mock
     private InstructorRepository instructorRepository;
 
-    @InjectMocks
-    private InstructorService instructorService;
 
     @Mock
     private UserService userService;
@@ -53,11 +52,17 @@ public class InstructorServiceTest {
     private PasswordEncoder passwordEncoder;
 
 
+    @InjectMocks
+    private InstructorService instructorService;
+
+
     @BeforeEach
     public void setup() {
-        userService = new UserService(userRepository, passwordEncoder);
-        instructorService = new InstructorService(instructorRepository, userService, passwordEncrypt, roleService);
+        /*userService = new UserService(userRepository, new PasswordEncoder());
+        instructorService = new InstructorService(instructorRepository, userService, new PasswordEncoder(), roleService);
         idList = new ArrayList<>();
+        */
+        MockitoAnnotations.initMocks(this);
     }
 
     private List<Long> idList;
@@ -75,8 +80,7 @@ public class InstructorServiceTest {
     //Save
     @Test
     public void testSave_Success() {
-        User user = new User("John", "Doe", "johndoe@compass.com", "senha");
-        CreateInstructorDTO instructor = new CreateInstructorDTO(user);
+        CreateInstructorDTO instructor = new CreateInstructorDTO(new User("John", "Doe", "johndoe@compass.com", "senha"));
         ResponseInstructorDTO response = instructorService.save(instructor);
         if (response != null) {
             idList.add(response.getId());
