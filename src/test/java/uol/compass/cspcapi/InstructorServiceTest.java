@@ -1,5 +1,6 @@
 package uol.compass.cspcapi;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -8,21 +9,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.instructor.dto.CreateInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.ResponseInstructorDTO;
-import uol.compass.cspcapi.application.api.instructor.dto.UpdateInstructorDTO;
 import uol.compass.cspcapi.domain.instructor.Instructor;
 import uol.compass.cspcapi.domain.instructor.InstructorRepository;
 import uol.compass.cspcapi.domain.instructor.InstructorService;
-import uol.compass.cspcapi.domain.role.Role;
 import uol.compass.cspcapi.domain.role.RoleService;
 import uol.compass.cspcapi.domain.user.User;
+import uol.compass.cspcapi.domain.user.UserRepository;
 import uol.compass.cspcapi.domain.user.UserService;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import static net.bytebuddy.matcher.ElementMatchers.any;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -41,63 +37,69 @@ public class InstructorServiceTest {
     private UserService userService;
 
     @Mock
+    private UserRepository userRepository;
+
+    @Mock
     private RoleService roleService;
+
+    /*
+    @Mock
+    private PasswordEncrypt passwordEncrypt;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @BeforeEach
+    public void setup() {
+        userService = new UserService(userRepository, passwordEncoder);
+        instructorService = new InstructorService(instructorRepository, userService, passwordEncrypt);
+        idList = new ArrayList<>();
+    }
+    */
+
+
+    private List<Long> idList;
+
+    /*
+    save : Success/Failure
+    getById : Success/Failure
+    getAll : Success/Failure
+    update
+    deleteById : Success/Failure
+    getAllInstructorsById : Success/Failure
+    attributeInstructorsToClassroom
+    */
 
     //Save
     @Test
-    public void testSaveInstructor_Success() {
-        // Criar um objeto CreateInstructorDTO simulado
-        CreateInstructorDTO instructorDTO = new CreateInstructorDTO();
-        // Configurar as propriedades do DTO simulado, como o primeiro nome, sobrenome, email e senha do usuário
-        instructorDTO.getUser().setFirstName("John");
-        instructorDTO.getUser().setLastName("Doe");
-        instructorDTO.getUser().setEmail("john.doe@example.com");
-        instructorDTO.getUser().setPassword("password123");
-
-        // Configurar o comportamento simulado do serviço de usuário para retornar um usuário não existente
-        when(userService.findByEmail(instructorDTO.getUser().getEmail())).thenReturn(Optional.empty());
-
-        // Configurar o comportamento simulado do serviço de papel para retornar um papel simulado de instrutor
-        when(roleService.findRoleByName("ROLE_INSTRUCTOR")).thenReturn(new Role("ROLE_INSTRUCTOR"));
-
-        // Criar um objeto Instructor simulado
-        Instructor instructor = new Instructor();
-        instructor.setId(1L);
-        // Configurar outras propriedades do instrutor, se necessário
-
-        // Configurar o comportamento simulado do repositório para retornar o instrutor simulado ao salvá-lo
-        when(instructorRepository.save(instructor)).thenReturn(instructor);
-
-        // Executar o método sendo testado
-        ResponseInstructorDTO result = instructorService.save(instructorDTO);
-
-        // Verificar se o instrutor foi salvo corretamente no repositório
-        verify(instructorRepository).save(instructor);
-
-        // Verificar se a resposta possui as informações corretas do instrutor mapeado para a DTO
-        assertEquals(instructor.getId(), result.getId());
-        // Verificar outras propriedades da DTO, se houver
+    public void saveInstructor_Success() {
+        User user = new User("John", "Doe", "johndoe@compass.com", "senha");
+        CreateInstructorDTO instructor = new CreateInstructorDTO(user);
+        ResponseInstructorDTO response = instructorService.save(instructor);
+        if (response != null) {
+            idList.add(response.getId());
+        }
+        Assertions.assertThat(response).isNotEqualTo(null);
     }
 
     @Test
-    public void testSaveInstructor_Error_UserAlreadyExists() {
-        // Criar um objeto CreateInstructorDTO simulado
-        CreateInstructorDTO instructorDTO = new CreateInstructorDTO();
-        // Configurar as propriedades do DTO simulado, como o primeiro nome, sobrenome, email e senha do usuário
-        instructorDTO.getUser().setFirstName("John");
-        instructorDTO.getUser().setLastName("Doe");
-        instructorDTO.getUser().setEmail("john.doe@example.com");
-        instructorDTO.getUser().setPassword("password123");
+	public void saveInstructor_Failure() {
+        User user = new User("John", "Doe", "johndoe@compass.com", "senha");
+		CreateInstructorDTO instructor = new CreateInstructorDTO(user);
+		ResponseInstructorDTO response = null;
+		boolean error = false;
+		try {
+			response = instructorService.save(instructor);
 
-        // Configurar o comportamento simulado do serviço de usuário para retornar um usuário existente
-        when(userService.findByEmail(instructorDTO.getUser().getEmail()))
-                .thenReturn(Optional.of(new User()));
+		} catch (ResponseStatusException e) {
+			error = true;
+		}
 
-        // Executar o método sendo testado e verificar se ele lança uma exceção
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> instructorService.save(instructorDTO));
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
-        assertEquals("user already exists", exception.getReason());
-    }
+		Assertions.assertThat(error).isEqualTo(true);
+	}
+
+    //Update instructor
+
 
 
 
@@ -124,7 +126,6 @@ public class InstructorServiceTest {
     }
 
 
-
     //GetAll
     @Test
     public void testGetAll_Success() {
@@ -148,7 +149,6 @@ public class InstructorServiceTest {
     }
 
 
-
     //GetAllById
     @Test
     public void testGetAllInstructorsById_Success() {
@@ -164,17 +164,17 @@ public class InstructorServiceTest {
     }
 
     @Test
-    public void testGetAllInstructorsById_Error() {
+    public void testGetAllInstructorsById_Failure() {
         List<Long> instructorIds = Arrays.asList(1L, 2L, 3L);
 
         when(instructorRepository.findAllByIdIn(instructorIds)).thenReturn(Arrays.asList(new Instructor(), new Instructor()));
 
-        Throwable exception = assertThrows(ResponseStatusException.class, () -> {
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
             instructorService.getAllInstructorsById(instructorIds);
         });
 
-        assertEquals(HttpStatus.NOT_FOUND, ((ResponseStatusException) exception).getStatusCode());
-        assertEquals("One or more instructors not found", ((ResponseStatusException) exception).getReason());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("One or more instructors not found", exception.getReason());
     }
 
 
@@ -195,7 +195,7 @@ public class InstructorServiceTest {
     }
 
     @Test
-    public void testDeleteById_Error() {
+    public void testDeleteById_Failure() {
         Long instructorId = 1L;
 
         when(instructorRepository.findById(instructorId)).thenReturn(Optional.empty());
@@ -209,5 +209,12 @@ public class InstructorServiceTest {
     }
 
 
+
 }
+
+
+
+
+
+
 

@@ -35,6 +35,9 @@ public class Squad {
         this.students = students;
     }
 
+    public Squad(long id, String name) {
+    }
+
     public Long getId() {
         return id;
     }
