@@ -1,6 +1,7 @@
 package uol.compass.cspcapi;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -16,6 +17,7 @@ import uol.compass.cspcapi.domain.role.RoleService;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserRepository;
 import uol.compass.cspcapi.domain.user.UserService;
+import uol.compass.cspcapi.infrastructure.config.passwordEncrypt.PasswordEncoder;
 
 import java.util.*;
 
@@ -42,20 +44,21 @@ public class InstructorServiceTest {
     @Mock
     private RoleService roleService;
 
-    /*
+
     @Mock
-    private PasswordEncrypt passwordEncrypt;
+    private PasswordEncoder passwordEncrypt;
 
     @Mock
     private PasswordEncoder passwordEncoder;
 
+
     @BeforeEach
     public void setup() {
         userService = new UserService(userRepository, passwordEncoder);
-        instructorService = new InstructorService(instructorRepository, userService, passwordEncrypt);
+        instructorService = new InstructorService(instructorRepository, userService, passwordEncrypt, roleService);
         idList = new ArrayList<>();
     }
-    */
+
 
 
     private List<Long> idList;
