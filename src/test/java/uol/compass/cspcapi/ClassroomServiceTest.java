@@ -28,6 +28,7 @@ import uol.compass.cspcapi.domain.student.StudentService;
 import uol.compass.cspcapi.domain.user.User;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
