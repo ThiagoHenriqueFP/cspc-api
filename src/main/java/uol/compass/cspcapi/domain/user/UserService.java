@@ -16,6 +16,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -40,19 +41,21 @@ public class UserService {
         return mapToResponseUser(savedUser);
     }
 
+    @Transactional
     public User saveUser(User user){
         if(findByEmail(user.getEmail()).isPresent()){
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "user already exists");
         }
-         return userRepository.save(new User(
+         User newUser = userRepository.save(new User(
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
                 passwordEncoder.encoder().encode(user.getPassword())
         ));
-
+        newUser.getRoles().addAll(user.getRoles());
+        return newUser;
     }
 
     public Optional<User> findByEmail(String email){

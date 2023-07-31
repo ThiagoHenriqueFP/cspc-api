@@ -21,11 +21,26 @@ public class CreateClassroomDTO {
         this.coordinatorId = coordinatorId;
     }
 
+    public CreateClassroomDTO(String title) {
+    }
+
+    public CreateClassroomDTO() {
+
+    }
+
     public String getTitle() {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public Long getCoordinatorId() {
         return coordinatorId;
+    }
+
+    public void setCoordinatorId(Long coordinatorId) {
+        this.coordinatorId = coordinatorId;
     }
 }

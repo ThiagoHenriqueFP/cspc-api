@@ -83,6 +83,28 @@ public class SquadService {
         );
 
         List<Student> toRemoveStudents = squad.getStudents();
+        if (toRemoveStudents != null) {
+            studentService.attributeStudentsToSquad(null, toRemoveStudents);
+
+            toRemoveStudents.removeIf(student -> true);
+            squad.setStudents(toRemoveStudents);
+        }
+
+        squadRepository.save(squad);
+        squadRepository.delete(squad);
+    }
+
+
+    /*
+    public void delete(Long id){
+        Squad squad = squadRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Squad not found"
+                )
+        );
+
+        List<Student> toRemoveStudents = squad.getStudents();
         studentService.attributeStudentsToSquad(null, toRemoveStudents);
 
         toRemoveStudents.removeIf(student -> true);
@@ -91,8 +113,27 @@ public class SquadService {
         squadRepository.save(squad);
         squadRepository.delete(squad);
     }
+    */
 
     @Transactional
+    public ResponseSquadDTO addStudentsToSquad(Long squadId, UpdateSquadDTO squadDTO) {
+        Squad squad = squadRepository.findById(squadId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Squad not found"));
+
+        // Cria uma cópia mutável da lista de estudantes do esquadrão
+        List<Student> students = new ArrayList<>(squad.getStudents());
+
+        List<Student> newStudents = studentService.getAllStudentsById(squadDTO.getStudentsIds());
+        students.addAll(newStudents);
+
+        studentService.attributeStudentsToSquad(squad, students);
+        squad.setStudents(students);
+        Squad updatedSquad = squadRepository.save(squad);
+
+        return mapToResponseSquad(updatedSquad);
+    }
+    /*
+ @Transactional
     public ResponseSquadDTO addStudentsToSquad(Long squadId, UpdateSquadDTO squadDTO) {
         Squad squad = squadRepository.findById(squadId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Squad not found"));
@@ -107,6 +148,8 @@ public class SquadService {
 
         return mapToResponseSquad(updatedSquad);
     }
+*/
+
 
     @Transactional
     public ResponseSquadDTO removeStudentsFromSquad(Long squadId, UpdateSquadDTO squadDTO) {
@@ -129,7 +172,13 @@ public class SquadService {
     }
 
     public List<Squad> getAllSquadsById(List<Long> squadsIds) {
-        return squadRepository.findAllByIdIn(squadsIds);
+        List<Squad> squads = squadRepository.findAllByIdIn(squadsIds);
+
+        if (squads.size() != squadsIds.size()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "One or more squads not found");
+        }
+
+        return squads;
     }
 
     @Transactional
@@ -137,7 +186,15 @@ public class SquadService {
         for (Squad squad : squads) {
             squad.setClassroom(classroom);
         }
-        return squadRepository.saveAll(squads);
+
+        List<Squad> updatedSquads;
+        try {
+            updatedSquads = squadRepository.saveAll(squads);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while saving squads");
+        }
+
+        return updatedSquads;
     }
 
     public ResponseSquadDTO mapToResponseSquad(Squad squad) {

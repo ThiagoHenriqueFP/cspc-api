@@ -28,11 +28,23 @@ public class UpdateSquadDTO {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public UpdateClassroomDTO getClassroom() {
         return classroom;
     }
 
+    public void setClassroom(UpdateClassroomDTO classroom) {
+        this.classroom = classroom;
+    }
+
     public List<Long> getStudentsIds() {
         return studentsIds;
+    }
+
+    public void setStudentsIds(List<Long> studentsIds) {
+        this.studentsIds = studentsIds;
     }
 }

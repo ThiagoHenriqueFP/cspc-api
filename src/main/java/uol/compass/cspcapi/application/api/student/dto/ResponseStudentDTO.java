@@ -18,6 +18,11 @@ public class ResponseStudentDTO {
         this.grades = grades;
     }
 
+    public ResponseStudentDTO(Long id, ResponseUserDTO user){
+        this.id = id;
+        this.user = user;
+    }
+
     public ResponseStudentDTO(Long id, ResponseUserDTO user, Grade grades, Long squadId, Long classroomId) {
         this.id = id;
         this.user = user;

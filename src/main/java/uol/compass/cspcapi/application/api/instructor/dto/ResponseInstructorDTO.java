@@ -19,6 +19,10 @@ public class ResponseInstructorDTO {
         this.classroomId = classroomId;
     }
 
+    public ResponseInstructorDTO() {
+
+    }
+
     public Long getId() {
         return id;
     }

@@ -45,4 +45,8 @@ public class UpdateClassroomDTO {
     public List<Long> getGeneralUsersIds() {
         return generalUsersIds;
     }
+
+    public void setGeneralUsersIds(List<Long> generalUsersIds) {
+        this.generalUsersIds = generalUsersIds;
+    }
 }

@@ -8,6 +8,8 @@ public class CreateSquadDTO {
     @Min(value = 3, message = "name must be greater than 3 letters")
     private String name;
 
+    private Long idClassroom;
+
     public CreateSquadDTO() {
     }
 
@@ -15,7 +17,24 @@ public class CreateSquadDTO {
         this.name = name;
     }
 
+    public CreateSquadDTO(String name, Long idClassroom) {
+        this.name = name;
+        this.idClassroom = idClassroom;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getIdClassroom() {
+        return idClassroom;
+    }
+
+    public void setIdClassroom(Long idClassroom) {
+        this.idClassroom = idClassroom;
     }
 }

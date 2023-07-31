@@ -42,6 +42,10 @@ public class Student {
         this.grades = grades;
     }
 
+    //For test
+    public Student(long id, String name) {
+    }
+
     public Long getId() {
         return id;
     }
