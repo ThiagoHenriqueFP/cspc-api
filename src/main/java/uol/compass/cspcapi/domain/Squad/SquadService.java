@@ -132,7 +132,7 @@ public class SquadService {
 
         return mapToResponseSquad(updatedSquad);
     }
-/*
+    /*
  @Transactional
     public ResponseSquadDTO addStudentsToSquad(Long squadId, UpdateSquadDTO squadDTO) {
         Squad squad = squadRepository.findById(squadId)

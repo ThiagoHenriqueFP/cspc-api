@@ -26,6 +26,9 @@ public class Instructor {
         this.user = user;
     }
 
+    public Instructor(long l, User user) {
+    }
+
     public Long getId() {
         return id;
     }

@@ -8,7 +8,6 @@ import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.instructor.dto.CreateInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.ResponseInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.UpdateInstructorDTO;
-import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.role.RoleService;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserService;
@@ -118,7 +117,7 @@ public class InstructorService {
         return instructors;
     }
 
-
+/*
     @Transactional
     public List<ResponseInstructorDTO> attributeInstructorsToClassroom(Classroom classroom, List<Instructor> instructors) {
         for (Instructor instructor : instructors) {
@@ -127,7 +126,7 @@ public class InstructorService {
         List<Instructor> updatedInstructors = instructorRepository.saveAll(instructors);
         return mapToResponseInstructors(updatedInstructors);
     }
-
+*/
     public ResponseInstructorDTO mapToResponseInstructor(Instructor instructor) {
         Long classroomId;
 

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.instructor.dto.CreateInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.ResponseInstructorDTO;
+import uol.compass.cspcapi.application.api.instructor.dto.UpdateInstructorDTO;
 import uol.compass.cspcapi.domain.instructor.Instructor;
 import uol.compass.cspcapi.domain.instructor.InstructorRepository;
 import uol.compass.cspcapi.domain.instructor.InstructorService;
@@ -59,8 +60,6 @@ public class InstructorServiceTest {
         idList = new ArrayList<>();
     }
 
-
-
     private List<Long> idList;
 
     /*
@@ -75,7 +74,7 @@ public class InstructorServiceTest {
 
     //Save
     @Test
-    public void saveInstructor_Success() {
+    public void testSave_Success() {
         User user = new User("John", "Doe", "johndoe@compass.com", "senha");
         CreateInstructorDTO instructor = new CreateInstructorDTO(user);
         ResponseInstructorDTO response = instructorService.save(instructor);
@@ -86,7 +85,7 @@ public class InstructorServiceTest {
     }
 
     @Test
-	public void saveInstructor_Failure() {
+	public void testSaveInstructor_Failure() {
         User user = new User("John", "Doe", "johndoe@compass.com", "senha");
 		CreateInstructorDTO instructor = new CreateInstructorDTO(user);
 		ResponseInstructorDTO response = null;
@@ -101,24 +100,72 @@ public class InstructorServiceTest {
 		Assertions.assertThat(error).isEqualTo(true);
 	}
 
+
     //Update instructor
+    @Test
+    public void testUpdate_Success() {
+        // Criar um objeto simulado do tipo UpdateInstructorDTO com as informações de atualização
+        UpdateInstructorDTO instructorDTO = new UpdateInstructorDTO( new User("John", "Doe", "johndoe@compass.com", "senha"));
+
+
+        // Criar um objeto simulado do tipo Instructor com ID 1
+        Instructor instructor = new Instructor(1L, new User("Jane", "Smith", "janesmith@compass.com", "password"));
+
+        // Configurar o comportamento simulado do instructorRepository.findById(1L) para retornar o instructor simulado
+        when(instructorRepository.findById(1L)).thenReturn(Optional.of(instructor));
+
+        // Executar o método sendo testado
+        ResponseInstructorDTO result = instructorService.update(1L, instructorDTO);
+
+        // Verificar se o instructor foi atualizado corretamente
+        assertEquals("John", instructor.getUser().getFirstName());
+        assertEquals("Doe", instructor.getUser().getLastName());
+        assertEquals("johndoe@compass.com", instructor.getUser().getEmail());
+
+        // Verificar se o método instructorRepository.save foi chamado corretamente
+        verify(instructorRepository).save(instructor);
+
+        // Verificar se o objeto ResponseInstructorDTO retornado possui as informações corretas do instructor atualizado
+        assertEquals(1L, result.getId());
+        assertEquals("John", result.getUser().getFirstName());
+        assertEquals("Doe", result.getUser().getLastName());
+        assertEquals("johndoe@compass.com", result.getUser().getEmail());
+    }
+
+    @Test
+    public void testUpdate_Failure() {
+        UpdateInstructorDTO instructorDTO = new UpdateInstructorDTO( new User("John", "Doe", "johndoe@compass.com", "senha"));
+
+        when(instructorRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class, () -> instructorService.update(1L, instructorDTO));
+    }
+
+
 
 
 
 
     //GetById
     @Test
-    public void testGetInstructorById_Success() {
-        Long instructorId = 1L;
-        Instructor instructor = new Instructor();
-        instructor.setId(instructorId);
-        when(instructorRepository.findById(instructorId)).thenReturn(Optional.of(instructor));
+    public void testGetById_Success() {
+        // Criar um objeto simulado do tipo Instructor com ID 1
+        Instructor instructor = new Instructor(1L, new User("John", "Doe", "johndoe@compass.com", "password"));
 
-        ResponseInstructorDTO result = instructorService.getById(instructorId);
 
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(instructorId);
+        // Configurar o comportamento simulado do instructorRepository.findById(1L) para retornar o instructor simulado
+        when(instructorRepository.findById(1L)).thenReturn(Optional.of(instructor));
+
+        // Executar o método sendo testado
+        ResponseInstructorDTO result = instructorService.getById(1L);
+
+        // Verificar se o objeto ResponseInstructorDTO retornado possui as informações corretas do instructor
+        assertEquals(instructor.getId(), result.getId());
+        assertEquals(instructor.getUser().getFirstName(), result.getUser().getFirstName());
+        assertEquals(instructor.getUser().getLastName(), result.getUser().getLastName());
+        assertEquals(instructor.getUser().getEmail(), result.getUser().getEmail());
     }
+
 
     @Test
     public void testGetInstructorById_Failure() {

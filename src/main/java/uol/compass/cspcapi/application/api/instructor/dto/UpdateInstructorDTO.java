@@ -9,6 +9,10 @@ public class UpdateInstructorDTO {
 
     public UpdateInstructorDTO() {}
 
+    public UpdateInstructorDTO(User user) {
+        this.user = user;
+    }
+
     public UpdateInstructorDTO(User user, Classroom classroom) {
         this.user = user;
         this.classroom = classroom;
@@ -18,7 +22,15 @@ public class UpdateInstructorDTO {
         return user;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public Classroom getClassroom() {
         return classroom;
+    }
+
+    public void setClassroom(Classroom classroom) {
+        this.classroom = classroom;
     }
 }

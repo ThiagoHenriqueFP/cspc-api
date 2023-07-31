@@ -117,8 +117,6 @@ public class ClassroomService {
         List<Student> toRemoveStudents = classroom.getStudents();
         studentService.attributeStudentsToClassroom(null, toRemoveStudents);
 
-        List<Instructor> toRemoveInstructors = classroom.getInstructors();
-        instructorService.attributeInstructorsToClassroom(null, toRemoveInstructors);
 
         List<ScrumMaster> toRemoveScrumMasters = classroom.getScrumMasters();
         scrumMasterService.attributeScrumMastersToClassroom(null, toRemoveScrumMasters);
@@ -127,9 +125,6 @@ public class ClassroomService {
         squadService.attributeSquadsToClassroom(null, toRemoveSquads);
 
         toRemoveStudents.removeIf(student -> true);
-        classroom.setStudents(toRemoveStudents);
-
-        toRemoveInstructors.removeIf(instructor -> true);
         classroom.setStudents(toRemoveStudents);
 
         toRemoveScrumMasters.removeIf(scrumMaster -> true);
@@ -184,7 +179,7 @@ public class ClassroomService {
         List<Instructor> newInstructors = instructorService.getAllInstructorsById(classroomDTO.getGeneralUsersIds());
         instructors.addAll(newInstructors);
 
-        instructorService.attributeInstructorsToClassroom(classroom, instructors);
+        //instructorService.attributeInstructorsToClassroom(classroom, instructors);
         classroom.setInstructors(instructors);
         Classroom updatedClassroom = classroomRepository.save(classroom);
 
@@ -262,7 +257,7 @@ public class ClassroomService {
         );
 
         List<Instructor> toRemoveInstructors = instructorService.getAllInstructorsById(classroomDTO.getGeneralUsersIds());
-        instructorService.attributeInstructorsToClassroom(null, toRemoveInstructors);
+        //instructorService.attributeInstructorsToClassroom(null, toRemoveInstructors);
 
         classroom.setInstructors(instructors);
         Classroom updatedClassroom = classroomRepository.save(classroom);
