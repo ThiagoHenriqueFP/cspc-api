@@ -29,11 +29,9 @@ public class Squad {
 
     public Squad(String name) {
         this.name = name;
-//        this.students = new ArrayList<>();
     }
 
-    public Squad(String name, List<Student> students) {
-        this.name = name;
+    public Squad(List<Student> students) {
         this.students = students;
     }
 

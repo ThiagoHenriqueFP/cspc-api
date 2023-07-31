@@ -4,8 +4,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
 public class CreateSquadDTO {
-    @NotBlank(message = "first name must not be empty")
-    @Min(value = 3, message = "first name must be greater than 3 letters")
+    @NotBlank(message = "name must not be empty")
+    @Min(value = 3, message = "name must be greater than 3 letters")
     private String name;
 
     private Long idClassroom;

@@ -1,6 +1,10 @@
 package uol.compass.cspcapi.domain.user;
 
 import jakarta.persistence.*;
+import uol.compass.cspcapi.domain.role.Role;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -12,10 +16,16 @@ public class User {
 
     private String lastName;
 
-    private String password;
-
     @Column(unique = true)
     private String email;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> roles = new ArrayList<>();
+    private String password;
 
     public User() {
     }
@@ -25,6 +35,14 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
     public Long getId() {
