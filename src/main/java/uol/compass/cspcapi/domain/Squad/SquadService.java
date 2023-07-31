@@ -88,7 +88,7 @@ public class SquadService {
         return squadRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "user not found"
+                        "Squad not found"
                 )
         );
     }
@@ -114,7 +114,6 @@ public class SquadService {
         Squad squad = squadRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Squad not found"));
 
-        //squad.setName(squad.getName());
         squad.setName(squadDTO.getName());
 
         Squad updatedSquad = squadRepository.save(squad);

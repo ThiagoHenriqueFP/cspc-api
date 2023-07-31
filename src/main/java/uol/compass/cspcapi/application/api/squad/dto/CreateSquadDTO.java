@@ -26,6 +26,10 @@ public class CreateSquadDTO {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Long getIdClassroom() {
         return idClassroom;
     }

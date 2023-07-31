@@ -26,6 +26,10 @@ public class UpdateClassroomDTO {
         this.generalUsersIds = generalUsersIds;
     }
 
+    public UpdateClassroomDTO() {
+
+    }
+
     public String getTitle() {
         return title;
     }
@@ -44,5 +48,8 @@ public class UpdateClassroomDTO {
 
     public List<Long> getGeneralUsersIds() {
         return generalUsersIds;
+    }
+
+    public void setGeneralUsersIds(List<Long> list) {
     }
 }
