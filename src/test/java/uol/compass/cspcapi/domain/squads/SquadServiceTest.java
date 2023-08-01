@@ -1,4 +1,4 @@
-package uol.compass.cspcapi;
+package uol.compass.cspcapi.domain.squads;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

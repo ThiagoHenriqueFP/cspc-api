@@ -1,4 +1,4 @@
-package uol.compass.cspcapi;
+package uol.compass.cspcapi.domain.classroom;
 
 
 import org.junit.jupiter.api.BeforeEach;
