@@ -215,43 +215,6 @@ public class ClassroomServiceTest {
         // Add more assertions as needed
     }
 
-//    @Test
-//    void testUpdateClassroom_ExistingClassroom() {
-//        // Dados de teste
-//        Long classroomId = 1L;
-//        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO("Updated Classroom", 2L);
-//
-//        Classroom existingClassroom = new Classroom("Classroom 101", new Coordinator());
-//        existingClassroom.setId(classroomId);
-//
-//        Coordinator updatedCoordinator = new Coordinator();
-//        updatedCoordinator.setId(classroomDTO.getCoordinatorId());
-//
-//        // Mock do repositório para retornar a sala de aula existente
-//        when(classroomRepository.findById(classroomId)).thenReturn(java.util.Optional.of(existingClassroom));
-//        when(classroomRepository.save(existingClassroom)).thenReturn(
-//                new Classroom(classroomDTO.getTitle(), classroomDTO.getCoordinatorId())
-//        );
-//
-//        // Mock do serviço de coordenador para retornar um coordenador atualizado com o ID fornecido
-//        when(coordinatorService.getByIdOriginal(classroomDTO.getCoordinatorId())).thenReturn(updatedCoordinator);
-//
-//        // Executando o método
-//        ResponseClassroomDTO result = classroomService.updateClassroom(classroomId, classroomDTO);
-//
-//        // Verificação
-//        verify(classroomRepository).findById(classroomId);
-//        verify(coordinatorService).getByIdOriginal(classroomDTO.getCoordinatorId());
-//        verify(classroomRepository).save(existingClassroom);
-//
-//        // Verifica se o resultado não é nulo
-//        assertNotNull(result);
-//
-//        // Verifica se o título e o coordenador da sala de aula no resultado foram atualizados corretamente
-//        assertEquals(classroomDTO.getTitle(), result.getTitle());
-//        assertEquals(classroomDTO.getCoordinatorId(), result.getCoordinator().getId());
-//    }
-
     @Test
     void testUpdateClassroom_NonExistingClassroom() {
         // Dados de teste
@@ -344,8 +307,8 @@ public class ClassroomServiceTest {
                 new Student(102L, "Jane"),
                 new Student(103L, "Smith")
         );
-        Classroom newClassroom = new Classroom();
-        newClassroom.setStudents(newStudents);
+//        Classroom newClassroom = new Classroom();
+//        newClassroom.setStudents(newStudents);
 
         // Mocking repository
         when(classroomRepository.findById(classroomId)).thenReturn(Optional.of(classroom));
@@ -614,31 +577,34 @@ public class ClassroomServiceTest {
 
         Classroom classroom = new Classroom();
         classroom.setId(classroomId);
-        List<Student> students = new ArrayList<>();
-        students.add(new Student(101L, "Alice"));
-        students.add(new Student(102L, "Bob"));
-        students.add(new Student(103L, "Charlie"));
-        students.add(new Student(104L, "David"));
-        classroom.setStudents(students);
+        classroom.setStudents(new ArrayList<>());
+
+        List<Student> students = List.of(
+                new Student(101L, "John"),
+                new Student(102L, "Jane"),
+                new Student(103L, "Smith"),
+                new Student(104L, "David")
+        );
+        classroom.getStudents().addAll(students);
 
         when(classroomRepository.findById(classroomId)).thenReturn(Optional.of(classroom));
+        when(classroomRepository.save(any(Classroom.class))).thenReturn(classroom);
+
         when(studentService.getAllStudentsById(classroomDTO.getGeneralUsersIds())).thenReturn(students.subList(0, 3));
 
         List<ResponseStudentDTO> responseStudents = List.of(
-                new ResponseStudentDTO(101L, new ResponseUserDTO(), new Grade(), null, null),
-                new ResponseStudentDTO(102L, new ResponseUserDTO(), new Grade(), null, null),
-                new ResponseStudentDTO(103L, new ResponseUserDTO(), new Grade(), null, null)
+                new ResponseStudentDTO(101L, new ResponseUserDTO(), new Grade(), null, null)
         );
 
         when(studentService.mapToResponseStudents(classroom.getStudents())).thenReturn(responseStudents);
 
         // Execução do método a ser testado
-        ResponseClassroomDTO result = classroomService.removeStudentsFromClassroom(classroomId, classroomDTO);
+        ResponseClassroomDTO response = classroomService.removeStudentsFromClassroom(classroomId, classroomDTO);
 
         // Verificação dos resultados esperados
-        assertNotNull(result);
-        assertEquals(1, result.getId());
-        assertEquals(1, result.getStudents().size());
+        assertNotNull(response);
+        assertEquals(1, response.getId());
+        assertEquals(1, response.getStudents().size());
 
         // Verificação das chamadas dos métodos simulados
         verify(classroomRepository, times(1)).findById(classroomId);
@@ -658,12 +624,310 @@ public class ClassroomServiceTest {
 
         // Execução do método a ser testado (deve lançar uma exceção)
         // classroomService.removeStudentsFromClassroom(classroomId, classroomDTO);
-        assertThrows(ResponseStatusException.class, () -> classroomService.addSquadsToClassroom(classroomId, classroomDTO));
+        assertThrows(ResponseStatusException.class, () -> classroomService.removeStudentsFromClassroom(classroomId, classroomDTO));
 
         // Verificação das chamadas dos métodos simulados
         verify(classroomRepository).findById(classroomId);
         verify(studentService, never()).getAllStudentsById(any());
         verify(studentService, never()).attributeStudentsToClassroom(any(), any());
         verify(classroomRepository, never()).save(any());
+    }
+
+    @Test
+    public void testRemoveScrumMastersFromClassroom_SuccessfulRemoval() {
+        // Criação de dados simulados
+        Long classroomId = 1L;
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
+        List<Long> scrumMastersIdsToRemove = Arrays.asList(101L, 102L, 103L);
+        classroomDTO.setGeneralUsersIds(scrumMastersIdsToRemove);
+
+        Classroom classroom = new Classroom();
+        classroom.setId(classroomId);
+        classroom.setScrumMasters(new ArrayList<>());
+
+        List<ScrumMaster> scrumMasters = List.of(
+                new ScrumMaster(101L, new User("John", "Fooley", "john.fooley@mail.com", "john.fooley")),
+                new ScrumMaster(102L, new User("Jane", "Smith", "jane.smith@mail.com", "jane.smith")),
+                new ScrumMaster(103L, new User("Smith", "Sutherland", "smith.sutherland@mail.com", "smith.sutherland")),
+                new ScrumMaster(104L, new User("David", "Homeland", "david.homeland@mail.com", "david.homeland"))
+        );
+        classroom.getScrumMasters().addAll(scrumMasters);
+
+        when(classroomRepository.findById(classroomId)).thenReturn(Optional.of(classroom));
+        when(classroomRepository.save(any(Classroom.class))).thenReturn(classroom);
+
+        when(scrumMasterService.getAllScrumMastersById(classroomDTO.getGeneralUsersIds())).thenReturn(scrumMasters.subList(0, 3));
+
+        List<ResponseScrumMasterDTO> responseScrumMasters = List.of(
+                new ResponseScrumMasterDTO(104L, new ResponseUserDTO(), 201L)
+        );
+
+        when(scrumMasterService.mapToResponseScrumMasters(classroom.getScrumMasters())).thenReturn(responseScrumMasters);
+
+        // Execução do método a ser testado
+        ResponseClassroomDTO response = classroomService.removeScrumMastersFromClassroom(classroomId, classroomDTO);
+
+        // Verificação dos resultados esperados
+        assertNotNull(response);
+        assertEquals(1, response.getId());
+        assertEquals(1, response.getScrumMasters().size());
+
+        // Verificação das chamadas dos métodos simulados
+        verify(classroomRepository, times(1)).findById(classroomId);
+        verify(scrumMasterService, times(1)).getAllScrumMastersById(classroomDTO.getGeneralUsersIds());
+        verify(scrumMasterService, times(1)).attributeScrumMastersToClassroom(eq(null), eq(scrumMasters.subList(0, 3)));
+        verify(classroomRepository, times(1)).save(classroom);
+    }
+
+    @Test
+    public void testRemoveScrumMastersFromClassroom_ClassroomNotFound() {
+        // Criação de dados simulados
+        Long classroomId = 1L;
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
+        classroomDTO.setGeneralUsersIds(Arrays.asList(1L, 2L, 3L));
+
+        when(classroomRepository.findById(classroomId)).thenReturn(java.util.Optional.empty());
+
+        // Execução do método a ser testado (deve lançar uma exceção)
+        // classroomService.removeStudentsFromClassroom(classroomId, classroomDTO);
+        assertThrows(ResponseStatusException.class, () -> classroomService.removeScrumMastersFromClassroom(classroomId, classroomDTO));
+
+        // Verificação das chamadas dos métodos simulados
+        verify(classroomRepository).findById(classroomId);
+        verify(scrumMasterService, never()).getAllScrumMastersById(any());
+        verify(scrumMasterService, never()).attributeScrumMastersToClassroom(any(), any());
+        verify(classroomRepository, never()).save(any());
+    }
+
+    @Test
+    public void testRemoveInstructorsFromClassroom_SuccessfulRemoval() {
+        // Criação de dados simulados
+        Long classroomId = 1L;
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
+        List<Long> instructorsIdsToRemove = Arrays.asList(101L, 102L, 103L);
+        classroomDTO.setGeneralUsersIds(instructorsIdsToRemove);
+
+        Classroom classroom = new Classroom();
+        classroom.setId(classroomId);
+        classroom.setInstructors(new ArrayList<>());
+
+        List<Instructor> instructors = List.of(
+                new Instructor(101L, new User("John", "Fooley", "john.fooley@mail.com", "john.fooley")),
+                new Instructor(102L, new User("Jane", "Smith", "jane.smith@mail.com", "jane.smith")),
+                new Instructor(103L, new User("Smith", "Sutherland", "smith.sutherland@mail.com", "smith.sutherland")),
+                new Instructor(104L, new User("David", "Homeland", "david.homeland@mail.com", "david.homeland"))
+        );
+        classroom.getInstructors().addAll(instructors);
+
+        when(classroomRepository.findById(classroomId)).thenReturn(Optional.of(classroom));
+        when(classroomRepository.save(any(Classroom.class))).thenReturn(classroom);
+
+        when(instructorService.getAllInstructorsById(classroomDTO.getGeneralUsersIds())).thenReturn(instructors.subList(0, 3));
+
+        List<ResponseInstructorDTO> responseInstructors = List.of(
+                new ResponseInstructorDTO(104L, new ResponseUserDTO(), 201L)
+        );
+
+        when(instructorService.mapToResponseInstructors(classroom.getInstructors())).thenReturn(responseInstructors);
+
+        // Execução do método a ser testado
+        ResponseClassroomDTO response = classroomService.removeInstructorsFromClassroom(classroomId, classroomDTO);
+
+        // Verificação dos resultados esperados
+        assertNotNull(response);
+        assertEquals(1, response.getId());
+        assertEquals(1, response.getInstructors().size());
+
+        // Verificação das chamadas dos métodos simulados
+        verify(classroomRepository, times(1)).findById(classroomId);
+        verify(instructorService, times(1)).getAllInstructorsById(classroomDTO.getGeneralUsersIds());
+        verify(instructorService, times(1)).attributeInstructorsToClassroom(eq(null), eq(instructors.subList(0, 3)));
+        verify(classroomRepository, times(1)).save(classroom);
+    }
+
+    @Test
+    public void testRemoveInstructorsFromClassroom_ClassroomNotFound() {
+        // Criação de dados simulados
+        Long classroomId = 1L;
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
+        classroomDTO.setGeneralUsersIds(Arrays.asList(1L, 2L, 3L));
+
+        when(classroomRepository.findById(classroomId)).thenReturn(java.util.Optional.empty());
+
+        // Execução do método a ser testado (deve lançar uma exceção)
+        // classroomService.removeStudentsFromClassroom(classroomId, classroomDTO);
+        assertThrows(ResponseStatusException.class, () -> classroomService.removeInstructorsFromClassroom(classroomId, classroomDTO));
+
+        // Verificação das chamadas dos métodos simulados
+        verify(classroomRepository).findById(classroomId);
+        verify(instructorService, never()).getAllInstructorsById(any());
+        verify(instructorService, never()).attributeInstructorsToClassroom(any(), any());
+        verify(classroomRepository, never()).save(any());
+    }
+
+    @Test
+    public void testRemoveSquadsFromClassroom_SuccessfulRemoval() {
+        // Criação de dados simulados
+        Long classroomId = 1L;
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
+        List<Long> squadsIdsToRemove = Arrays.asList(101L, 102L, 103L);
+        classroomDTO.setGeneralUsersIds(squadsIdsToRemove);
+
+        Classroom classroom = new Classroom();
+        classroom.setId(classroomId);
+        classroom.setSquads(new ArrayList<>());
+
+        List<Squad> squads = List.of(
+                new Squad(101L, "Springforce"),
+                new Squad(102L, "Modern Bugs"),
+                new Squad(103L, "Cyberchase"),
+                new Squad(104L, "Os JEDPS")
+        );
+        classroom.getSquads().addAll(squads);
+
+        when(classroomRepository.findById(classroomId)).thenReturn(Optional.of(classroom));
+        when(classroomRepository.save(any(Classroom.class))).thenReturn(classroom);
+
+        when(squadService.getAllSquadsById(classroomDTO.getGeneralUsersIds())).thenReturn(squads.subList(0, 3));
+
+        List<ResponseSquadDTO> responseSquads = List.of(
+                new ResponseSquadDTO(104L, "Os JEDPS")
+        );
+
+        when(squadService.mapToResponseSquads(classroom.getSquads())).thenReturn(responseSquads);
+
+        // Execução do método a ser testado
+        ResponseClassroomDTO response = classroomService.removeSquadsFromClassroom(classroomId, classroomDTO);
+
+        // Verificação dos resultados esperados
+        assertNotNull(response);
+        assertEquals(1, response.getId());
+        assertEquals(1, response.getSquads().size());
+
+        // Verificação das chamadas dos métodos simulados
+        verify(classroomRepository, times(1)).findById(classroomId);
+        verify(squadService, times(1)).getAllSquadsById(classroomDTO.getGeneralUsersIds());
+        verify(squadService, times(1)).attributeSquadsToClassroom(eq(null), eq(squads.subList(0, 3)));
+        verify(classroomRepository, times(1)).save(classroom);
+    }
+
+    @Test
+    public void testRemoveSquadsFromClassroom_ClassroomNotFound() {
+        // Criação de dados simulados
+        Long classroomId = 1L;
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
+        classroomDTO.setGeneralUsersIds(Arrays.asList(1L, 2L, 3L));
+
+        when(classroomRepository.findById(classroomId)).thenReturn(java.util.Optional.empty());
+
+        // Execução do método a ser testado (deve lançar uma exceção)
+        // classroomService.removeStudentsFromClassroom(classroomId, classroomDTO);
+        assertThrows(ResponseStatusException.class, () -> classroomService.removeSquadsFromClassroom(classroomId, classroomDTO));
+
+        // Verificação das chamadas dos métodos simulados
+        verify(classroomRepository).findById(classroomId);
+        verify(squadService, never()).getAllSquadsById(any());
+        verify(squadService, never()).attributeSquadsToClassroom(any(), any());
+        verify(classroomRepository, never()).save(any());
+    }
+
+    @Test
+    public void testMapToResponseClassroom_WithNullStudentsInstructorsScrumMastersAndSquads_ShouldMapToResponseClassroomDTOWithEmptyLists() {
+        // Arrange
+        Classroom classroom = new Classroom();
+        classroom.setId(1L);
+        classroom.setTitle("Sample Classroom");
+        classroom.setCoordinator(new Coordinator(new User("John", "Doe", "john.doe@mail.com", "john.doe")));
+
+        // Act
+        ResponseClassroomDTO responseClassroomDTO = classroomService.mapToResponseClassroom(classroom);
+
+        // Assert
+        assertNotNull(responseClassroomDTO);
+        assertEquals(1L, responseClassroomDTO.getId());
+        assertEquals("Sample Classroom", responseClassroomDTO.getTitle());
+        assertEquals("John", responseClassroomDTO.getCoordinator().getUser().getFirstName());
+        assertEquals("Doe", responseClassroomDTO.getCoordinator().getUser().getLastName());
+        assertEquals("john.doe@mail.com", responseClassroomDTO.getCoordinator().getUser().getEmail());
+        assertEquals("john.doe", responseClassroomDTO.getCoordinator().getUser().getPassword());
+        assertNotNull(responseClassroomDTO.getStudents());
+        assertTrue(responseClassroomDTO.getStudents().isEmpty());
+        assertNotNull(responseClassroomDTO.getInstructors());
+        assertTrue(responseClassroomDTO.getInstructors().isEmpty());
+        assertNotNull(responseClassroomDTO.getScrumMasters());
+        assertTrue(responseClassroomDTO.getScrumMasters().isEmpty());
+        assertNotNull(responseClassroomDTO.getSquads());
+        assertTrue(responseClassroomDTO.getSquads().isEmpty());
+    }
+
+    @Test
+    public void testMapToResponseClassroom_WithNonNullStudentsInstructorsScrumMastersAndSquads_ShouldMapToResponseClassroomDTOWithNonEmptyLists() {
+        // Arrange
+        Classroom classroom = new Classroom();
+        classroom.setId(2L);
+        classroom.setTitle("Another Classroom");
+        classroom.setCoordinator(new Coordinator(new User("John", "Doe", "john.doe@mail.com", "john.doe")));
+
+        List<Student> students = Arrays.asList(
+                new Student(new User("Virginia", "Montana", "virginia.montana@mail.com", "viginia.montana")),
+                new Student(new User("Bob", "Phill", "bob.phill@mail.com", "bob.phill"))
+        );
+        List<Instructor> instructors = Arrays.asList(
+                new Instructor(new User("Eve", "William", "eve.william@mail.com", "eve.william")),
+                new Instructor(new User("Michael", "Souza", "michael.souza@mail.com", "michael.souza"))
+        );
+        List<ScrumMaster> scrumMasters = Arrays.asList(
+                new ScrumMaster(new User("Oscar", "Potter", "oscar.pottter@mail.com", "oscar.pottter")),
+                new ScrumMaster(new User("Pamela", "Kratkovswky", "pamela.kratkovswky@mail.com", "pamela.kratkovswky"))
+        );
+        List<Squad> squads = Arrays.asList(new Squad(7L, "Squad A"), new Squad(8L, "Squad B"));
+
+        classroom.setStudents(students);
+        classroom.setInstructors(instructors);
+        classroom.setScrumMasters(scrumMasters);
+        classroom.setSquads(squads);
+
+        // Mock the behavior of the service mapping methods
+        when(studentService.mapToResponseStudents(students)).thenReturn(
+                Arrays.asList(
+                        new ResponseStudentDTO(1L, new ResponseUserDTO(1L, "Virginia", "Montana", "virginia.montana@mail.com")),
+                        new ResponseStudentDTO(2L, new ResponseUserDTO(2L, "Bob", "Phill", "bob.phill@mail.com"))
+                )
+        );
+
+        when(instructorService.mapToResponseInstructors(instructors)).thenReturn(
+                Arrays.asList(
+                        new ResponseInstructorDTO(3L, new ResponseUserDTO(3L, "Eve", "William", "eve.william@mail.com")),
+                        new ResponseInstructorDTO(4L, new ResponseUserDTO(4L, "Michael", "Souza", "michael.souza@mail.com"))
+                )
+        );
+
+        when(scrumMasterService.mapToResponseScrumMasters(scrumMasters)).thenReturn(
+                Arrays.asList(
+                        new ResponseScrumMasterDTO(5L, new ResponseUserDTO(5L, "Oscar", "Potter", "oscar.pottter@mail.com")),
+                        new ResponseScrumMasterDTO(6L, new ResponseUserDTO(6L, "Pamela", "Kratkovswky", "pamela.kratkovswky@mail.com"))
+                )
+        );
+
+        when(squadService.mapToResponseSquads(squads)).thenReturn(
+                Arrays.asList(new ResponseSquadDTO(7L, "Squad A"), new ResponseSquadDTO(8L, "Squad B"))
+        );
+
+        // Act
+        ResponseClassroomDTO responseClassroomDTO = classroomService.mapToResponseClassroom(classroom);
+
+        // Assert
+        assertNotNull(responseClassroomDTO);
+        assertEquals(2L, responseClassroomDTO.getId());
+        assertEquals("Another Classroom", responseClassroomDTO.getTitle());
+        assertEquals(classroom.getCoordinator(), responseClassroomDTO.getCoordinator());
+        assertNotNull(responseClassroomDTO.getStudents());
+        assertEquals(2, responseClassroomDTO.getStudents().size());
+        assertNotNull(responseClassroomDTO.getInstructors());
+        assertEquals(2, responseClassroomDTO.getInstructors().size());
+        assertNotNull(responseClassroomDTO.getScrumMasters());
+        assertEquals(2, responseClassroomDTO.getScrumMasters().size());
+        assertNotNull(responseClassroomDTO.getSquads());
+        assertEquals(2, responseClassroomDTO.getSquads().size());
     }
 }

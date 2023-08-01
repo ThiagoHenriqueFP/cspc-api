@@ -257,7 +257,7 @@ public class ClassroomService {
         );
 
         List<Instructor> toRemoveInstructors = instructorService.getAllInstructorsById(classroomDTO.getGeneralUsersIds());
-        //instructorService.attributeInstructorsToClassroom(null, toRemoveInstructors);
+        instructorService.attributeInstructorsToClassroom(null, toRemoveInstructors);
 
         classroom.setInstructors(instructors);
         Classroom updatedClassroom = classroomRepository.save(classroom);
