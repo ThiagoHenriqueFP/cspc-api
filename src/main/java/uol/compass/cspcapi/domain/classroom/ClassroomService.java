@@ -179,7 +179,7 @@ public class ClassroomService {
         List<Instructor> newInstructors = instructorService.getAllInstructorsById(classroomDTO.getGeneralUsersIds());
         instructors.addAll(newInstructors);
 
-        //instructorService.attributeInstructorsToClassroom(classroom, instructors);
+        instructorService.attributeInstructorsToClassroom(classroom, instructors);
         classroom.setInstructors(instructors);
         Classroom updatedClassroom = classroomRepository.save(classroom);
 
@@ -257,7 +257,7 @@ public class ClassroomService {
         );
 
         List<Instructor> toRemoveInstructors = instructorService.getAllInstructorsById(classroomDTO.getGeneralUsersIds());
-        //instructorService.attributeInstructorsToClassroom(null, toRemoveInstructors);
+        instructorService.attributeInstructorsToClassroom(null, toRemoveInstructors);
 
         classroom.setInstructors(instructors);
         Classroom updatedClassroom = classroomRepository.save(classroom);
@@ -301,7 +301,7 @@ public class ClassroomService {
         return new ResponseClassroomDTO(
                 classroom.getId(),
                 classroom.getTitle(),
-                classroom.getCoordinator(),
+                coordinatorService.mapToResponseCoordinator(classroom.getCoordinator()),
                 studentService.mapToResponseStudents(classroom.getStudents()),
                 instructorService.mapToResponseInstructors(classroom.getInstructors()),
                 scrumMasterService.mapToResponseScrumMasters(classroom.getScrumMasters()),

@@ -6,6 +6,9 @@ public class ResponseUserDTO {
     private String lastName;
     private String email;
 
+    public ResponseUserDTO() {
+    }
+
     public ResponseUserDTO(Long id, String firstName, String lastName, String email) {
         this.id = id;
         this.firstName = firstName;

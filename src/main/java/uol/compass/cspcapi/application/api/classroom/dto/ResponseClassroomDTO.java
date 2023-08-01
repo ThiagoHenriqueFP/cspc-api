@@ -1,5 +1,6 @@
 package uol.compass.cspcapi.application.api.classroom.dto;
 
+import uol.compass.cspcapi.application.api.coordinator.dto.ResponseCoordinatorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.ResponseInstructorDTO;
 import uol.compass.cspcapi.application.api.scrumMaster.dto.ResponseScrumMasterDTO;
 import uol.compass.cspcapi.application.api.squad.dto.ResponseSquadDTO;
@@ -13,7 +14,8 @@ public class ResponseClassroomDTO {
 
     private Long id;
     private String title;
-    private Coordinator coordinator;
+    //private Coordinator coordinator;
+    private ResponseCoordinatorDTO coordinator;
     private List<ResponseStudentDTO> students;
     private List<ResponseInstructorDTO> instructors;
     private List<ResponseScrumMasterDTO> scrumMasters;
@@ -22,7 +24,7 @@ public class ResponseClassroomDTO {
     public ResponseClassroomDTO() {
     }
 
-    public ResponseClassroomDTO(Long id, String title, Coordinator coordinator, List<ResponseStudentDTO> students, List<ResponseInstructorDTO> instructors, List<ResponseScrumMasterDTO> scrumMasters, List<ResponseSquadDTO> squads) {
+    public ResponseClassroomDTO(Long id, String title, ResponseCoordinatorDTO coordinator, List<ResponseStudentDTO> students, List<ResponseInstructorDTO> instructors, List<ResponseScrumMasterDTO> scrumMasters, List<ResponseSquadDTO> squads) {
         this.id = id;
         this.title = title;
         this.coordinator = coordinator;
@@ -40,7 +42,7 @@ public class ResponseClassroomDTO {
         return title;
     }
 
-    public Coordinator getCoordinator() {
+    public ResponseCoordinatorDTO getCoordinator() {
         return coordinator;
     }
 
