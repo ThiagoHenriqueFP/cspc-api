@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.classroom.dto.CreateClassroomDTO;
 import uol.compass.cspcapi.application.api.classroom.dto.ResponseClassroomDTO;
 import uol.compass.cspcapi.application.api.classroom.dto.UpdateClassroomDTO;
+import uol.compass.cspcapi.application.api.coordinator.dto.ResponseCoordinatorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.ResponseInstructorDTO;
 import uol.compass.cspcapi.application.api.scrumMaster.dto.ResponseScrumMasterDTO;
 import uol.compass.cspcapi.application.api.squad.dto.ResponseSquadDTO;
@@ -184,44 +185,40 @@ public class ClassroomServiceTest {
         assertEquals(classroom2.getId(), result.get(1).getId());
     }
 
-//    @Test
-//    public void testUpdateClassroom_Success() {
-//        // Mocking input data
-//        Long classroomId = 1L;
-//        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
-//        classroomDTO.setTitle("New Title");
-//        classroomDTO.setCoordinatorId(10L);
-//
-//        // Mocking the coordinator object
-//        Coordinator coordinator = new Coordinator(new User("John", "Doe", "john.doe@mail.com", "john.doe"));
-//        coordinator.setId(10L);
-//
-//        // Mocking the classroom object
-//        Classroom classroom = new Classroom();
-//        classroom.setId(classroomId);
-//        classroom.setTitle("Old Title");
-//        //classroom.setCoordinator(coordinator);
-//
-//        // Mocking repository behavior
-//        when(classroomRepository.findById(classroomId)).thenReturn(Optional.of(classroom));
-//        when(coordinatorService.getByIdOriginal(10L)).thenReturn(coordinator);
-//        when(classroomRepository.save(any())).thenReturn(classroom);
-//
-//        // Call the method under test
-//        ResponseClassroomDTO updatedClassroomDTO = classroomService.updateClassroom(classroomId, classroomDTO);
-//
-//        // Assertions
-//        assertEquals(classroomDTO.getTitle(), updatedClassroomDTO.getTitle());
-//
-//        System.out.println(updatedClassroomDTO);
-//        System.out.println(updatedClassroomDTO.getCoordinator());
-//        System.out.println(updatedClassroomDTO.getCoordinator().getId());
-//        System.out.println();
-//        System.out.println(classroomDTO);
-//        System.out.println(classroomDTO.getCoordinatorId());
-//        assertEquals(classroomDTO.getCoordinatorId(), updatedClassroomDTO.getCoordinator().getId());
-//        // Add more assertions as needed
-//    }
+    @Test
+    public void testUpdateClassroom_Success() {
+        // Mocking input data
+        Long classroomId = 1L;
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
+        classroomDTO.setTitle("New Title");
+        classroomDTO.setCoordinatorId(10L);
+
+        // Mocking the coordinator object
+        Coordinator coordinator = new Coordinator(new User("John", "Doe", "john.doe@mail.com", "john.doe"));
+        coordinator.setId(10L);
+
+        // Mocking the classroom object
+        Classroom classroom = new Classroom();
+        classroom.setId(classroomId);
+        classroom.setTitle("Old Title");
+        //classroom.setCoordinator(coordinator);
+
+        // Mocking repository behavior
+        when(classroomRepository.findById(classroomId)).thenReturn(Optional.of(classroom));
+        when(coordinatorService.getByIdOriginal(classroomDTO.getCoordinatorId())).thenReturn(coordinator);
+        when(classroomRepository.save(any(Classroom.class))).thenReturn(classroom);
+
+        // Mocking the mapping of students to response DTOs
+        ResponseCoordinatorDTO responseCoordinator = new ResponseCoordinatorDTO(10L, new ResponseUserDTO(10L, "John", "Doe", "john.doe@mail.com"));
+        when(coordinatorService.mapToResponseCoordinator(any(Coordinator.class))).thenReturn(responseCoordinator);
+
+        // Call the method under test
+        ResponseClassroomDTO response = classroomService.updateClassroom(classroomId, classroomDTO);
+
+        // Assertions
+        assertEquals(classroomDTO.getTitle(), response.getTitle());
+        assertEquals(classroomDTO.getCoordinatorId(), response.getCoordinator().getId());
+    }
 
     @Test
     void testUpdateClassroom_NonExistingClassroom() {
@@ -315,8 +312,6 @@ public class ClassroomServiceTest {
                 new Student(102L, "Jane"),
                 new Student(103L, "Smith")
         );
-//        Classroom newClassroom = new Classroom();
-//        newClassroom.setStudents(newStudents);
 
         // Mocking repository
         when(classroomRepository.findById(classroomId)).thenReturn(Optional.of(classroom));
@@ -839,102 +834,118 @@ public class ClassroomServiceTest {
         verify(classroomRepository, never()).save(any());
     }
 
-//    @Test
-//    public void testMapToResponseClassroom_WithNullStudentsInstructorsScrumMastersAndSquads_ShouldMapToResponseClassroomDTOWithEmptyLists() {
-//        // Arrange
-//        Classroom classroom = new Classroom();
-//        classroom.setId(1L);
-//        classroom.setTitle("Sample Classroom");
-//        classroom.setCoordinator(new Coordinator(new User("John", "Doe", "john.doe@mail.com", "john.doe")));
-//
-//        // Act
-//        ResponseClassroomDTO responseClassroomDTO = classroomService.mapToResponseClassroom(classroom);
-//
-//        // Assert
-//        assertNotNull(responseClassroomDTO);
-//        assertEquals(1L, responseClassroomDTO.getId());
-//        assertEquals("Sample Classroom", responseClassroomDTO.getTitle());
-//        assertEquals("John", responseClassroomDTO.getCoordinator().getUser().getFirstName());
-//        assertEquals("Doe", responseClassroomDTO.getCoordinator().getUser().getLastName());
-//        assertEquals("john.doe@mail.com", responseClassroomDTO.getCoordinator().getUser().getEmail());
-//        assertNotNull(responseClassroomDTO.getStudents());
-//        assertTrue(responseClassroomDTO.getStudents().isEmpty());
-//        assertNotNull(responseClassroomDTO.getInstructors());
-//        assertTrue(responseClassroomDTO.getInstructors().isEmpty());
-//        assertNotNull(responseClassroomDTO.getScrumMasters());
-//        assertTrue(responseClassroomDTO.getScrumMasters().isEmpty());
-//        assertNotNull(responseClassroomDTO.getSquads());
-//        assertTrue(responseClassroomDTO.getSquads().isEmpty());
-//    }
-//
-//    @Test
-//    public void testMapToResponseClassroom_WithNonNullStudentsInstructorsScrumMastersAndSquads_ShouldMapToResponseClassroomDTOWithNonEmptyLists() {
-//        // Arrange
-//        Classroom classroom = new Classroom();
-//        classroom.setId(2L);
-//        classroom.setTitle("Another Classroom");
-//        classroom.setCoordinator(new Coordinator(new User("John", "Doe", "john.doe@mail.com", "john.doe")));
-//
-//        List<Student> students = Arrays.asList(
-//                new Student(new User("Virginia", "Montana", "virginia.montana@mail.com", "viginia.montana")),
-//                new Student(new User("Bob", "Phill", "bob.phill@mail.com", "bob.phill"))
-//        );
-//        List<Instructor> instructors = Arrays.asList(
-//                new Instructor(new User("Eve", "William", "eve.william@mail.com", "eve.william")),
-//                new Instructor(new User("Michael", "Souza", "michael.souza@mail.com", "michael.souza"))
-//        );
-//        List<ScrumMaster> scrumMasters = Arrays.asList(
-//                new ScrumMaster(new User("Oscar", "Potter", "oscar.pottter@mail.com", "oscar.pottter")),
-//                new ScrumMaster(new User("Pamela", "Kratkovswky", "pamela.kratkovswky@mail.com", "pamela.kratkovswky"))
-//        );
-//        List<Squad> squads = Arrays.asList(new Squad(7L, "Squad A"), new Squad(8L, "Squad B"));
-//
-//        classroom.setStudents(students);
-//        classroom.setInstructors(instructors);
-//        classroom.setScrumMasters(scrumMasters);
-//        classroom.setSquads(squads);
-//
-//        // Mock the behavior of the service mapping methods
-//        when(studentService.mapToResponseStudents(students)).thenReturn(
-//                Arrays.asList(
-//                        new ResponseStudentDTO(1L, new ResponseUserDTO(1L, "Virginia", "Montana", "virginia.montana@mail.com")),
-//                        new ResponseStudentDTO(2L, new ResponseUserDTO(2L, "Bob", "Phill", "bob.phill@mail.com"))
-//                )
-//        );
-//
-//        when(instructorService.mapToResponseInstructors(instructors)).thenReturn(
-//                Arrays.asList(
-//                        new ResponseInstructorDTO(3L, new ResponseUserDTO(3L, "Eve", "William", "eve.william@mail.com")),
-//                        new ResponseInstructorDTO(4L, new ResponseUserDTO(4L, "Michael", "Souza", "michael.souza@mail.com"))
-//                )
-//        );
-//
-//        when(scrumMasterService.mapToResponseScrumMasters(scrumMasters)).thenReturn(
-//                Arrays.asList(
-//                        new ResponseScrumMasterDTO(5L, new ResponseUserDTO(5L, "Oscar", "Potter", "oscar.pottter@mail.com")),
-//                        new ResponseScrumMasterDTO(6L, new ResponseUserDTO(6L, "Pamela", "Kratkovswky", "pamela.kratkovswky@mail.com"))
-//                )
-//        );
-//
-//        when(squadService.mapToResponseSquads(squads)).thenReturn(
-//                Arrays.asList(new ResponseSquadDTO(7L, "Squad A"), new ResponseSquadDTO(8L, "Squad B"))
-//        );
-//
-//        // Act
-//        ResponseClassroomDTO responseClassroomDTO = classroomService.mapToResponseClassroom(classroom);
-//
-//        // Assert
-//        assertNotNull(responseClassroomDTO);
-//        assertEquals(2L, responseClassroomDTO.getId());
-//        assertEquals("Another Classroom", responseClassroomDTO.getTitle());
-//        assertEquals(classroom.getCoordinator(), responseClassroomDTO.getCoordinator());
-//        assertNotNull(responseClassroomDTO.getStudents());
-//        assertEquals(2, responseClassroomDTO.getStudents().size());
-//        assertNotNull(responseClassroomDTO.getInstructors());
-//        assertEquals(2, responseClassroomDTO.getInstructors().size());
-//        assertNotNull(responseClassroomDTO.getScrumMasters());
-//        assertEquals(2, responseClassroomDTO.getScrumMasters().size());
-//        assertNotNull(responseClassroomDTO.getSquads());
-//        assertEquals(2, responseClassroomDTO.getSquads().size());
-//    }
+    @Test
+    public void testMapToResponseClassroom_WithNullStudentsInstructorsScrumMastersAndSquads_ShouldMapToResponseClassroomDTOWithEmptyLists() {
+        // Arrange
+        Classroom classroom = new Classroom();
+        classroom.setId(1L);
+        classroom.setTitle("Sample Classroom");
+        classroom.setCoordinator(new Coordinator(new User("John", "Doe", "john.doe@mail.com", "john.doe")));
+
+        when(coordinatorService.mapToResponseCoordinator(any(Coordinator.class))).thenReturn(
+                new ResponseCoordinatorDTO(1L, new ResponseUserDTO(1L, "John", "Doe", "john.doe@mail.com"))
+        );
+
+        // Act
+        ResponseClassroomDTO responseClassroomDTO = classroomService.mapToResponseClassroom(classroom);
+
+        // Assert
+        assertNotNull(responseClassroomDTO);
+        assertEquals(1L, responseClassroomDTO.getId());
+        assertEquals("Sample Classroom", responseClassroomDTO.getTitle());
+        assertEquals("John", responseClassroomDTO.getCoordinator().getUser().getFirstName());
+        assertEquals("Doe", responseClassroomDTO.getCoordinator().getUser().getLastName());
+        assertEquals("john.doe@mail.com", responseClassroomDTO.getCoordinator().getUser().getEmail());
+        assertNotNull(responseClassroomDTO.getStudents());
+        assertTrue(responseClassroomDTO.getStudents().isEmpty());
+        assertNotNull(responseClassroomDTO.getInstructors());
+        assertTrue(responseClassroomDTO.getInstructors().isEmpty());
+        assertNotNull(responseClassroomDTO.getScrumMasters());
+        assertTrue(responseClassroomDTO.getScrumMasters().isEmpty());
+        assertNotNull(responseClassroomDTO.getSquads());
+        assertTrue(responseClassroomDTO.getSquads().isEmpty());
+    }
+
+    @Test
+    public void testMapToResponseClassroom_WithNonNullStudentsInstructorsScrumMastersAndSquads_ShouldMapToResponseClassroomDTOWithNonEmptyLists() {
+        // Arrange
+        Classroom classroom = new Classroom();
+        classroom.setId(2L);
+        classroom.setTitle("Another Classroom");
+        Coordinator coordinator = new Coordinator(new User("John", "Doe", "john.doe@mail.com", "john.doe"));
+        classroom.setCoordinator(coordinator);
+
+        ResponseCoordinatorDTO responseCoordinatorDTO = new ResponseCoordinatorDTO(coordinator.getId(),
+                new ResponseUserDTO(
+                        coordinator.getUser().getId(),
+                        coordinator.getUser().getFirstName(),
+                        coordinator.getUser().getLastName(),
+                        coordinator.getUser().getEmail()
+                )
+        );
+
+        List<Student> students = Arrays.asList(
+                new Student(new User("Virginia", "Montana", "virginia.montana@mail.com", "viginia.montana")),
+                new Student(new User("Bob", "Phill", "bob.phill@mail.com", "bob.phill"))
+        );
+        List<Instructor> instructors = Arrays.asList(
+                new Instructor(new User("Eve", "William", "eve.william@mail.com", "eve.william")),
+                new Instructor(new User("Michael", "Souza", "michael.souza@mail.com", "michael.souza"))
+        );
+        List<ScrumMaster> scrumMasters = Arrays.asList(
+                new ScrumMaster(new User("Oscar", "Potter", "oscar.pottter@mail.com", "oscar.pottter")),
+                new ScrumMaster(new User("Pamela", "Kratkovswky", "pamela.kratkovswky@mail.com", "pamela.kratkovswky"))
+        );
+        List<Squad> squads = Arrays.asList(new Squad(7L, "Squad A"), new Squad(8L, "Squad B"));
+
+        classroom.setStudents(students);
+        classroom.setInstructors(instructors);
+        classroom.setScrumMasters(scrumMasters);
+        classroom.setSquads(squads);
+
+        // Mock the behavior of the service mapping methods
+        when(coordinatorService.mapToResponseCoordinator(any(Coordinator.class))).thenReturn(responseCoordinatorDTO);
+
+        when(studentService.mapToResponseStudents(students)).thenReturn(
+                Arrays.asList(
+                        new ResponseStudentDTO(1L, new ResponseUserDTO(1L, "Virginia", "Montana", "virginia.montana@mail.com")),
+                        new ResponseStudentDTO(2L, new ResponseUserDTO(2L, "Bob", "Phill", "bob.phill@mail.com"))
+                )
+        );
+
+        when(instructorService.mapToResponseInstructors(instructors)).thenReturn(
+                Arrays.asList(
+                        new ResponseInstructorDTO(3L, new ResponseUserDTO(3L, "Eve", "William", "eve.william@mail.com")),
+                        new ResponseInstructorDTO(4L, new ResponseUserDTO(4L, "Michael", "Souza", "michael.souza@mail.com"))
+                )
+        );
+
+        when(scrumMasterService.mapToResponseScrumMasters(scrumMasters)).thenReturn(
+                Arrays.asList(
+                        new ResponseScrumMasterDTO(5L, new ResponseUserDTO(5L, "Oscar", "Potter", "oscar.pottter@mail.com")),
+                        new ResponseScrumMasterDTO(6L, new ResponseUserDTO(6L, "Pamela", "Kratkovswky", "pamela.kratkovswky@mail.com"))
+                )
+        );
+
+        when(squadService.mapToResponseSquads(squads)).thenReturn(
+                Arrays.asList(new ResponseSquadDTO(7L, "Squad A"), new ResponseSquadDTO(8L, "Squad B"))
+        );
+
+        // Act
+        ResponseClassroomDTO responseClassroomDTO = classroomService.mapToResponseClassroom(classroom);
+
+        // Assert
+        assertNotNull(responseClassroomDTO);
+        assertEquals(2L, responseClassroomDTO.getId());
+        assertEquals("Another Classroom", responseClassroomDTO.getTitle());
+        assertEquals(classroom.getCoordinator().getUser().getEmail(), responseClassroomDTO.getCoordinator().getUser().getEmail());
+        assertNotNull(responseClassroomDTO.getStudents());
+        assertEquals(2, responseClassroomDTO.getStudents().size());
+        assertNotNull(responseClassroomDTO.getInstructors());
+        assertEquals(2, responseClassroomDTO.getInstructors().size());
+        assertNotNull(responseClassroomDTO.getScrumMasters());
+        assertEquals(2, responseClassroomDTO.getScrumMasters().size());
+        assertNotNull(responseClassroomDTO.getSquads());
+        assertEquals(2, responseClassroomDTO.getSquads().size());
+    }
 }

@@ -123,10 +123,10 @@ public class CoordinatorService {
         coordinatorRepository.delete(coordinator);
     }
 
-    public ResponseCoordinatorDTO mapToResponseCoordinator(Coordinator coordinatorDb) {
+    public ResponseCoordinatorDTO mapToResponseCoordinator(Coordinator coordinator) {
         return new ResponseCoordinatorDTO(
-                coordinatorDb.getId(),
-                userService.mapToResponseUser(coordinatorDb.getUser())
+                coordinator.getId(),
+                userService.mapToResponseUser(coordinator.getUser())
         );
     }
 }
