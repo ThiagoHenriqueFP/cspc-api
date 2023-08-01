@@ -123,7 +123,7 @@ public class CoordinatorService {
         coordinatorRepository.delete(coordinator);
     }
 
-    private ResponseCoordinatorDTO mapToResponseCoordinator(Coordinator coordinatorDb) {
+    public ResponseCoordinatorDTO mapToResponseCoordinator(Coordinator coordinatorDb) {
         return new ResponseCoordinatorDTO(
                 coordinatorDb.getId(),
                 userService.mapToResponseUser(coordinatorDb.getUser())

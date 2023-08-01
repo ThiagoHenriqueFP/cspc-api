@@ -301,7 +301,7 @@ public class ClassroomService {
         return new ResponseClassroomDTO(
                 classroom.getId(),
                 classroom.getTitle(),
-                classroom.getCoordinator(),
+                coordinatorService.mapToResponseCoordinator(classroom.getCoordinator()),
                 studentService.mapToResponseStudents(classroom.getStudents()),
                 instructorService.mapToResponseInstructors(classroom.getInstructors()),
                 scrumMasterService.mapToResponseScrumMasters(classroom.getScrumMasters()),
