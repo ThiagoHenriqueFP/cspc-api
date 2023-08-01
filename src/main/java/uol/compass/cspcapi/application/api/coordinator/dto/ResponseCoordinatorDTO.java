@@ -20,4 +20,12 @@ public class ResponseCoordinatorDTO {
     public ResponseUserDTO getUser() {
         return user;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUser(ResponseUserDTO user) {
+        this.user = user;
+    }
 }

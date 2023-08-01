@@ -61,4 +61,32 @@ public class ResponseClassroomDTO {
     public List<ResponseSquadDTO> getSquads() {
         return squads;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setCoordinator(ResponseCoordinatorDTO coordinator) {
+        this.coordinator = coordinator;
+    }
+
+    public void setStudents(List<ResponseStudentDTO> students) {
+        this.students = students;
+    }
+
+    public void setInstructors(List<ResponseInstructorDTO> instructors) {
+        this.instructors = instructors;
+    }
+
+    public void setScrumMasters(List<ResponseScrumMasterDTO> scrumMasters) {
+        this.scrumMasters = scrumMasters;
+    }
+
+    public void setSquads(List<ResponseSquadDTO> squads) {
+        this.squads = squads;
+    }
 }
