@@ -24,6 +24,7 @@ import uol.compass.cspcapi.domain.classroom.ClassroomService;
 import uol.compass.cspcapi.domain.coordinator.Coordinator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -453,5 +454,177 @@ public class ClassroomControllerTest {
         // Performing the test and verifying the exception
         assertThrows(ResponseStatusException.class,
                 () -> classroomController.addSquadsToClassroom(classroomId, classroomDTO));
+    }
+
+    @Test
+    public void testRemoveStudentsFromClassroom_Success() {
+        // Mocking the behavior of the ClassroomService.removeStudentsFromClassroom method for success scenario
+        Long classroomId = 1L;
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
+        classroomDTO.setGeneralUsersIds(List.of(101L, 102L, 103L));
+
+        ResponseClassroomDTO responseClassroomDTO = new ResponseClassroomDTO();
+        responseClassroomDTO.setId(classroomId);
+        responseClassroomDTO.setTitle("Math Class");
+        responseClassroomDTO.setCoordinator(RESPONSE_COORDINATOR_3);
+        responseClassroomDTO.setStudents(Collections.emptyList()); // Classroom with no students after removal
+
+        when(classroomService.removeStudentsFromClassroom(anyLong(), any(UpdateClassroomDTO.class)))
+                .thenReturn(responseClassroomDTO);
+
+        // Performing the test
+        ResponseEntity<ResponseClassroomDTO> responseEntity =
+                classroomController.removeStudentsFromClassroom(classroomId, classroomDTO);
+
+        // Asserting the response status code and the returned ResponseClassroomDTO object
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(classroomId, responseEntity.getBody().getId());
+        assertEquals("Math Class", responseEntity.getBody().getTitle());
+        assertEquals(3L, responseEntity.getBody().getCoordinator().getId());
+        assertEquals(Collections.emptyList(), responseEntity.getBody().getStudents());
+    }
+
+    @Test
+    public void testRemoveStudentsFromClassroom_ClassroomNotFound() {
+        // Mocking the behavior of the ClassroomService.removeStudentsFromClassroom method for scenario where classroom is not found
+        Long classroomId = 999L;
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
+        classroomDTO.setGeneralUsersIds(List.of(101L, 102L, 103L));
+
+        when(classroomService.removeStudentsFromClassroom(anyLong(), any(UpdateClassroomDTO.class)))
+                .thenThrow(ResponseStatusException.class);
+
+        // Performing the test and verifying the exception
+        assertThrows(ResponseStatusException.class,
+                () -> classroomController.removeStudentsFromClassroom(classroomId, classroomDTO));
+    }
+
+    @Test
+    public void testRemoveScrumMastersFromClassroom_Success() {
+        // Mocking the behavior of the ClassroomService.removeStudentsFromClassroom method for success scenario
+        Long classroomId = 1L;
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
+        classroomDTO.setGeneralUsersIds(List.of(101L, 102L, 103L));
+
+        ResponseClassroomDTO responseClassroomDTO = new ResponseClassroomDTO();
+        responseClassroomDTO.setId(classroomId);
+        responseClassroomDTO.setTitle("Math Class");
+        responseClassroomDTO.setCoordinator(RESPONSE_COORDINATOR_3);
+        responseClassroomDTO.setScrumMasters(Collections.emptyList());
+
+        when(classroomService.removeScrumMastersFromClassroom(anyLong(), any(UpdateClassroomDTO.class)))
+                .thenReturn(responseClassroomDTO);
+
+        // Performing the test
+        ResponseEntity<ResponseClassroomDTO> responseEntity =
+                classroomController.removeScrumMastersFromClassroom(classroomId, classroomDTO);
+
+        // Asserting the response status code and the returned ResponseClassroomDTO object
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(classroomId, responseEntity.getBody().getId());
+        assertEquals("Math Class", responseEntity.getBody().getTitle());
+        assertEquals(3L, responseEntity.getBody().getCoordinator().getId());
+        assertEquals(Collections.emptyList(), responseEntity.getBody().getScrumMasters());
+    }
+
+    @Test
+    public void testRemoveScrumMastersFromClassroom_ClassroomNotFound() {
+        // Mocking the behavior of the ClassroomService.removeStudentsFromClassroom method for scenario where classroom is not found
+        Long classroomId = 999L;
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
+        classroomDTO.setGeneralUsersIds(List.of(101L, 102L, 103L));
+
+        when(classroomService.removeScrumMastersFromClassroom(anyLong(), any(UpdateClassroomDTO.class)))
+                .thenThrow(ResponseStatusException.class);
+
+        // Performing the test and verifying the exception
+        assertThrows(ResponseStatusException.class,
+                () -> classroomController.removeScrumMastersFromClassroom(classroomId, classroomDTO));
+    }
+
+    @Test
+    public void testRemoveInstructorsFromClassroom_Success() {
+        // Mocking the behavior of the ClassroomService.removeStudentsFromClassroom method for success scenario
+        Long classroomId = 1L;
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
+        classroomDTO.setGeneralUsersIds(List.of(101L, 102L, 103L));
+
+        ResponseClassroomDTO responseClassroomDTO = new ResponseClassroomDTO();
+        responseClassroomDTO.setId(classroomId);
+        responseClassroomDTO.setTitle("Math Class");
+        responseClassroomDTO.setCoordinator(RESPONSE_COORDINATOR_3);
+        responseClassroomDTO.setInstructors(Collections.emptyList());
+
+        when(classroomService.removeInstructorsFromClassroom(anyLong(), any(UpdateClassroomDTO.class)))
+                .thenReturn(responseClassroomDTO);
+
+        // Performing the test
+        ResponseEntity<ResponseClassroomDTO> responseEntity =
+                classroomController.removeInstructorsFromClassroom(classroomId, classroomDTO);
+
+        // Asserting the response status code and the returned ResponseClassroomDTO object
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(classroomId, responseEntity.getBody().getId());
+        assertEquals("Math Class", responseEntity.getBody().getTitle());
+        assertEquals(3L, responseEntity.getBody().getCoordinator().getId());
+        assertEquals(Collections.emptyList(), responseEntity.getBody().getInstructors());
+    }
+
+    @Test
+    public void testRemoveInstructorsFromClassroom_ClassroomNotFound() {
+        // Mocking the behavior of the ClassroomService.removeStudentsFromClassroom method for scenario where classroom is not found
+        Long classroomId = 999L;
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
+        classroomDTO.setGeneralUsersIds(List.of(101L, 102L, 103L));
+
+        when(classroomService.removeInstructorsFromClassroom(anyLong(), any(UpdateClassroomDTO.class)))
+                .thenThrow(ResponseStatusException.class);
+
+        // Performing the test and verifying the exception
+        assertThrows(ResponseStatusException.class,
+                () -> classroomController.removeInstructorsFromClassroom(classroomId, classroomDTO));
+    }
+
+    @Test
+    public void testRemoveSquadsFromClassroom_Success() {
+        // Mocking the behavior of the ClassroomService.removeStudentsFromClassroom method for success scenario
+        Long classroomId = 1L;
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
+        classroomDTO.setGeneralUsersIds(List.of(101L, 102L, 103L));
+
+        ResponseClassroomDTO responseClassroomDTO = new ResponseClassroomDTO();
+        responseClassroomDTO.setId(classroomId);
+        responseClassroomDTO.setTitle("Math Class");
+        responseClassroomDTO.setCoordinator(RESPONSE_COORDINATOR_3);
+        responseClassroomDTO.setSquads(Collections.emptyList());
+
+        when(classroomService.removeSquadsFromClassroom(anyLong(), any(UpdateClassroomDTO.class)))
+                .thenReturn(responseClassroomDTO);
+
+        // Performing the test
+        ResponseEntity<ResponseClassroomDTO> responseEntity =
+                classroomController.removeSquadsFromClassroom(classroomId, classroomDTO);
+
+        // Asserting the response status code and the returned ResponseClassroomDTO object
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(classroomId, responseEntity.getBody().getId());
+        assertEquals("Math Class", responseEntity.getBody().getTitle());
+        assertEquals(3L, responseEntity.getBody().getCoordinator().getId());
+        assertEquals(Collections.emptyList(), responseEntity.getBody().getSquads());
+    }
+
+    @Test
+    public void testRemoveSquadsFromClassroom_ClassroomNotFound() {
+        // Mocking the behavior of the ClassroomService.removeStudentsFromClassroom method for scenario where classroom is not found
+        Long classroomId = 999L;
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO();
+        classroomDTO.setGeneralUsersIds(List.of(101L, 102L, 103L));
+
+        when(classroomService.removeSquadsFromClassroom(anyLong(), any(UpdateClassroomDTO.class)))
+                .thenThrow(ResponseStatusException.class);
+
+        // Performing the test and verifying the exception
+        assertThrows(ResponseStatusException.class,
+                () -> classroomController.removeSquadsFromClassroom(classroomId, classroomDTO));
     }
 }
