@@ -1,16 +1,20 @@
 package uol.compass.cspcapi.domain.student;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.server.ResponseStatusException;
+import uol.compass.cspcapi.application.api.grade.dto.UpdateGradeDTO;
 import uol.compass.cspcapi.application.api.student.dto.CreateStudentDTO;
 import uol.compass.cspcapi.application.api.student.dto.ResponseStudentDTO;
 import uol.compass.cspcapi.application.api.student.dto.UpdateStudentDTO;
 import uol.compass.cspcapi.application.api.user.dto.CreateUserDTO;
 import uol.compass.cspcapi.application.api.user.dto.UpdateUserDTO;
+import uol.compass.cspcapi.domain.Squad.Squad;
+import uol.compass.cspcapi.domain.classroom.Classroom;
+import uol.compass.cspcapi.domain.grade.Grade;
 import uol.compass.cspcapi.domain.role.Role;
 import uol.compass.cspcapi.domain.role.RoleRepository;
 import uol.compass.cspcapi.domain.role.RoleService;
@@ -34,25 +38,33 @@ class StudentServiceTest {
             "12345678"
     );
 
+    private static final User USER_2 = new User(
+            "primeiro",
+            "segundo",
+            "teste2@mail.com",
+            "12345678"
+    );
+
     private static final Role ROLE_1 = new Role("ROLE_STUDENT");
 
     private static final Student STUDENT_1 = new Student(USER_1);
     private static final Student STUDENT_2 = new Student(USER_1);
 
+    private static final Grade GRADE = new Grade();
 
     @MockBean
-    private StudentRepository studentRepository;
+    private static StudentRepository studentRepository;
     @InjectMocks
-    private StudentService studentService;
+    private static StudentService studentService;
     @MockBean
-    private RoleRepository roleRepository;
+    private static RoleRepository roleRepository;
     @InjectMocks
-    private RoleService roleService;
+    private static RoleService roleService;
 
     @MockBean
-    private UserRepository userRepository;
+    private static UserRepository userRepository;
     @InjectMocks
-    private UserService userService;
+    private static UserService userService;
 
     private CreateStudentDTO createStudent(){
         CreateUserDTO createUserDTO = new CreateUserDTO(
@@ -65,8 +77,8 @@ class StudentServiceTest {
         return new CreateStudentDTO(createUserDTO);
     }
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    static void setUp() {
         studentRepository = mock(StudentRepository.class);
         userRepository = mock(UserRepository.class);
         roleRepository = createRoleRepository();
@@ -76,8 +88,15 @@ class StudentServiceTest {
         studentService = new StudentService(studentRepository, userService, new PasswordEncoder(), roleService);
 
         USER_1.getRoles().add(roleService.findRoleByName("ROLE_STUDENT"));
+        USER_2.getRoles().add(roleService.findRoleByName("ROLE_STUDENT"));
+        USER_1.setId(1L);
+        USER_2.setId(2L);
+
         STUDENT_1.setId(1L);
+        STUDENT_1.setGrades(GRADE);
         STUDENT_2.setId(2L);
+        STUDENT_2.setGrades(GRADE);
+
     }
 
     @AfterEach
@@ -96,6 +115,17 @@ class StudentServiceTest {
 
         assertEquals("teste@mail.com", student.getUser().getEmail());
     }
+
+    @Test
+    void testSave() {
+        when(studentRepository.save(any(Student.class))).thenReturn(STUDENT_1);
+        when(roleRepository.findByName(anyString())).thenReturn(Optional.of(ROLE_1));
+
+        ResponseStudentDTO student = studentService.save(createStudent());
+
+        assertEquals("teste@mail.com", student.getUser().getEmail());
+    }
+
 
     @Test
     void saveFail(){
@@ -162,8 +192,15 @@ class StudentServiceTest {
 
     @Test
     void update() {
+        User user = new User(
+                USER_1.getFirstName(),
+                USER_1.getLastName(),
+                USER_1.getEmail(),
+                USER_1.getPassword()
+        );
+
         Student student = new Student(
-                STUDENT_1.getUser()
+                user
         );
 
         student.getUser().setEmail("testePut@mail.com");
@@ -280,14 +317,148 @@ class StudentServiceTest {
 
     @Test
     void attributeStudentsToSquad() {
+        User u1 = new User(
+                USER_1.getFirstName(),
+                USER_1.getLastName(),
+                USER_1.getEmail(),
+                USER_1.getPassword()
+        );
+
+        Student s1 = new Student(
+                u1
+        );
+
+        User u2 = new User(
+                USER_1.getFirstName(),
+                USER_1.getLastName(),
+                USER_1.getEmail(),
+                USER_1.getPassword()
+        );
+
+        Student s2 = new Student(
+                u2
+        );
+
+        Squad squad = new Squad("QA");
+        squad.setId(1L);
+
+        List<Student> list = List.of(s1, s2);
+        list.forEach(it -> it.setSquad(squad));
+
+        when(studentRepository.saveAll(anyList())).thenReturn(list);
+        List<ResponseStudentDTO> students = studentService.attributeStudentsToSquad(squad, list);
+
+        assertNotNull(students.get(0).getSquadId());
+        assertEquals(1L, students.get(0).getSquadId());
+        assertEquals(1L, students.get(1).getSquadId());
     }
 
     @Test
     void attributeStudentsToClassroom() {
+        User u1 = new User(
+                USER_1.getFirstName(),
+                USER_1.getLastName(),
+                USER_1.getEmail(),
+                USER_1.getPassword()
+        );
+
+        Student s1 = new Student(
+                u1
+        );
+
+        User u2 = new User(
+                USER_1.getFirstName(),
+                USER_1.getLastName(),
+                USER_1.getEmail(),
+                USER_1.getPassword()
+        );
+
+        Student s2 = new Student(
+                u2
+        );
+
+        Classroom classroom = new Classroom("QA - spring junit");
+        classroom.setId(1L);
+
+        List<Student> list = List.of(s1, s2);
+        list.forEach(it -> it.setClassroom(classroom));
+
+        when(studentRepository.saveAll(anyList())).thenReturn(list);
+
+        List<ResponseStudentDTO> students = studentService.attributeStudentsToClassroom(classroom, list);
+
+        assertEquals(classroom.getId(), students.get(0).getClassroomId());
+        assertEquals(classroom.getId(), students.get(1).getClassroomId());
     }
 
     @Test
     void updateGradesFromStudent() {
+        when(studentRepository.findById(anyLong())).thenReturn(Optional.of(STUDENT_1));
+        when(studentRepository.save(any(Student.class))).thenReturn(STUDENT_1);
+
+        UpdateStudentDTO newStudent = new UpdateStudentDTO(
+                new UpdateGradeDTO(
+                        0D,
+                        0D,
+                        0D,
+                        0D,
+                        0D,
+                        0D,
+                        0D
+                )
+        );
+
+        ResponseStudentDTO student = studentService.updateGradesFromStudent(1L, newStudent);
+
+        assertNotNull(student.getGrades());
+        assertEquals(GRADE, student.getGrades());
+    }
+
+    @Test
+    void updateGradesFromStudentWhereGradeIsNull() {
+        when(studentRepository.findById(anyLong())).thenReturn(Optional.of(STUDENT_1));
+        when(studentRepository.save(any(Student.class))).thenReturn(STUDENT_1);
+
+        UpdateStudentDTO newStudent = new UpdateStudentDTO(
+                new UpdateGradeDTO(
+                        0D,
+                        0D,
+                        0D,
+                        0D,
+                        0D,
+                        0D,
+                        0D
+                )
+        );
+
+        ResponseStudentDTO student = studentService.updateGradesFromStudent(1L, newStudent);
+
+        assertNotNull(student.getGrades());
+        assertEquals(GRADE, student.getGrades());
+    }
+
+    @Test
+    void updateGradesFromStudentFailNotFound() {
+        when(studentRepository.findById(0L)).thenThrow(ResponseStatusException.class);
+
+        UpdateStudentDTO newStudent = new UpdateStudentDTO(
+                new UpdateGradeDTO(
+                        0D,
+                        0D,
+                        0D,
+                        0D,
+                        0D,
+                        0D,
+                        0D
+                )
+        );
+
+        ResponseStatusException response = assertThrows(ResponseStatusException.class,
+                () -> studentService.updateGradesFromStudent(1L, newStudent)
+        );
+
+        assertEquals("student not found", response.getReason());
+        assertEquals(404, response.getStatusCode().value());
     }
 
     @Test
@@ -298,7 +469,7 @@ class StudentServiceTest {
     void mapToResponseStudents() {
     }
 
-    private RoleRepository createRoleRepository() {
+    private static RoleRepository createRoleRepository() {
         RoleRepository mock = mock(RoleRepository.class);
         when(mock.findByName("ROLE_STUDENT")).thenReturn(Optional.of(ROLE_1));
         when(mock.findByName("ROLE_NOT_EXISTS")).thenReturn(Optional.of(ROLE_1)).thenThrow(ResponseStatusException.class);
