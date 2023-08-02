@@ -25,4 +25,12 @@ public class UpdateScrumMasterDTO {
     public Classroom getClassroom() {
         return classroom;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setClassroom(Classroom classroom) {
+        this.classroom = classroom;
+    }
 }
