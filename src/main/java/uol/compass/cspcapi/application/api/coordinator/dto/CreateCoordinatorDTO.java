@@ -21,4 +21,8 @@ public class CreateCoordinatorDTO {
     public CreateUserDTO getUser() {
         return user;
     }
+
+    public void setUser(CreateUserDTO user) {
+        this.user = user;
+    }
 }
