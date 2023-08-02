@@ -403,7 +403,6 @@ class StudentServiceTest {
                         0D,
                         0D,
                         0D,
-                        0D,
                         0D
                 )
         );
@@ -426,7 +425,6 @@ class StudentServiceTest {
                         0D,
                         0D,
                         0D,
-                        0D,
                         0D
                 )
         );
@@ -443,7 +441,6 @@ class StudentServiceTest {
 
         UpdateStudentDTO newStudent = new UpdateStudentDTO(
                 new UpdateGradeDTO(
-                        0D,
                         0D,
                         0D,
                         0D,
