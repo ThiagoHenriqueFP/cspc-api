@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Service
 public class InstructorService {
-    private InstructorRepository instructorRepository;
+    private final InstructorRepository instructorRepository;
     private final UserService userService;
     private final PasswordEncoder passwordEncrypt;
 
@@ -121,6 +121,18 @@ public class InstructorService {
 
     @Transactional
     public List<ResponseInstructorDTO> attributeInstructorsToClassroom(Classroom classroom, List<Instructor> instructors) {
+        List<Long> idList = instructors.stream()
+                .map(Instructor::getId).toList();
+
+        List<Instructor> checkedInstructors = instructorRepository.findAllByIdIn(idList);
+
+        if(idList.size() != checkedInstructors.size()){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "one or more instructors not exists"
+            );
+        }
+
         for (Instructor instructor : instructors) {
             instructor.setClassroom(classroom);
         }
