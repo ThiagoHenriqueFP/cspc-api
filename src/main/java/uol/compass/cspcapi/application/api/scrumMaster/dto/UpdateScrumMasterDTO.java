@@ -13,6 +13,10 @@ public class UpdateScrumMasterDTO {
 
     public UpdateScrumMasterDTO() {}
 
+    public UpdateScrumMasterDTO(User user) {
+        this.user = user;
+    }
+
     public UpdateScrumMasterDTO(User user, Classroom classroom) {
         this.user = user;
         this.classroom = classroom;
