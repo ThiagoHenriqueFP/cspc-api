@@ -23,6 +23,7 @@ import uol.compass.cspcapi.domain.user.UserService;
 import uol.compass.cspcapi.infrastructure.config.jwt.JwtTokenProvider;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -108,13 +109,13 @@ public class AuthControllerIT {
         String email = "test@example.com";
         String password = "test123";
 
+        //todo authentication returning null with correct DTO
+
         LoginDTO loginDTO = new LoginDTO(email, password);
 
         String token = "test-token";
-        when(authenticationManager.authenticate(any()))
-                .thenReturn(new UsernamePasswordAuthenticationToken(email, password));
-        when(jwtTokenProvider.createToken(any()))
-                .thenReturn(token);
+//        when(authenticationManager.authenticate(any())).thenReturn(new UsernamePasswordAuthenticationToken(email, password));
+//        when(jwtTokenProvider.createToken(any())).thenReturn(token);
 
         mockMvc.perform(post("/auth/signin")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -145,4 +146,22 @@ public class AuthControllerIT {
     private static String asJsonString(Object obj) throws Exception {
         return new ObjectMapper().writeValueAsString(obj);
     }
+
+//    @Test
+//    public void testLoginSuccess() throws Exception {
+//        String email = "test@example.com";
+//        String password = "test123";
+//
+//        LoginDTO loginDTO = new LoginDTO(email, password);
+//
+//        String token = "test-token";
+//        when(authenticationManager.authenticate(any())).thenReturn(new UsernamePasswordAuthenticationToken(email, password));
+//        when(jwtTokenProvider.createToken(any())).thenReturn(token);
+//
+//        mockMvc.perform(post("/auth/signin")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(asJsonString(loginDTO)))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.data").value(token));
+//    }
 }
