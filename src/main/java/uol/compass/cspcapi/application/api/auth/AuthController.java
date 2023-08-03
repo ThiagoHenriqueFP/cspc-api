@@ -1,6 +1,7 @@
 package uol.compass.cspcapi.application.api.auth;
 
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.auth.dto.LoginDTO;
 import uol.compass.cspcapi.application.api.generalPourposeDTO.ResponseDTO;
 import uol.compass.cspcapi.application.api.user.dto.CreateUserDTO;
@@ -63,7 +65,13 @@ public class AuthController {
                 createUserDTO.getPassword()
         );
 
-        user.getRoles().add(roleService.findRoleByName("ROLE_ADMIN"));
+        Role role = roleService.findRoleByName("ROLE_ADMIN");
+        if (role == null) {
+            // Role not found, throw internal server error
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error creating admin user.");
+        }
+
+        user.getRoles().add(role);
 
         return ResponseEntity.ok(
                 ResponseDTO.ok(userService.saveUser(user))
