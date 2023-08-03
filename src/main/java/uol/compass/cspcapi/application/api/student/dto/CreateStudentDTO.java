@@ -20,4 +20,8 @@ public class CreateStudentDTO {
     public CreateUserDTO getUser() {
         return user;
     }
+
+    public void setUser(CreateUserDTO user) {
+        this.user = user;
+    }
 }

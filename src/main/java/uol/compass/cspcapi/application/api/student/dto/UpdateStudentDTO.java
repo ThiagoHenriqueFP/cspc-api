@@ -48,4 +48,8 @@ public class UpdateStudentDTO {
     public Classroom getClassroom() {
         return classroom;
     }
+
+    public void setUser(UpdateUserDTO user) {
+        this.user = user;
+    }
 }

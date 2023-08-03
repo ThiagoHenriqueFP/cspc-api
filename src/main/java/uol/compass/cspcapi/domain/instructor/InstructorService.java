@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.instructor.dto.CreateInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.ResponseInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.UpdateInstructorDTO;
+import uol.compass.cspcapi.application.api.user.dto.ResponseUserDTO;
 import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.role.RoleService;
 import uol.compass.cspcapi.domain.user.User;
@@ -20,7 +21,7 @@ import java.util.Optional;
 
 @Service
 public class InstructorService {
-    private final InstructorRepository instructorRepository;
+    private InstructorRepository instructorRepository;
     private final UserService userService;
     private final PasswordEncoder passwordEncrypt;
 
@@ -57,16 +58,45 @@ public class InstructorService {
         Instructor newInstructor = new Instructor(user);
         Instructor instructorDb = instructorRepository.save(newInstructor);
 
-        return mapToResponseInstructor(instructorDb);
+        Long classroomId;
+
+        if (instructorDb.getClassroom() == null) {
+            classroomId = null;
+        } else {
+            classroomId = instructorDb.getClassroom().getId();
+        }
+
+        ResponseInstructorDTO responseInstructor = new ResponseInstructorDTO(
+                instructorDb.getId(),
+                new ResponseUserDTO(
+                        instructorDb.getUser().getId(),
+                        instructorDb.getUser().getFirstName(),
+                        instructorDb.getUser().getLastName(),
+                        instructorDb.getUser().getEmail()
+                ),
+                classroomId
+        );
+        return responseInstructor;
     }
 
     public ResponseInstructorDTO getById(Long id) {
-        return mapToResponseInstructor(instructorRepository.findById(id).orElseThrow(
+        Instructor instructor = instructorRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "instructor not found"
                 )
-        ));
+        );
+
+        ResponseInstructorDTO responseInstructor = new ResponseInstructorDTO(
+                instructor.getId(),
+                new ResponseUserDTO(
+                        instructor.getUser().getId(),
+                        instructor.getUser().getFirstName(),
+                        instructor.getUser().getLastName(),
+                        instructor.getUser().getEmail()
+                )
+        );
+        return responseInstructor;
     }
 
     public List<ResponseInstructorDTO> getAll() {
@@ -93,7 +123,16 @@ public class InstructorService {
 
         Instructor updatedInstructor = instructorRepository.save(instructor);
 
-        return mapToResponseInstructor(updatedInstructor);
+        ResponseInstructorDTO responseInstructor = new ResponseInstructorDTO(
+                updatedInstructor.getId(),
+                new ResponseUserDTO(
+                        updatedInstructor.getUser().getId(),
+                        updatedInstructor.getUser().getFirstName(),
+                        updatedInstructor.getUser().getLastName(),
+                        updatedInstructor.getUser().getEmail()
+                )
+        );
+        return responseInstructor;
     }
 
     @Transactional

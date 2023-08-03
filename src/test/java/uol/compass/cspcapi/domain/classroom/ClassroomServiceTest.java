@@ -254,12 +254,17 @@ public class ClassroomServiceTest {
         scrumMasters.add(new ScrumMaster(new User("Victor", "Silva", "victor.silva@mail.com", "victor.silva")));
         scrumMasters.add(new ScrumMaster(new User("Gilberto", "Maderos", "gilberto.maderos", "gilberto.maderos")));
 
+        List<Instructor> instructors = new ArrayList<>();
+        instructors.add(new Instructor(new User("Instructor", "Employee", "instructor.employee1@mail.com", "instructor.employee1@mail.com")));
+        instructors.add(new Instructor(new User("Instructor", "Employee", "instructor.employee2@mail.com", "instructor.employee2")));
+
         List<Squad> squads = new ArrayList<>();
         squads.add(new Squad("Squad 1"));
         squads.add(new Squad("Squad 2"));
 
         existingClassroom.setStudents(students);
         existingClassroom.setScrumMasters(scrumMasters);
+        existingClassroom.setInstructors(instructors);
         existingClassroom.setSquads(squads);
 
         // Mock do repositório para retornar a sala de aula existente
