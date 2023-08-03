@@ -59,29 +59,4 @@ public class MapToResponseCoordinatorTest {
         assertEquals(coordinator.getId(), responseCoordinatorDTO.getId());
         assertNull(responseCoordinatorDTO.getUser());
     }
-
-//    @Test
-//    public void testMapToResponseCoordinator() {
-//        // Mock Coordinator and User objects
-//        Coordinator coordinator = new Coordinator();
-//        coordinator.setId(1L);
-//        User user = new User("First", "Second", "first.second@mail.com", "first.second");
-//        user.setId(100L);
-//        coordinator.setUser(user);
-//
-//        // Mock the behavior of userService.mapToResponseUser()
-//        ResponseUserDTO responseUserDTO = new ResponseUserDTO(user.getId(), "John", "Doe", "john@example.com");
-//        when(userService.mapToResponseUser(coordinator.getUser())).thenReturn(responseUserDTO);
-//
-//        // Call the method to be tested
-//        ResponseCoordinatorDTO responseCoordinatorDTO = coordinatorService.mapToResponseCoordinator(coordinator);
-//
-//        // Verify that userService.mapToResponseUser() was called with the correct argument
-//        verify(userService).mapToResponseUser(coordinator.getUser());
-//
-//        // Assertions
-//        assertEquals(coordinator.getId(), responseCoordinatorDTO.getId());
-//        assertEquals(responseUserDTO, responseCoordinatorDTO.getUser());
-//    }
-
 }

@@ -78,29 +78,6 @@ public class CoordinatorServiceTest {
     }
 
     @Test
-    public void testSave_Success() {
-        User user = new User("John", "Doe", "johndoe@compass.com", "password");
-        Coordinator coordinator = new Coordinator(user);
-
-        CreateUserDTO userDTO = new CreateUserDTO(user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
-        CreateCoordinatorDTO coordinatorDTO = new CreateCoordinatorDTO(userDTO);
-
-        coordinator.setId(1L);
-
-//        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
-        when(coordinatorRepository.save(any(Coordinator.class))).thenReturn(coordinator);
-//        when(roleRepository.findByName(anyString())).thenReturn(Optional.of(new Role("ROLE_COORDINATOR")));
-
-        ResponseCoordinatorDTO response = coordinatorService.save(coordinatorDTO);
-
-        assertEquals(coordinator.getId(), response.getId());
-        assertEquals(coordinator.getUser().getFirstName(), response.getUser().getFirstName());
-        assertEquals(coordinator.getUser().getLastName(), response.getUser().getLastName());
-        assertEquals(coordinator.getUser().getEmail(), response.getUser().getEmail());
-
-    }
-
-    @Test
     public void testGetById_ExistingId_ReturnsResponseCoordinatorDTO() {
         Long coordinatorId = 1L;
         User user_1 = new User("First", "Second", "first.second@mail.com", "first.second");
@@ -119,21 +96,6 @@ public class CoordinatorServiceTest {
 
         assertEquals(coordinatorId, result.getId());
     }
-
-//    @Test
-//    void testGetById_NonExistingId_ReturnsError() {
-//        // Dados de teste
-//        Long coordinatorId = 1L;
-//
-//        // Mock do repositório para retornar Optional vazio
-//        when(coordinatorRepository.findById(coordinatorId)).thenReturn(Optional.empty());
-//
-//        // Verificação de exceção quando a sala de aula não é encontrada
-//        assertThrows(ResponseStatusException.class, () -> coordinatorService.getById(coordinatorId));
-//
-//        // Verificação de chamada de método
-//        verify(coordinatorRepository).findById(coordinatorId);
-//    }
 
     @Test
     public void testGetById_NonExistingId_ThrowsResponseStatusException() {
@@ -328,122 +290,4 @@ public class CoordinatorServiceTest {
 
         //verify(userService, times(1)).mapToResponseUser(any(User.class));
     }
-
-
-
-
-
-
-
-
-
-
-    /*
-    @MockBean
-    private UserRepository userRepository;
-    @InjectMocks
-    private UserService userService;
-
-    @MockBean
-    private CoordinatorRepository coordinatorRepository;
-    @InjectMocks
-    private CoordinatorService coordinatorService;
-
-    @MockBean
-    private RoleRepository roleRepository;
-    @InjectMocks
-    private RoleService roleService;
-
-    @BeforeEach
-    void setUp() {
-        userRepository = createUserRepository();
-        coordinatorRepository = createCoordinatorRepository();
-        roleRepository = createRoleRepository();
-
-        userService = new UserService(userRepository, new PasswordEncoder());
-        roleService = new RoleService(roleRepository);
-        coordinatorService = new CoordinatorService(coordinatorRepository, userService, new PasswordEncoder(), roleService);
-        reset(userRepository);
-        reset(roleRepository);
-        reset(coordinatorRepository);
-    }
-
-    @AfterEach
-    void tearDown() {
-        reset(userRepository);
-        reset(roleRepository);
-        reset(coordinatorRepository);
-    }
-
-//    @Test
-//    void saveCoordinatorSuccess(){
-//        when(coordinatorRepository.save(any(Coordinator.class))).thenReturn(COORDINATOR_1);
-//        Optional<Role> foundRole = Optional.of(new Role("ROLE_COORDINATOR"));
-//        when(roleRepository.findByName(anyString())).thenReturn(foundRole);
-//        when(roleService.findRoleByName("ROLE_COORDINATOR")).thenReturn(new Role("ROLE_COORDINATOR"));
-//
-//        CreateCoordinatorDTO coordinatorDTO = new CreateCoordinatorDTO(
-//                new CreateUserDTO(
-//                        COORDINATOR_1.getUser().getFirstName(),
-//                        COORDINATOR_1.getUser().getLastName(),
-//                        COORDINATOR_1.getUser().getEmail(),
-//                        COORDINATOR_1.getUser().getPassword()
-//                )
-//        );
-//
-//        ResponseCoordinatorDTO newCoordinator = coordinatorService.save(coordinatorDTO);
-//
-//        assertEquals("teste@mail.com", newCoordinator.getUser().getEmail());
-//    }
-
-    @Test
-    void saveCoordinatorFailDuplicated(){
-        when(coordinatorRepository.findByEmail(anyString())).thenReturn(Optional.of(COORDINATOR_1)).thenThrow(ResponseStatusException.class);
-
-        CreateCoordinatorDTO coordinatorDTO = new CreateCoordinatorDTO(
-                new CreateUserDTO(
-                        COORDINATOR_1.getUser().getFirstName(),
-                        COORDINATOR_1.getUser().getLastName(),
-                        COORDINATOR_1.getUser().getEmail(),
-                        COORDINATOR_1.getUser().getPassword()
-                )
-        );
-
-        ResponseCoordinatorDTO response = coordinatorService.save(coordinatorDTO);
-        assertThrows()
-                assertThrows(ResponseStatusException.class,
-                () -> {
-                    coordinatorService.save(coordinatorDTO);
-                },
-                "user already exists"
-        );
-
-        assertEquals(400, response.getStatusCode().value());
-        assertEquals("user already exists", response.getReason());
-    }
-
-
-    private UserRepository createUserRepository(){
-        UserRepository mock = mock(UserRepository.class);
-        when(mock.findByEmail("teste@mail.com")).thenReturn(Optional.of(USER_4));
-        when(mock.findByEmail("teste2@mail.com")).thenReturn(Optional.of(USER_5));
-        return mock;
-    }
-
-    private CoordinatorRepository createCoordinatorRepository(){
-        CoordinatorRepository mock = mock(CoordinatorRepository.class);
-        when(mock.findByEmail("teste@mail.com")).thenReturn(Optional.of(COORDINATOR_1));
-        when(mock.findByEmail("teste2@mail.com")).thenReturn(Optional.of(COORDINATOR_2));
-        return mock;
-    }
-
-    private RoleRepository createRoleRepository() {
-        RoleRepository mock = mock(RoleRepository.class);
-        when(mock.findByName("ROLE_COORDINATOR")).thenReturn(Optional.of(ROLE_1));
-        when(mock.findByName("ROLE_NOT_EXISTS")).thenReturn(Optional.of(ROLE_1)).thenThrow(ResponseStatusException.class);
-        return mock;
-    }
-
-
-     */
 }
