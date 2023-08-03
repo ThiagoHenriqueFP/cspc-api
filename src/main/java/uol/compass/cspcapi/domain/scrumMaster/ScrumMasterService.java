@@ -68,7 +68,7 @@ public class ScrumMasterService {
         return mapToResponseScrumMaster(scrumMasterRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "user not found"
+                        "scrum master not found"
                 )
         ));
     }
@@ -118,7 +118,18 @@ public class ScrumMasterService {
     }
 
     public List<ScrumMaster> getAllScrumMastersById(List<Long> scrumMastersIds) {
-        return scrumMasterRepository.findAllByIdIn(scrumMastersIds);
+
+
+        List<ScrumMaster> scrumMasters = scrumMasterRepository.findAllByIdIn(scrumMastersIds);
+
+        if(scrumMasters.size() != scrumMastersIds.size()){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "one or more scrum masters not exists"
+            );
+        }
+
+        return scrumMasters;
     }
 
     @Transactional
