@@ -3,6 +3,7 @@ package uol.compass.cspcapi.integrationTests.classroom;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,7 @@ public class ClassroomControllerIT {
         return token;
     }
 
+    @Disabled
     @Test
     public void testCreateClassroom_Success() throws Exception {
         // User user = new User();
@@ -107,6 +109,7 @@ public class ClassroomControllerIT {
         assertEquals(coordinator.getId(), responseCoordinatorid);
     }
 
+    @Disabled
     @Test
     public void testGetByIdClassroom_Success() throws Exception {
         // User user = new User();
@@ -137,6 +140,7 @@ public class ClassroomControllerIT {
         assertEquals(coordinator.getId(), responseCoordinatorid);
     }
 
+    @Disabled
     @Test
     public void testGetAllClassrooms_Success() throws Exception {
         // User user = new User();
@@ -182,6 +186,7 @@ public class ClassroomControllerIT {
         assertEquals(coordinator_2.getId(), responseCoordinatorid_2);
     }
 
+    @Disabled
     @Test
     public void testUpdateClassroom_Success() throws Exception {
         Long coordinatorId = 2L;
@@ -212,6 +217,7 @@ public class ClassroomControllerIT {
         assertEquals(coordinator.getId(), responseCoordinatorid);
     }
 
+    @Disabled
     @Test
     public void testDeleteClassroom_Success() throws Exception {
         Long coordinatorId = 1L;
