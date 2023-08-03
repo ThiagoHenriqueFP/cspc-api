@@ -54,6 +54,9 @@ public class CoordinatorServiceTest {
     private CoordinatorRepository coordinatorRepository;
 
     @Mock
+    private UserRepository userRepository;
+
+    @Mock
     private UserService userService;
 
     @Mock
@@ -61,6 +64,8 @@ public class CoordinatorServiceTest {
     @Mock
     private PasswordEncoder passwordEncrypt;
 
+    @Mock
+    private RoleRepository roleRepository;
     @Mock
     private RoleService roleServiceMock;
 
@@ -72,66 +77,46 @@ public class CoordinatorServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-//    @Test
-//    void testSaveClassroom() {
-//        // Dados de teste
-//        Long coordinatorId = 1L;
-//
-//        User user_1 = new User("First", "Second", "first.second@mail.com", "first.second");
-//        user_1.setId(1L);
-//        Coordinator existingCoordinator = new Coordinator(user_1);
-//        existingCoordinator.setId(coordinatorId);
-//        CreateUserDTO userDTO_1 = new CreateUserDTO(user_1.getFirstName(), user_1.getLastName(), user_1.getEmail(), user_1.getPassword());
-//        CreateCoordinatorDTO coordinatorDTO_1 = new CreateCoordinatorDTO(userDTO_1);
-//
-//        ResponseUserDTO responseUserDTO = new ResponseUserDTO(1L, "First", "Second", "first.second@mail.com");
-//
-//        // Mock do repositório
-//        when(userService.findByEmail(existingCoordinator.getUser().getEmail())).thenReturn(Optional.empty());
-//        when(coordinatorRepository.save(any(Coordinator.class))).thenAnswer(invocation -> invocation.getArgument(0));
-//
-//        String encryptedPassword = "$a#10alsks";
-//        //java.lang.CharSequence
-//        when(passwordEncoder.encode(coordinatorDTO_1.getUser().getPassword())).thenReturn("encryptedPassword");
-//        //when(passwordEncrypt.encoder().encode(coordinatorDTO_1.getUser().getPassword())).thenReturn(encryptedPassword);
-//        // Executando o método
-//        when(userService.mapToResponseUser(any(User.class))).thenReturn(responseUserDTO);
-//
-//        ResponseCoordinatorDTO result = coordinatorService.save(coordinatorDTO_1);
-//
-//        // Verificação
-//        //verify(userService).findByEmail(existingCoordinator.getUser().getEmail());
-//        verify(coordinatorRepository).save(any(Coordinator.class));
-//
-//        // Verifica se o resultado não é nulo
-//        assertNotNull(result);
-//
-//        // Verifica se o título da sala de aula no resultado é o mesmo que o fornecido na entrada
-//        assertEquals(coordinatorDTO_1.getUser(), result.getUser());
-//    }
+    @Test
+    public void testSave_Success() {
+        User user = new User("John", "Doe", "johndoe@compass.com", "password");
+        Coordinator coordinator = new Coordinator(user);
+
+        CreateUserDTO userDTO = new CreateUserDTO(user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
+        CreateCoordinatorDTO coordinatorDTO = new CreateCoordinatorDTO(userDTO);
+
+        coordinator.setId(1L);
+
+//        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(coordinatorRepository.save(any(Coordinator.class))).thenReturn(coordinator);
+//        when(roleRepository.findByName(anyString())).thenReturn(Optional.of(new Role("ROLE_COORDINATOR")));
+
+        ResponseCoordinatorDTO response = coordinatorService.save(coordinatorDTO);
+
+        assertEquals(coordinator.getId(), response.getId());
+        assertEquals(coordinator.getUser().getFirstName(), response.getUser().getFirstName());
+        assertEquals(coordinator.getUser().getLastName(), response.getUser().getLastName());
+        assertEquals(coordinator.getUser().getEmail(), response.getUser().getEmail());
+
+    }
 
     @Test
     public void testGetById_ExistingId_ReturnsResponseCoordinatorDTO() {
-        // Dados de teste
         Long coordinatorId = 1L;
         User user_1 = new User("First", "Second", "first.second@mail.com", "first.second");
         user_1.setId(1L);
         Coordinator existingCoordinator = new Coordinator(user_1);
         existingCoordinator.setId(coordinatorId);
 
-        // Mock do repositório
         when(coordinatorRepository.findById(coordinatorId)).thenReturn(Optional.of(existingCoordinator));
 
-        // Executando o método
         ResponseCoordinatorDTO result = coordinatorService.getById(coordinatorId);
 
-        // Verificação
         verify(coordinatorRepository).findById(coordinatorId);
         verify(coordinatorRepository, times(1)).findById(coordinatorId);
-        // Verifica se o resultado não é nulo
+
         assertNotNull(result);
 
-        // Verifica se o ID da sala de aula no resultado é o mesmo que o fornecido na entrada
         assertEquals(coordinatorId, result.getId());
     }
 
@@ -227,36 +212,33 @@ public class CoordinatorServiceTest {
         assertEquals(coordinator_2.getId(), result.get(1).getId());
     }
 
-    @Disabled
     @Test
-    public void testUpdateClassroom_Success() {
+    public void testUpdateCoordinator_Success() {
         // Mocking input data
         Long coordinatorId = 1L;
 
-        User user_1 = new User("First", "Second", "first.second@mail.com", "first.second");
-        user_1.setId(1L);
-        Coordinator coordinator_1 = new Coordinator(user_1);
-        coordinator_1.setId(coordinatorId);
+        User user = new User("First", "Second", "first.second@mail.com", "first.second");
+        user.setId(1L);
+        Coordinator coordinator = new Coordinator(user);
+        coordinator.setId(coordinatorId);
 
-        UpdateUserDTO userDTO_1 = new UpdateUserDTO(user_1.getFirstName(), user_1.getLastName(), user_1.getEmail(), user_1.getPassword());
-        UpdateCoordinatorDTO coordinatorDTO = new UpdateCoordinatorDTO(userDTO_1);
+        User newUser = new User("User1", "User2", "user@mail.com", "user1.user2");
+        newUser.setId(1L);
+        Coordinator newCoordinator = new Coordinator(newUser);
+        newCoordinator.setId(coordinatorId);
 
-        ResponseUserDTO responseUserDTO = new ResponseUserDTO(1L, userDTO_1.getFirstName(), user_1.getLastName(), user_1.getEmail());
-        ResponseCoordinatorDTO responseCoordinatorDTO = new ResponseCoordinatorDTO(1L, responseUserDTO);
+        UpdateUserDTO userDTO = new UpdateUserDTO("User1", "User2", "user@mail.com", "user1.user2");
+        UpdateCoordinatorDTO coordinatorDTO = new UpdateCoordinatorDTO(userDTO);
 
-        // Mocking repository behavior
+        when(coordinatorRepository.findById(coordinatorId)).thenReturn(Optional.of(coordinator));
+        when(coordinatorRepository.save(any(Coordinator.class))).thenReturn(newCoordinator);
 
-        when(coordinatorRepository.findById(coordinatorId)).thenReturn(Optional.of(coordinator_1));
-        when(coordinatorRepository.save(any(Coordinator.class))).thenReturn(coordinator_1);
-        System.out.println(coordinator_1);
-        System.out.println();
-        when(coordinatorService.mapToResponseCoordinator(any(Coordinator.class))).thenReturn(responseCoordinatorDTO);
-
-        // Call the method under test
         ResponseCoordinatorDTO response = coordinatorService.update(coordinatorId, coordinatorDTO);
 
-        // Assertions
-        assertEquals(coordinatorDTO.getUser(), response.getUser());
+        assertEquals(coordinatorId, response.getId());
+        assertEquals(coordinatorDTO.getUser().getFirstName(), response.getUser().getFirstName());
+        assertEquals(coordinatorDTO.getUser().getLastName(), response.getUser().getLastName());
+        assertEquals(coordinatorDTO.getUser().getEmail(), response.getUser().getEmail());
     }
 
     @Test

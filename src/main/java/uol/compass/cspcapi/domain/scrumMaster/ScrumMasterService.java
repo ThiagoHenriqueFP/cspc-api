@@ -3,12 +3,12 @@ package uol.compass.cspcapi.domain.scrumMaster;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.scrumMaster.dto.CreateScrumMasterDTO;
 import uol.compass.cspcapi.application.api.scrumMaster.dto.ResponseScrumMasterDTO;
 import uol.compass.cspcapi.application.api.scrumMaster.dto.UpdateScrumMasterDTO;
-import uol.compass.cspcapi.application.api.user.dto.CreateUserDTO;
 import uol.compass.cspcapi.application.api.user.dto.ResponseUserDTO;
 import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.role.RoleService;
@@ -23,7 +23,7 @@ import java.util.Optional;
 @Service
 public class ScrumMasterService {
 
-    private final ScrumMasterRepository scrumMasterRepository;
+    private ScrumMasterRepository scrumMasterRepository;
 
     // Aqui eu não posso acessar diretamente o user repository
     // Essa abordagem serve para manter as classes protegidas
@@ -60,17 +60,36 @@ public class ScrumMasterService {
         user.getRoles().add(roleService.findRoleByName("ROLE_SCRUM_MASTER"));
         ScrumMaster newScrumMaster = new ScrumMaster(user);
         ScrumMaster scrumMasterDb = scrumMasterRepository.save(newScrumMaster);
-        
-        return mapToResponseScrumMaster(scrumMasterDb);
+
+
+        Long classroomId;
+
+        if (scrumMasterDb.getClassroom() == null) {
+            classroomId = null;
+        } else {
+            classroomId = scrumMasterDb.getClassroom().getId();
+        }
+
+        ResponseScrumMasterDTO responseScrumMaster = new ResponseScrumMasterDTO(
+                scrumMasterDb.getId(),
+                new ResponseUserDTO(
+                        scrumMasterDb.getUser().getId(),
+                        scrumMasterDb.getUser().getFirstName(),
+                        scrumMasterDb.getUser().getLastName(),
+                        scrumMasterDb.getUser().getEmail()
+                ),
+                classroomId
+        );
+
+        return responseScrumMaster;
     }
 
     public ResponseScrumMasterDTO getById(Long id){
-        return mapToResponseScrumMaster(scrumMasterRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "user not found"
-                )
-        ));
+        ScrumMaster scrumMaster = scrumMasterRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found")
+        );
+
+        return mapToResponseScrumMaster(scrumMaster);
     }
 
     public List<ResponseScrumMasterDTO> getAll(){

@@ -9,6 +9,7 @@ import uol.compass.cspcapi.application.api.instructor.dto.CreateInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.ResponseInstructorDTO;
 import uol.compass.cspcapi.application.api.instructor.dto.UpdateInstructorDTO;
 import uol.compass.cspcapi.application.api.user.dto.ResponseUserDTO;
+import uol.compass.cspcapi.application.api.user.dto.UpdateUserDTO;
 import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.role.Role;
 import uol.compass.cspcapi.domain.role.RoleRepository;
@@ -63,70 +64,20 @@ public class InstructorServiceTest {
 //        MockitoAnnotations.openMocks(this);
 //    }
 
-    /*
-    save : Success/Failure
-    getById : Success/Failure
-    getAll : Success/Failure
-    update : Success/Failure
-    deleteById : Success/Failure
-    getAllInstructorsById : Success/Failure
-    attributeInstructorsToClassroom : Success/Failure
-    */
-
-    //Save
-//    @Test
-//    public void testSave_Success() {
-//        CreateInstructorDTO instructorDTO = new CreateInstructorDTO();
-//        User userDTO = new User("John", "Doe", "johndoe@compass.com", "password");
-//        instructorDTO.setUser(userDTO);
-//
-//        when(userService.findByEmail("johndoe@compass.com")).thenReturn(Optional.empty());
-//
-//        Instructor savedInstructor = new Instructor();
-//        Classroom classroom = new Classroom();
-//
-//        savedInstructor.setId(1L);
-//        savedInstructor.setUser(new User("John", "Doe", "johndoe@compass.com", "hashed_password"));
-//        savedInstructor.setClassroom(classroom);
-//
-//        when(instructorRepository.save(any(Instructor.class))).thenReturn(savedInstructor);
-//        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(userDTO));
-//        when(roleRepository.findByName(anyString())).thenReturn(Optional.of(new Role("ROLE_INSTRUCTOR")));
-////        when(mockService.mapToResponseInstructor(savedInstructor)).thenReturn(
-////                new ResponseInstructorDTO(1L, new ResponseUserDTO(
-////                        userDTO.getId(),
-////                        userDTO.getFirstName(),
-////                        userDTO.getLastName(),
-////                        userDTO.getEmail()
-////                )
-////        ));
-//
-//        ResponseInstructorDTO result = instructorService.save(instructorDTO);
-//
-//        assertEquals(savedInstructor.getId(), result.getId());
-//        assertEquals(savedInstructor.getUser().getFirstName(), result.getUser().getFirstName());
-//        assertEquals(savedInstructor.getUser().getLastName(), result.getUser().getLastName());
-//        assertEquals(savedInstructor.getUser().getEmail(), result.getUser().getEmail());
-//    }
-
     @Test
     public void testSave_Success() {
         User user = new User("John", "Doe", "johndoe@compass.com", "password");
-        Instructor instructor = new Instructor();
+        Instructor instructor = new Instructor(user);
         Classroom classroom = new Classroom();
-        CreateInstructorDTO instructorDTO = new CreateInstructorDTO();
+        CreateInstructorDTO instructorDTO = new CreateInstructorDTO(user);
 
         instructor.setId(1L);
-        instructor.setUser(user);
-        instructor.setClassroom(classroom);
         classroom.setId(1L);
-        instructorDTO.setUser(user);
+        instructor.setClassroom(classroom);
 
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         when(instructorRepository.save(any(Instructor.class))).thenReturn(instructor);
         when(roleRepository.findByName(anyString())).thenReturn(Optional.of(new Role("ROLE_INSTRUCTOR")));
-        when(mockUserService.mapToResponseUser(user)).thenReturn(new ResponseUserDTO());
-        when(instructorService.mapToResponseInstructor(instructor)).thenReturn(new ResponseInstructorDTO());
 
         ResponseInstructorDTO result = instructorService.save(instructorDTO);
 
@@ -154,17 +105,24 @@ public class InstructorServiceTest {
     @Test
     public void testUpdate_Success() {
         Long instructorId = 1L;
-        UpdateInstructorDTO instructorDTO = new UpdateInstructorDTO();
-        instructorDTO.setUser(new User("John", "Doe", "johndoe@compass.com", "senha" ));
+        User user = new User("First", "Second", "first.second@mail.com", "first.second");
+        user.setId(1L);
+        Instructor instructor = new Instructor(user);
+        instructor.setId(instructorId);
 
-        Instructor instructor = new Instructor(instructorId, new User("Jane", "Smith", "janesmith@compass.com", "senha"));
+        User newUser = new User("User1", "User2", "user@mail.com", "user1.user2");
+        newUser.setId(1L);
+        Instructor newInstructor = new Instructor(newUser);
+        newInstructor.setId(instructorId);
+
+        UpdateInstructorDTO instructorDTO = new UpdateInstructorDTO(newUser);
 
         when(instructorRepository.findById(instructorId)).thenReturn(Optional.of(instructor));
-
-        when(instructorRepository.save(any(Instructor.class))).thenReturn(instructor);
+        when(instructorRepository.save(any(Instructor.class))).thenReturn(newInstructor);
 
         ResponseInstructorDTO result = instructorService.update(instructorId, instructorDTO);
 
+        verify(instructorRepository, times(1)).findById(anyLong());
         assertEquals(instructorId, result.getId());
         assertEquals(instructorDTO.getUser().getFirstName(), result.getUser().getFirstName());
         assertEquals(instructorDTO.getUser().getLastName(), result.getUser().getLastName());
@@ -184,16 +142,33 @@ public class InstructorServiceTest {
     //GetById
     @Test
     public void testGetById_Success() {
-        User user = new User("John", "Doe", "johndoe@compass.com", "password");
-        user.setId(1L);
-        Instructor instructor = new Instructor(1L, user);
+//        User user = new User("John", "Doe", "johndoe@compass.com", "password");
+//        user.setId(1L);
+//        Instructor instructor = new Instructor(1L, user);
+//
+//        when(instructorRepository.findById(1L)).thenReturn(Optional.of(instructor));
+//        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+//
+//        ResponseInstructorDTO result = instructorService.getById(1L);
+//
+//        assertEquals(instructor.getId(), result.getId());
 
-        when(instructorRepository.findById(1L)).thenReturn(Optional.of(instructor));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
+        Long instructorId = 1L;
+        User user_1 = new User("First", "Second", "first.second@mail.com", "first.second");
+        user_1.setId(1L);
+        Instructor existingInstructor = new Instructor(user_1);
+        existingInstructor.setId(instructorId);
+
+        when(instructorRepository.findById(1L)).thenReturn(Optional.of(existingInstructor));
         ResponseInstructorDTO result = instructorService.getById(1L);
 
-        assertEquals(instructor.getId(), result.getId());
+        verify(instructorRepository).findById(instructorId);
+        verify(instructorRepository, times(1)).findById(instructorId);
+
+        assertNotNull(result);
+        assertEquals(instructorId, result.getId());
+
         /*
         assertEquals(instructor.getUser().getFirstName(), result.getUser().getFirstName());
         assertEquals(instructor.getUser().getLastName(), result.getUser().getLastName());
