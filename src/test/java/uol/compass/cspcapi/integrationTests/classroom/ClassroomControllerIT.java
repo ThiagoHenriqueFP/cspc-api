@@ -2,6 +2,7 @@ package uol.compass.cspcapi.integrationTests.classroom;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -32,8 +33,12 @@ import uol.compass.cspcapi.application.api.classroom.dto.UpdateClassroomDTO;
 import uol.compass.cspcapi.application.api.coordinator.dto.CreateCoordinatorDTO;
 import uol.compass.cspcapi.application.api.generalPourposeDTO.ResponseDTO;
 import uol.compass.cspcapi.application.api.user.dto.CreateUserDTO;
+import uol.compass.cspcapi.domain.Squad.Squad;
 import uol.compass.cspcapi.domain.classroom.ClassroomService;
 import uol.compass.cspcapi.domain.coordinator.Coordinator;
+import uol.compass.cspcapi.domain.instructor.Instructor;
+import uol.compass.cspcapi.domain.scrumMaster.ScrumMaster;
+import uol.compass.cspcapi.domain.student.Student;
 import uol.compass.cspcapi.domain.user.User;
 import uol.compass.cspcapi.domain.user.UserRepository;
 import uol.compass.cspcapi.infrastructure.config.auth.SecurityConfig;
@@ -42,8 +47,11 @@ import uol.compass.cspcapi.infrastructure.config.jwt.JwtTokenProvider;
 import uol.compass.cspcapi.infrastructure.config.userDetails.UserDetailsImpl;
 import uol.compass.cspcapi.infrastructure.config.userDetails.UserDetilsServiceImpl;
 
+import java.util.*;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -234,6 +242,295 @@ public class ClassroomControllerIT {
                 .andExpect(status().isNoContent())
                 .andReturn();
     }
+
+    @Disabled
+    @Test
+    public void testAddStudentsToClassroom_Success() throws Exception {
+        Student student_1 = new Student();
+        student_1.setId(1L);
+        Student student_2 = new Student();
+        student_2.setId(2L);
+        Student student_3 = new Student();
+        student_3.setId(3L);
+
+        Long classroomId = 1L;
+        List<Long> generalUsersIds = Arrays.asList(1L, 2L, 3L);
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO(generalUsersIds);
+
+        String authToken = login();
+
+        MvcResult result = this.mockMvc.perform(patch("/classrooms/" + classroomId + "/add-students")
+                        .header("Authorization", "Bearer " + authToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(classroomDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.students[0].id").value(generalUsersIds.get(0)))
+                .andExpect(jsonPath("$.students[1].id").value(generalUsersIds.get(1)))
+                .andExpect(jsonPath("$.students[2].id").value(generalUsersIds.get(2)))
+                .andReturn();
+
+        String responseJson = result.getResponse().getContentAsString();
+
+        Integer studentJson_1 = JsonPath.read(responseJson, "$.students[0].id");
+        Long studentId_1 = studentJson_1.longValue();
+        Integer studentJson_2 = JsonPath.read(responseJson, "$.students[1].id");
+        Long studentId_2 = studentJson_2.longValue();
+        Integer studentJson_3 = JsonPath.read(responseJson, "$.students[2].id");
+        Long studentId_3 = studentJson_3.longValue();
+
+        assertEquals(generalUsersIds.get(0), studentId_1);
+        assertEquals(generalUsersIds.get(1), studentId_2);
+        assertEquals(generalUsersIds.get(2), studentId_3);
+    }
+
+    @Disabled
+    @Test
+    public void testRemoveStudentsFromClassroom_Success() throws Exception {
+        Student student_1 = new Student();
+        student_1.setId(1L);
+        Student student_2 = new Student();
+        student_2.setId(2L);
+        Student student_3 = new Student();
+        student_3.setId(3L);
+
+        Long classroomId = 1L;
+        List<Long> generalUsersIds = Arrays.asList(1L, 2L, 3L);
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO(generalUsersIds);
+
+        String authToken = login();
+
+        MvcResult result = this.mockMvc.perform(patch("/classrooms/" + classroomId + "/remove-students")
+                        .header("Authorization", "Bearer " + authToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(classroomDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.students").isEmpty())
+                .andReturn();
+
+        String responseJson = result.getResponse().getContentAsString();
+
+        List studentJson = JsonPath.read(responseJson, "$.students");
+
+        List empty = new ArrayList<>();
+        assertEquals(empty, studentJson);
+    }
+
+    @Disabled
+    @Test
+    public void testAddInstructorsToClassroom_Success() throws Exception {
+        Instructor instructor_1 = new Instructor();
+        instructor_1.setId(1L);
+        Instructor instructor_2 = new Instructor();
+        instructor_2.setId(2L);
+        Instructor instructor_3 = new Instructor();
+        instructor_3.setId(3L);
+
+        Long classroomId = 1L;
+        List<Long> generalUsersIds = Arrays.asList(1L, 2L, 3L);
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO(generalUsersIds);
+
+        String authToken = login();
+
+        MvcResult result = this.mockMvc.perform(patch("/classrooms/" + classroomId + "/add-instructors")
+                        .header("Authorization", "Bearer " + authToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(classroomDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.instructors[0].id").value(generalUsersIds.get(0)))
+                .andExpect(jsonPath("$.instructors[1].id").value(generalUsersIds.get(1)))
+                .andExpect(jsonPath("$.instructors[2].id").value(generalUsersIds.get(2)))
+                .andReturn();
+
+        String responseJson = result.getResponse().getContentAsString();
+
+        Integer instructorJson_1 = JsonPath.read(responseJson, "$.instructors[0].id");
+        Long instructorId_1 = instructorJson_1.longValue();
+        Integer instructorJson_2 = JsonPath.read(responseJson, "$.instructors[1].id");
+        Long instructorId_2 = instructorJson_2.longValue();
+        Integer instructorJson_3 = JsonPath.read(responseJson, "$.instructors[2].id");
+        Long instructorId_3 = instructorJson_3.longValue();
+
+        assertEquals(generalUsersIds.get(0), instructorId_1);
+        assertEquals(generalUsersIds.get(1), instructorId_2);
+        assertEquals(generalUsersIds.get(2), instructorId_3);
+    }
+
+    @Disabled
+    @Test
+    public void testRemoveInstructorsFromClassroom_Success() throws Exception {
+        Instructor instructor_1 = new Instructor();
+        instructor_1.setId(1L);
+        Instructor instructor_2 = new Instructor();
+        instructor_2.setId(2L);
+        Instructor instructor_3 = new Instructor();
+        instructor_3.setId(3L);
+
+        Long classroomId = 1L;
+        List<Long> generalUsersIds = Arrays.asList(1L, 2L, 3L);
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO(generalUsersIds);
+
+        String authToken = login();
+
+        MvcResult result = this.mockMvc.perform(patch("/classrooms/" + classroomId + "/remove-instructors")
+                        .header("Authorization", "Bearer " + authToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(classroomDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.instructors").isEmpty())
+                .andReturn();
+
+        String responseJson = result.getResponse().getContentAsString();
+
+        List instructorJson = JsonPath.read(responseJson, "$.instructors");
+
+        List empty = new ArrayList<>();
+        assertEquals(empty, instructorJson);
+    }
+
+    @Disabled
+    @Test
+    public void testAddScrumMastersToClassroom_Success() throws Exception {
+        ScrumMaster scrumMaster_1 = new ScrumMaster();
+        scrumMaster_1.setId(1L);
+        ScrumMaster scrumMaster_2 = new ScrumMaster();
+        scrumMaster_2.setId(2L);
+        ScrumMaster scrumMaster_3 = new ScrumMaster();
+        scrumMaster_3.setId(3L);
+
+        Long classroomId = 1L;
+        List<Long> generalUsersIds = Arrays.asList(1L, 2L, 3L);
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO(generalUsersIds);
+
+        String authToken = login();
+
+        MvcResult result = this.mockMvc.perform(patch("/classrooms/" + classroomId + "/add-scrummasters")
+                        .header("Authorization", "Bearer " + authToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(classroomDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.scrumMasters[0].id").value(generalUsersIds.get(0)))
+                .andExpect(jsonPath("$.scrumMasters[1].id").value(generalUsersIds.get(1)))
+                .andExpect(jsonPath("$.scrumMasters[2].id").value(generalUsersIds.get(2)))
+                .andReturn();
+
+        String responseJson = result.getResponse().getContentAsString();
+
+        Integer scrumMasterJson_1 = JsonPath.read(responseJson, "$.scrumMasters[0].id");
+        Long scrumMasterId_1 = scrumMasterJson_1.longValue();
+        Integer scrumMasterJson_2 = JsonPath.read(responseJson, "$.scrumMasters[1].id");
+        Long scrumMasterId_2 = scrumMasterJson_2.longValue();
+        Integer scrumMasterJson_3 = JsonPath.read(responseJson, "$.scrumMasters[2].id");
+        Long scrumMasterId_3 = scrumMasterJson_3.longValue();
+
+        assertEquals(generalUsersIds.get(0), scrumMasterId_1);
+        assertEquals(generalUsersIds.get(1), scrumMasterId_2);
+        assertEquals(generalUsersIds.get(2), scrumMasterId_3);
+    }
+
+    @Disabled
+    @Test
+    public void testRemoveScrumMastersFromClassroom_Success() throws Exception {
+        ScrumMaster scrumMaster_1 = new ScrumMaster();
+        scrumMaster_1.setId(1L);
+        ScrumMaster scrumMaster_2 = new ScrumMaster();
+        scrumMaster_2.setId(2L);
+        ScrumMaster scrumMaster_3 = new ScrumMaster();
+        scrumMaster_3.setId(3L);
+
+        Long classroomId = 1L;
+        List<Long> generalUsersIds = Arrays.asList(1L, 2L, 3L);
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO(generalUsersIds);
+
+        String authToken = login();
+
+        MvcResult result = this.mockMvc.perform(patch("/classrooms/" + classroomId + "/remove-scrummasters")
+                        .header("Authorization", "Bearer " + authToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(classroomDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.scrumMasters").isEmpty())
+                .andReturn();
+
+        String responseJson = result.getResponse().getContentAsString();
+
+        List scrumMasterJson = JsonPath.read(responseJson, "$.scrumMasters");
+
+        List empty = new ArrayList<>();
+        assertEquals(empty, scrumMasterJson);
+    }
+
+    @Disabled
+    @Test
+    public void testAddSquadsToClassroom_Success() throws Exception {
+        Squad squad_1 = new Squad();
+        squad_1.setId(1L);
+        Squad squad_2 = new Squad();
+        squad_2.setId(2L);
+        Squad squad_3 = new Squad();
+        squad_3.setId(3L);
+
+        Long classroomId = 1L;
+        List<Long> generalUsersIds = Arrays.asList(1L, 2L, 3L);
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO(generalUsersIds);
+
+        String authToken = login();
+
+        MvcResult result = this.mockMvc.perform(patch("/classrooms/" + classroomId + "/add-squads")
+                        .header("Authorization", "Bearer " + authToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(classroomDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.squads[0].id").value(generalUsersIds.get(0)))
+                .andExpect(jsonPath("$.squads[1].id").value(generalUsersIds.get(1)))
+                .andExpect(jsonPath("$.squads[2].id").value(generalUsersIds.get(2)))
+                .andReturn();
+
+        String responseJson = result.getResponse().getContentAsString();
+
+        Integer squadJson_1 = JsonPath.read(responseJson, "$.squads[0].id");
+        Long squadId_1 = squadJson_1.longValue();
+        Integer squadJson_2 = JsonPath.read(responseJson, "$.squads[1].id");
+        Long squadId_2 = squadJson_2.longValue();
+        Integer squadJson_3 = JsonPath.read(responseJson, "$.squads[2].id");
+        Long squadId_3 = squadJson_3.longValue();
+
+        assertEquals(generalUsersIds.get(0), squadId_1);
+        assertEquals(generalUsersIds.get(1), squadId_2);
+        assertEquals(generalUsersIds.get(2), squadId_3);
+    }
+
+    @Disabled
+    @Test
+    public void testRemoveSquadsFromClassroom_Success() throws Exception {
+        Squad squad_1 = new Squad();
+        squad_1.setId(1L);
+        Squad squad_2 = new Squad();
+        squad_2.setId(2L);
+        Squad squad_3 = new Squad();
+        squad_3.setId(3L);
+
+        Long classroomId = 1L;
+        List<Long> generalUsersIds = Arrays.asList(1L, 2L, 3L);
+        UpdateClassroomDTO classroomDTO = new UpdateClassroomDTO(generalUsersIds);
+
+        String authToken = login();
+
+        MvcResult result = this.mockMvc.perform(patch("/classrooms/" + classroomId + "/remove-squads")
+                        .header("Authorization", "Bearer " + authToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(classroomDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.squads").isEmpty())
+                .andReturn();
+
+        String responseJson = result.getResponse().getContentAsString();
+
+        List squadsJson = JsonPath.read(responseJson, "$.squads");
+
+        List empty = new ArrayList<>();
+        assertEquals(empty, squadsJson);
+    }
+
 
     // Helper method to convert object to JSON string
     private static String asJsonString(Object obj) throws Exception {
