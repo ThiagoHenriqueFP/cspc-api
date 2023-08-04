@@ -2,6 +2,7 @@ package uol.compass.cspcapi.infrastructure.config.errorHandling;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
@@ -12,6 +13,7 @@ import javax.naming.AuthenticationException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
 class DefaultControllerAdviceTest {
 
     private static RuntimeException runtimeException;

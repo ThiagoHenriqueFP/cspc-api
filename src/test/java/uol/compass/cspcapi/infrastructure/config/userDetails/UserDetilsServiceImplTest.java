@@ -2,6 +2,7 @@ package uol.compass.cspcapi.infrastructure.config.userDetails;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import uol.compass.cspcapi.domain.role.Role;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
 class UserDetilsServiceImplTest {
 
     private static UserDetilsServiceImpl userDetilsService;

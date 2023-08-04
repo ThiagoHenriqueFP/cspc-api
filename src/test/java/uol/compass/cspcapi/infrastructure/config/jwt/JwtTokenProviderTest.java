@@ -3,6 +3,7 @@ package uol.compass.cspcapi.infrastructure.config.jwt;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
 class JwtTokenProviderTest {
 
     public static final String HASED_STRING = "$2a$12$4tCUci.7aboq13VUYTcp1ugg6km2OBZdtZ4AHjJKHI6SU94aYlGrW";
