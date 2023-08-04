@@ -114,6 +114,8 @@ public class ScrumMasterService {
                 )
         );
 
+        scrumMaster.getUser().getRoles().removeAll(scrumMaster.getUser().getRoles());
+
         scrumMasterRepository.delete(scrumMaster);
     }
 
