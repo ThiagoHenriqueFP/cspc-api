@@ -57,6 +57,7 @@ public class SecurityConfig {
                 req
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/coordinators/**").hasAnyRole("ADMIN", "COORDINATOR")
                         .requestMatchers("/scrum_masters/**").hasAnyRole("ADMIN", "SCRUM_MASTER")
                         .requestMatchers("/instructors/**").hasAnyRole("ADMIN", "COORDINATOR", "SCRUM_MASTER", "INSTRUCTOR")
