@@ -15,6 +15,11 @@ public class UpdateSquadDTO {
 
     public UpdateSquadDTO() {
     }
+
+    public UpdateSquadDTO(String name) {
+        this.name = name;
+    }
+
     public UpdateSquadDTO(String name, UpdateClassroomDTO classroom) {
         this.name = name;
         this.classroom = classroom;
