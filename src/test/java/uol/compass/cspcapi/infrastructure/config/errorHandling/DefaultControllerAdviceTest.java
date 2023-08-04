@@ -50,6 +50,7 @@ class DefaultControllerAdviceTest {
         ResponseDTO<String> parse = (ResponseDTO<String>) response.getBody();
         assertNotNull(parse);
         assertEquals(responseDTO.getData(), parse.getData());
+        assertInstanceOf(ResponseEntity.class, response);
     }
 
     @Test
@@ -66,6 +67,7 @@ class DefaultControllerAdviceTest {
         ResponseDTO<String> parse = (ResponseDTO<String>) response.getBody();
         assertNotNull(parse);
         assertEquals(responseDTO.getData(), parse.getData());
+        assertInstanceOf(ResponseEntity.class, response);
     }
 
 //    @Test
@@ -86,5 +88,6 @@ class DefaultControllerAdviceTest {
         ResponseDTO<String> parse = (ResponseDTO<String>) response.getBody();
         assertNotNull(parse);
         assertEquals(responseDTO.getData(), parse.getData());
+        assertInstanceOf(ResponseEntity.class, response);
     }
 }
