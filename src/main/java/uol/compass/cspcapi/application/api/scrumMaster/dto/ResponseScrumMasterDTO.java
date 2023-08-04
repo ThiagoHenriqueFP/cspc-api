@@ -10,6 +10,11 @@ public class ResponseScrumMasterDTO {
 
     public ResponseScrumMasterDTO() {}
 
+    public ResponseScrumMasterDTO(Long id, ResponseUserDTO user) {
+        this.id = id;
+        this.user = user;
+    }
+
     public ResponseScrumMasterDTO(Long id, ResponseUserDTO user, Long classroomId) {
         this.id = id;
         this.user = user;

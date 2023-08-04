@@ -119,6 +119,8 @@ public class StudentService {
                 )
         );
 
+        student.getUser().getRoles().removeAll(student.getUser().getRoles());
+
         studentRepository.delete(student);
     }
 

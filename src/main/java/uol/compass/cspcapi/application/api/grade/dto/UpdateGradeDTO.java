@@ -1,6 +1,6 @@
 package uol.compass.cspcapi.application.api.grade.dto;
 
-import java.text.DecimalFormat;
+
 
 public class UpdateGradeDTO {
     private Double communication;
@@ -11,7 +11,7 @@ public class UpdateGradeDTO {
     private Double squadChallenge;
     private Double finalGrade;
 
-    public UpdateGradeDTO(Double communication, Double collaboration, Double autonomy, Double quiz, Double individualChallenge, Double squadChallenge, Double finalGrade) {
+    public UpdateGradeDTO(Double communication, Double collaboration, Double autonomy, Double quiz, Double individualChallenge, Double squadChallenge) {
         this.communication = communication;
         this.collaboration = collaboration;
         this.autonomy = autonomy;

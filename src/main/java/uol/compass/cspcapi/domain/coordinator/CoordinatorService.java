@@ -3,6 +3,7 @@ package uol.compass.cspcapi.domain.coordinator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uol.compass.cspcapi.application.api.coordinator.dto.CreateCoordinatorDTO;
@@ -58,7 +59,17 @@ public class CoordinatorService {
         Coordinator newCoordinator = new Coordinator(user);
         Coordinator coordinatorDb = coordinatorRepository.save(newCoordinator);
 
-        return mapToResponseCoordinator(coordinatorDb);
+        ResponseCoordinatorDTO responseCoordinator = new ResponseCoordinatorDTO(
+                coordinatorDb.getId(),
+                new ResponseUserDTO(
+                        coordinatorDb.getUser().getId(),
+                        coordinatorDb.getUser().getFirstName(),
+                        coordinatorDb.getUser().getLastName(),
+                        coordinatorDb.getUser().getEmail()
+                )
+        );
+
+        return responseCoordinator;
     }
 
     public ResponseCoordinatorDTO getById(Long id) {
@@ -108,7 +119,17 @@ public class CoordinatorService {
 
         Coordinator updatedCoordinator = coordinatorRepository.save(coordinator);
 
-        return mapToResponseCoordinator(updatedCoordinator);
+        ResponseCoordinatorDTO responseCoordinator = new ResponseCoordinatorDTO(
+                updatedCoordinator.getId(),
+                new ResponseUserDTO(
+                        updatedCoordinator.getUser().getId(),
+                        updatedCoordinator.getUser().getFirstName(),
+                        updatedCoordinator.getUser().getLastName(),
+                        updatedCoordinator.getUser().getEmail()
+                )
+        );
+
+        return responseCoordinator;
     }
 
     @Transactional
@@ -120,13 +141,15 @@ public class CoordinatorService {
                 )
         );
 
+        coordinator.getUser().getRoles().removeAll(coordinator.getUser().getRoles());
+
         coordinatorRepository.delete(coordinator);
     }
 
-    private ResponseCoordinatorDTO mapToResponseCoordinator(Coordinator coordinatorDb) {
+    public ResponseCoordinatorDTO mapToResponseCoordinator(Coordinator coordinator) {
         return new ResponseCoordinatorDTO(
-                coordinatorDb.getId(),
-                userService.mapToResponseUser(coordinatorDb.getUser())
+                coordinator.getId(),
+                userService.mapToResponseUser(coordinator.getUser())
         );
     }
 }

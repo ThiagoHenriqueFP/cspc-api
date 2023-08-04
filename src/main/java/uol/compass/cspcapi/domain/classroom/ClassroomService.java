@@ -114,12 +114,15 @@ public class ClassroomService {
                         "Squad not found"
                 )
         );
+
         List<Student> toRemoveStudents = classroom.getStudents();
         studentService.attributeStudentsToClassroom(null, toRemoveStudents);
 
-
         List<ScrumMaster> toRemoveScrumMasters = classroom.getScrumMasters();
         scrumMasterService.attributeScrumMastersToClassroom(null, toRemoveScrumMasters);
+
+        List<Instructor> toRemoveInstructors = classroom.getInstructors();
+        instructorService.attributeInstructorsToClassroom(null, toRemoveInstructors);
 
         List<Squad> toRemoveSquads = classroom.getSquads();
         squadService.attributeSquadsToClassroom(null, toRemoveSquads);
@@ -128,10 +131,13 @@ public class ClassroomService {
         classroom.setStudents(toRemoveStudents);
 
         toRemoveScrumMasters.removeIf(scrumMaster -> true);
-        classroom.setStudents(toRemoveStudents);
+        classroom.setScrumMasters(toRemoveScrumMasters);
+
+        toRemoveInstructors.removeIf(instructor -> true);
+        classroom.setInstructors(toRemoveInstructors);
 
         toRemoveSquads.removeIf(squad -> true);
-        classroom.setStudents(toRemoveStudents);
+        classroom.setSquads(toRemoveSquads);
 
         classroomRepository.save(classroom);
         classroomRepository.deleteById(classroom.getId());
@@ -257,7 +263,7 @@ public class ClassroomService {
         );
 
         List<Instructor> toRemoveInstructors = instructorService.getAllInstructorsById(classroomDTO.getGeneralUsersIds());
-        //instructorService.attributeInstructorsToClassroom(null, toRemoveInstructors);
+        instructorService.attributeInstructorsToClassroom(null, toRemoveInstructors);
 
         classroom.setInstructors(instructors);
         Classroom updatedClassroom = classroomRepository.save(classroom);
@@ -301,7 +307,7 @@ public class ClassroomService {
         return new ResponseClassroomDTO(
                 classroom.getId(),
                 classroom.getTitle(),
-                classroom.getCoordinator(),
+                coordinatorService.mapToResponseCoordinator(classroom.getCoordinator()),
                 studentService.mapToResponseStudents(classroom.getStudents()),
                 instructorService.mapToResponseInstructors(classroom.getInstructors()),
                 scrumMasterService.mapToResponseScrumMasters(classroom.getScrumMasters()),

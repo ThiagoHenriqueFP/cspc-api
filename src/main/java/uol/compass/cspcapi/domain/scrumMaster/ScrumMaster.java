@@ -22,6 +22,11 @@ public class ScrumMaster {
     public ScrumMaster() {
     }
 
+    public ScrumMaster(Long id, User user) {
+        this.id = id;
+        this.user = user;
+    }
+
     public ScrumMaster(User user) {
         this.user = user;
     }

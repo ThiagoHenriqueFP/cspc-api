@@ -15,4 +15,8 @@ public class UpdateCoordinatorDTO {
     public UpdateUserDTO getUser() {
         return user;
     }
+
+    public void setUser(UpdateUserDTO user) {
+        this.user = user;
+    }
 }
