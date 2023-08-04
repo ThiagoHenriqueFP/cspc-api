@@ -141,6 +141,8 @@ public class CoordinatorService {
                 )
         );
 
+        coordinator.getUser().getRoles().removeAll(coordinator.getUser().getRoles());
+
         coordinatorRepository.delete(coordinator);
     }
 
