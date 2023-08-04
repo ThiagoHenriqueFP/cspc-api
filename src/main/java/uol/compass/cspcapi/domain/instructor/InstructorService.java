@@ -144,6 +144,8 @@ public class InstructorService {
                 )
         );
 
+        instructor.getUser().getRoles().removeAll(instructor.getUser().getRoles());
+
         instructorRepository.delete(instructor);
     }
 

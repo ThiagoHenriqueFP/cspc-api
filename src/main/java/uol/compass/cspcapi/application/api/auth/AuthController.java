@@ -73,8 +73,13 @@ public class AuthController {
 
         user.getRoles().add(role);
 
-        return ResponseEntity.ok(
-                ResponseDTO.ok(userService.saveUser(user))
+//        return ResponseEntity.ok(
+//                ResponseDTO.ok(userService.saveUser(user))
+//        );
+
+        return new ResponseEntity<>(
+                new ResponseDTO<>(userService.saveUser(user)),
+                HttpStatus.CREATED
         );
     }
 }
