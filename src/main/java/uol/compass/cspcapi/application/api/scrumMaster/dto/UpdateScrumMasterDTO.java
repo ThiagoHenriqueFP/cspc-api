@@ -6,35 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import uol.compass.cspcapi.domain.classroom.Classroom;
 import uol.compass.cspcapi.domain.user.User;
 
-public class UpdateScrumMasterDTO {
-    @NotBlank(message = "user must not be empty")
-    private User user;
-    private Classroom classroom;
-
-    public UpdateScrumMasterDTO() {}
-
-    public UpdateScrumMasterDTO(User user) {
-        this.user = user;
-    }
-
-    public UpdateScrumMasterDTO(User user, Classroom classroom) {
-        this.user = user;
-        this.classroom = classroom;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Classroom getClassroom() {
-        return classroom;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setClassroom(Classroom classroom) {
-        this.classroom = classroom;
-    }
-}
+public record UpdateScrumMasterDTO(
+        @NotBlank(message = "user must not be empty")
+        User user,
+        Classroom classroom
+) { }

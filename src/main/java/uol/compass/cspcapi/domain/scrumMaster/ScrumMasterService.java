@@ -41,7 +41,7 @@ public class ScrumMasterService {
 
     @Transactional
     public ResponseScrumMasterDTO save(CreateScrumMasterDTO scrumMaster) {
-        Optional<User> alreadyExists = userService.findByEmail(scrumMaster.getUser().getEmail());
+        Optional<User> alreadyExists = userService.findByEmail(scrumMaster.user().getEmail());
 
         if(alreadyExists.isPresent()){
             throw new ResponseStatusException(
@@ -51,10 +51,10 @@ public class ScrumMasterService {
         }
 
         User user = new User(
-                scrumMaster.getUser().getFirstName(),
-                scrumMaster.getUser().getLastName(),
-                scrumMaster.getUser().getEmail(),
-                passwordEncrypt.encoder().encode(scrumMaster.getUser().getPassword())
+                scrumMaster.user().getFirstName(),
+                scrumMaster.user().getLastName(),
+                scrumMaster.user().getEmail(),
+                passwordEncrypt.encoder().encode(scrumMaster.user().getPassword())
         );
 
         user.getRoles().add(roleService.findRoleByName("ROLE_SCRUM_MASTER"));
@@ -94,9 +94,9 @@ public class ScrumMasterService {
 
         User user = scrumMaster.getUser();
 
-        user.setFirstName(scrumMasterDTO.getUser().getFirstName());
-        user.setLastName(scrumMasterDTO.getUser().getLastName());
-        user.setEmail(scrumMasterDTO.getUser().getEmail());
+        user.setFirstName(scrumMasterDTO.user().getFirstName());
+        user.setLastName(scrumMasterDTO.user().getLastName());
+        user.setEmail(scrumMasterDTO.user().getEmail());
 
         scrumMaster.setUser(user);
 

@@ -46,7 +46,7 @@ public class StudentService {
 
     @Transactional
     public ResponseStudentDTO save(CreateStudentDTO student) {
-        Optional<User> alreadyExists = userService.findByEmail(student.getUser().getEmail());
+        Optional<User> alreadyExists = userService.findByEmail(student.user().email());
 
         if(alreadyExists.isPresent()){
             throw new ResponseStatusException(
@@ -56,10 +56,10 @@ public class StudentService {
         }
 
         User user = new User(
-                student.getUser().getFirstName(),
-                student.getUser().getLastName(),
-                student.getUser().getEmail(),
-                passwordEncrypt.encoder().encode(student.getUser().getPassword())
+                student.user().firstName(),
+                student.user().lastName(),
+                student.user().email() ,
+                passwordEncrypt.encoder().encode(student.user().password())
         );
       
         user.getRoles().add(roleService.findRoleByName("ROLE_STUDENT"));
@@ -99,9 +99,9 @@ public class StudentService {
 
         User user = student.getUser();
 
-        user.setFirstName(studentDTO.getUser().getFirstName());
-        user.setLastName(studentDTO.getUser().getLastName());
-        user.setEmail(studentDTO.getUser().getEmail());
+        user.setFirstName(studentDTO.getUser().firstName());
+        user.setLastName(studentDTO.getUser().lastName());
+        user.setEmail(studentDTO.getUser().email());
 
         student.setUser(user);
 
