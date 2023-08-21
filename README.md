@@ -50,7 +50,7 @@ whil return a jwt token, to authenticate any other protected resources
 
 
 
-## Rodando localmente
+## Run locally
 
 Clone the project
 
@@ -64,10 +64,13 @@ Move to project directory
   cd cspc-api
 ```
 
+Make sure your mysql database ir running and your application.properties is rigth
+
+Create a database called 'scholarship_db'
+
 **we recomend to open an IDE to run maven**
 
 Launch the application inside an IDE (Intellij, Eclipse etc)
-
 
 
 ## Autores
