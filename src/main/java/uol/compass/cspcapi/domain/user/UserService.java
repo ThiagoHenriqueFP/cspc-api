@@ -24,17 +24,17 @@ public class UserService {
 
     @Transactional
     public ResponseUserDTO saveUser (CreateUserDTO userDTO){
-        if(findByEmail(userDTO.getEmail()).isPresent()){
+        if(findByEmail(userDTO.email()).isPresent()){
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "user already exists");
         }
 
         User user = new User(
-                userDTO.getFirstName(),
-                userDTO.getLastName(),
-                userDTO.getEmail(),
-                passwordEncoder.encoder().encode(userDTO.getPassword())
+                userDTO.firstName(),
+                userDTO.lastName(),
+                userDTO.email(),
+                passwordEncoder.encoder().encode(userDTO.password())
         );
         User savedUser = userRepository.save(user);
 

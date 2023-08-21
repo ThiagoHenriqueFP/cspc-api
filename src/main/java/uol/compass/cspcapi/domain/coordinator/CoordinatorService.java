@@ -38,7 +38,7 @@ public class CoordinatorService {
 
     @Transactional
     public ResponseCoordinatorDTO save(CreateCoordinatorDTO coordinator) {
-        Optional<User> alreadyExists = userService.findByEmail(coordinator.getUser().getEmail());
+        Optional<User> alreadyExists = userService.findByEmail(coordinator.getUser().email());
 
         if(alreadyExists.isPresent()){
             throw new ResponseStatusException(
@@ -48,10 +48,10 @@ public class CoordinatorService {
         }
 
         User user = new User(
-                coordinator.getUser().getFirstName(),
-                coordinator.getUser().getLastName(),
-                coordinator.getUser().getEmail(),
-                passwordEncrypt.encoder().encode(coordinator.getUser().getPassword())
+                coordinator.getUser().firstName(),
+                coordinator.getUser().lastName(),
+                coordinator.getUser().email(),
+                passwordEncrypt.encoder().encode(coordinator.getUser().password())
         );
       
         user.getRoles().add(roleService.findRoleByName("ROLE_COORDINATOR"));
@@ -111,9 +111,9 @@ public class CoordinatorService {
 
         User user = coordinator.getUser();
 
-        user.setFirstName(coordinatorDTO.getUser().getFirstName());
-        user.setLastName(coordinatorDTO.getUser().getLastName());
-        user.setEmail(coordinatorDTO.getUser().getEmail());
+        user.setFirstName(coordinatorDTO.getUser().firstName());
+        user.setLastName(coordinatorDTO.getUser().lastName());
+        user.setEmail(coordinatorDTO.getUser().email());
 
         coordinator.setUser(user);
 
