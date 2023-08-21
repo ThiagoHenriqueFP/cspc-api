@@ -69,7 +69,7 @@ public class AuthControllerTest {
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(createUserDTO)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.firstName").value(firstName))
                 .andExpect(jsonPath("$.data.lastName").value(lastName))
                 .andExpect(jsonPath("$.data.email").value(email))
